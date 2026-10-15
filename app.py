@@ -2,14 +2,14 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# إعداد الصفحة وتكوين العرض
+# إعداد الصفحة
 st.set_page_config(
     page_title="وعلم الإنسان ما لم يعلم | النظام التحليلي المتطور",
     page_icon="🎓",
     layout="wide"
 )
 
-# تصميم واجهة مستخدم نظيفة، مرتبة، وبدون زحمة (UI/UX Clean & Minimalist Navy/Orange)
+# تصميم واجهة مستخدم بيضاء، نظيفة، وفاخرة (Minimalist Light Mode - Apple/Notion Style)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -20,82 +20,89 @@ st.markdown("""
     }
 
     .main {
-        background-color: #0b132b;
-        color: #e0f2fe;
+        background-color: #f8fafc;
+        color: #0f172a;
     }
 
-    /* العنوان الرئيسي المرن في المنتصف */
+    /* العنوان الرئيسي الفخم في المنتصف بخلفية بيضاء وبطاقة نظيفة */
     .hero-container {
-        background: linear-gradient(135deg, #1c2541 0%, #0b132b 100%);
-        padding: 28px;
+        background: #ffffff;
+        padding: 30px;
         border-radius: 16px;
-        border: 2px solid #ff6b35;
+        border: 1px solid #e2e8f0;
         text-align: center;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
     }
 
     .hero-verse {
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         font-weight: 700;
-        color: #ff6b35;
+        color: #ea580c;
         margin-bottom: 6px;
+        letter-spacing: 0.5px;
     }
 
     .hero-title {
         font-weight: 900;
-        font-size: 1.8rem;
-        color: #ffffff;
+        font-size: 1.85rem;
+        color: #1e293b;
         margin-bottom: 4px;
     }
 
     .hero-subtitle {
-        color: #94a3b8;
+        color: #64748b;
         font-size: 0.95rem;
     }
 
-    /* بطاقات نظيفة ومنظمة بعيدة عن الكركبة */
+    /* بطاقات بيضاء نظيفة ومنظمة بعيدة عن الكركبة */
     .clean-card {
-        background-color: #1c2541;
-        border: 1px solid #3a506b;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 
-    /* تنسيق التبويبات الفخمة */
+    /* تنسيق التبويبات الاحترافية النظيفة */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
-        background-color: #0b132b;
+        background-color: #f1f5f9;
         padding: 8px;
-        border-radius: 10px;
-        border: 1px solid #3a506b;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background-color: #1c2541;
-        color: #94a3b8;
-        border-radius: 6px;
-        padding: 8px 16px;
+        background-color: #ffffff;
+        color: #475569;
+        border-radius: 8px;
+        padding: 10px 20px;
         font-weight: 700;
-        border: 1px solid #3a506b;
+        border: 1px solid #e2e8f0;
     }
 
     .stTabs [aria-selected="true"] {
-        background: #ff6b35 !important;
+        background: #ea580c !important;
         color: white !important;
-        border-color: #ff6b35 !important;
+        border-color: #ea580c !important;
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
     }
 
     .stButton>button {
-        background: #ff6b35;
+        background: #ea580c;
         color: white;
-        border-radius: 8px;
-        padding: 8px 16px;
+        border-radius: 10px;
+        padding: 10px 20px;
         font-weight: bold;
         border: none;
         width: 100%;
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
+    }
+    
+    .stButton>button:hover {
+        background: #c2410c;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -105,13 +112,13 @@ st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">« وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ »</div>
         <div class="hero-title">النظام التحليلي الذكي للأداء الدراسي</div>
-        <div class="hero-subtitle">معرض العلوم والابتكار — منصة مقاييس وعمليات عصبية سلوكية دقيقة ومنظمة</div>
+        <div class="hero-subtitle">معرض العلوم والابتكار — منصة قياس الأنماط المعرفة والبيئة العصبية السلوكية</div>
     </div>
 """, unsafe_allow_html=True)
 
 st.write("")
 
-# التبويبات الرئيسية (مرتبة ومنظمة بدون زحمة)
+# التبويبات الرئيسية (مرتبة ونظيفة)
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 لوحة التنبؤ الشامل (من 500)", 
     "🔋 بطارية الطاقة والاستشفاء", 
@@ -121,8 +128,8 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📋 خطة المذاكرة الشخصية"
 ])
 
-# لوحة التحكم الجانبية (منظمة وواضحة - مقاييس من 15)
-st.sidebar.markdown("### 🎛️ لوحة القياسات الحيوية والدراسية")
+# لوحة التحكم الجانبية (مرتبة وبسيطة)
+st.sidebar.markdown("### لوحة القياسات الحيوية")
 st.sidebar.markdown("---")
 
 sleep_hours = st.sidebar.slider("ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.5)
@@ -177,7 +184,7 @@ accumulated_sleep_debt = max(0.0, (8.0 - sleep_hours) * 5.5)
 mental_battery_index = min(100.0, max(10.0, (nq * 40) + (nm * 30) + (nh * 15) - (ns * 25)))
 
 retention_window = "الفترة الصباحية (الصبح بدري - صفاء ذهني عالي)" if "الصبح" in chronotype else "الفترة المسائية (تركيز هادئ ومتأخر)"
-memory_fatigue = "منخفض ومستقر ✅" if deep_focus < 7 else "مرتفع ويحتاج استراحة قصيرة ⚠️"
+memory_fatigue = "منخفض ومستقر" if deep_focus < 7 else "مرتفع ويحتاج استراحة قصيرة"
 
 
 with tab1:
@@ -185,24 +192,24 @@ with tab1:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("🎯 مؤشر التنبؤ الأكاديمي الشامل (من 500)")
+        st.subheader("مؤشر التنبؤ الأكاديمي الشامل (من 500)")
         st.metric(label="رصيد التحصيل المعرفي الإجمالي", value=f"{final_score_500:.1f} / 500 نقطة")
         st.write(f"النسبة المعيارية المكافئة: **{percentage_equivalent:.2f}%**")
         
         if final_score_500 >= 400:
-            st.success("🌟 **أداء استثنائي:** توازن كامل في مقاييسك العصبية والبيئية يضعك في قمة الجاهزية.")
+            st.success("أداء استثنائي: توازن كامل في مقاييسك العصبية والبيئية يضعك في قمة الجاهزية الأكاديمية.")
         elif final_score_500 >= 320:
-            st.info("👍 **أداء مستقر:** تحصيلك ممتاز وثابت، وموازنة بسيطة في التركيز تضمن لك العلامة الكاملة.")
+            st.info("أداء مستقر: تحصيلك ممتاز وثابت، وموازنة بسيطة في التركيز تضمن لك العلامة الكاملة.")
         else:
-            st.warning("⚠️ **تنبيه:** هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
+            st.warning("تنبيه: هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
             
         st.markdown("---")
-        st.subheader("📈 مؤشر استقرار وثبات المؤشرات (Stability Index)")
+        st.subheader("مؤشر استقرار وثبات المؤشرات")
         st.write("يقيس مدى توازن المدخلات وعدم تأثر النتيجة بالتقلبات العشوائية.")
         st.progress(min(int(percentage_equivalent), 100))
 
     with col2:
-        st.subheader("⚖️ الأوزان النسبية للعوامل")
+        st.subheader("الأوزان النسبية للعوامل")
         factors_df = pd.DataFrame({
             'المؤشر': ['التركيز الصافي', 'جودة النوم', 'الدافعية', 'التوتر', 'البيئة والماء'],
             'التأثير (%)': [32, 24, 18, 14, 12]
@@ -213,7 +220,7 @@ with tab1:
 
 with tab2:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🔋 بطارية الطاقة الذهنية والاستشفاء العصبي")
+    st.subheader("بطارية الطاقة الذهنية والاستشفاء العصبي")
     
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -229,15 +236,15 @@ with tab2:
     st.markdown("---")
     col_n1, col_n2 = st.columns(2)
     with col_n1:
-        st.info(f"🧠 **مُقيّم إرهاق الذاكرة العاملة الفرعي:** {memory_fatigue}")
+        st.info(f"مُقيّم إرهاق الذاكرة العاملة الفرعي: {memory_fatigue}")
     with col_n2:
-        st.success(f"⏰ **نافذة الاستيعاب الأمثل الفرعية:** {retention_window}")
+        st.success(f"نافذة الاستيعاب الأمثل الفرعية: {retention_window}")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🤖 المساعد التحليلي والبرومبتات الذكية المتعددة")
+    st.subheader("المساعد التحليلي والبرومبتات الذكية المتعددة")
     st.write("اختر أمراً تحليلياً لتوليد تقرير استشاري دقيق مخصص حسب مقاييسك الحالية:")
     
     selected_prompt = st.selectbox("اختر البرومْت التحليلي المطلوب:", [
@@ -248,25 +255,25 @@ with tab3:
     ])
     
     if st.button("تنفيذ البرومْت وتوليد التقرير المخصص"):
-        st.markdown("### 📑 مخرجات التقرير المخصص:")
+        st.markdown("### مخرجات التقرير المخصص:")
         if "1." in selected_prompt:
-            report_msg_1 = f"**تقرير الانتباه:** التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ **{100 - focus_efficiency:.1f}%**. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة."
+            report_msg_1 = f"تقرير الانتباه: التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ {100 - focus_efficiency:.1f}%. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة."
             st.info(report_msg_1)
         elif "2." in selected_prompt:
-            report_msg_2 = f"**تقرير الاستشفاء:** جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً."
+            report_msg_2 = f"تقرير الاستشفاء: جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً."
             st.info(report_msg_2)
         elif "3." in selected_prompt:
-            report_msg_3 = f"**تقرير مقاومة التسويف:** الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط)."
+            report_msg_3 = f"تقرير مقاومة التسويف: الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط)."
             st.info(report_msg_3)
         else:
-            report_msg_4 = f"**تقرير الذاكرة:** الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً."
+            report_msg_4 = f"تقرير الذاكرة: الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً."
             st.info(report_msg_4)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 with tab4:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("⚖️ مختبر المحاكاة التنبؤي المتقدم")
+    st.subheader("مختبر المحاكاة التنبؤي المتقدم")
     st.write("اختبر أثر تحسين بعض العادات على رصيدك الكلي من 500:")
     
     sim_sleep = st.slider("إضافة ساعات نوم إضافية مقترحة", 0.0, 3.0, 1.0, 0.5)
@@ -281,30 +288,30 @@ with tab4:
     with col_s2:
         st.metric(label="رصيدك المتوقع بعد التعديل", value=f"{simulated_score:.1f} / 500", delta=f"+{diff_score:.1f} نقطة")
     
-    st.success("💡 **رأي المحاكي الفرعي:** الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
+    st.success("رأي المحاكي الفرعي: الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("❓ تحدي الاسترجاع الذاتي والتدريب النشط")
+    st.subheader("تحدي الاسترجاع الذاتي والتدريب النشط")
     st.write("تحدًّ نشط لتثبيت الفهم بناءً على نمط دراستك:")
     
     domain_choice = st.selectbox("اختر المجال للاختبار:", ["العلوم والرياضيات التطبيقية", "المواد الأدبية والنصوص", "الحفظ والمفاهيم العامة"])
     
     if st.button("بدء التحدي النشط"):
         if "العلوم" in domain_choice:
-            st.warning("🧩 **التحدي:** اشرح بخطوات متسلسلة القانون أو القاعدة التي درستها اليوم وكيف تطبقها على مسألة جديدة دون النظر للمرجع.")
+            st.warning("التحدي: اشرح بخطوات متسلسلة القانون أو القاعدة التي درستها اليوم وكيف تطبقها على مسألة جديدة دون النظر للمرجع.")
         elif "المواد الأدبية" in domain_choice:
-            st.warning("🧩 **التحدي:** أعد صياغة القاعدة أو الفكرة الرئيسية بأسلوبك الخاص وبناء ثلاثة أمثلة جديدة كلياً.")
+            st.warning("التحدي: أعد صياغة القاعدة أو الفكرة الرئيسية بأسلوبك الخاص وبناء ثلاثة أمثلة جديدة كلياً.")
         else:
-            st.warning("🧩 **التحدي:** ارسم خريطة ذهنية سريعة على ورقة فارغة لأهم 5 مفاهيم رئيسية حفظتها اليوم خلال 5 دقائق.")
+            st.warning("التحدي: ارسم خريطة ذهنية سريعة على ورقة فارغة لأهم 5 مفاهيم رئيسية حفظتها اليوم خلال 5 دقائق.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 with tab6:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("📋 خطة المذاكرة الشخصية وتقرير الجاهزية الشامل")
+    st.subheader("خطة المذاكرة الشخصية وتقرير الجاهزية الشامل")
     
     exam_readiness = min(100, int((percentage_equivalent + mental_battery_index) / 2))
     

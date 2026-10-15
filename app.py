@@ -13,12 +13,12 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main { background-color: #07090e; color: #e2e8f0; }
-    .stTabs [data-baseweb="tab-list"] { gap: 12px; }
+    .stTabs [data-baseweb="tab-list"] { gap: 10px; }
     .stTabs [data-baseweb="tab"] {
         background-color: #0f172a;
         color: #94a3b8;
         border-radius: 10px 10px 0px 0px;
-        padding: 12px 24px;
+        padding: 10px 20px;
         font-weight: 600;
         border: 1px solid #1e293b;
     }
@@ -27,17 +27,10 @@ st.markdown("""
         color: white;
         border: none;
     }
-    .metric-container {
-        background: rgba(30, 41, 59, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 14px;
-        backdrop-filter: blur(10px);
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# عنوان المشروع الفلسفي والتقني
+# العنوان الرئيسي الفلسفي
 st.title("⚡ النظام التحليلي المعرفي المتقدم للأداء البشري")
 st.markdown("### *«وعلم الإنسان ما لم يعلم»* — منصة تحليل الأنماط السلوكية والعصبية لاكتساب المعرفة وتطوير الذاكرة.")
 st.write("---")
@@ -61,17 +54,25 @@ study_method = st.sidebar.selectbox("أسلوب معالجة المعلومات"
 chronotype = st.sidebar.selectbox("الذروة الحيوية (متى ينشط عقلك؟)", ["صباحي مبكر (فجر وعصر)", "مسائي عميق (ليل متأخر)", "مرن / متوازن"])
 environment_noise = st.sidebar.selectbox("مستوى المشتتات البيئية", ["هادئ ومفصول عن الهاتف", "متوسط (وجود ضوضاء خفيفة)", "مرتفع (تنبيهات وهواتف قريبة)"])
 
-# خوارزمية الحساب المعرفي (بدون ذكر ذكاء اصطناعي)
+# خوارزمية الحساب المعرفي الدقيقة والآمنة
 base_score = 40 + (sleep_hours * 3.2) + (sleep_quality * 1.8) + (total_study * 0.8) + (deep_focus * 4.2)
-if study_method == "التسجيل النشط والخرائط الذهنية": base_score += 10
-elif study_method == "حل المسائل والاختبارات التطبيقية": base_score += 14
+if study_method == "التسجيل النشط والخرائط الذهنية": 
+    base_score += 10
+elif study_method == "حل المسائل والاختبارات التطبيقية": 
+    base_score += 14
 
-if environment_noise == "هادئ ومفصول عن الهاتف": base_score += 6
-elif environment_noise == "مرتفع (تنبيهات وهواتف قريبة)": base_score -= 8
+if environment_noise == "هادئ ومفصول عن الهاتف": 
+    base_score += 6
+elif environment_noise == "مرتفع (تنبيهات وهواتف قريبة)": 
+    base_score -= 8
 
 predicted_grade = min(max(base_score, 30.0), 99.5)
 ffr_ratio = (deep_focus / total_study) * 100 if total_study > 0 else 0
 sleep_debt = max(0, (7.5 - sleep_hours) * 5)
+
+# مؤشرات الميزتين الجديدتين
+cognitive_load = min(100, (total_study * 8) - (deep_focus * 5))
+neuro_balance = min(100, max(0, (sleep_quality * 7) + (sleep_hours * 4) - (sleep_debt * 0.5)))
 
 
 with tab1:
@@ -85,7 +86,7 @@ with tab1:
         if sleep_hours < 5:
             st.error("⚠️ **إنذار حرج - ديون نوم مرتفعة:** قلة النوم المستمرة تؤدي لتراكم البروتينات السامة في الخلايا العصبية وانخفاض الذاكرة العاملة بنسبة 40%.")
         elif ffr_ratio > 70 and sleep_quality >= 7:
-            st.success("✨ **حالة التدفق العالي (Flow State):** توافق مثالى بين التركيز العمقي وجودة الاستشفاء العصبي.")
+            st.success("✨ **حالة التدفق العالي (Flow State):** توافق مثالي بين التركيز العمقي وجودة الاستشفاء العصبي.")
         else:
             st.info("⚖️ **حالة استقرار معتدلة:** الأداء ضمن النطاق الآمن مع وجود مساحة واسعة للرفع عبر زيادة التركيز الفعلي.")
             
@@ -106,13 +107,16 @@ with tab1:
 
 with tab2:
     st.subheader("🧠 نظام تحليل الإرهاق والديون النومية التراكمية")
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns(3)
     with c1:
-        st.metric(label="حجم العجز العصبي المتراكم (تأثير النوم)", value=f"{sleep_debt:.1f} نقاط فقدان تركيز")
-        st.write("كل ساعة نقص عن 7.5 ساعات تخفض كفاءة الفص الجبهي المسؤول عن التفكير النقدي.")
+        st.metric(label="حجم العجز العصبي المتراكم", value=f"{sleep_debt:.1f} نقطة")
+        st.write("تأثير نقص النوم على الفص الجبهي.")
     with c2:
-        st.metric(label="مقاومة حاجز البدء (التسويف الافتراضي)", value="متوسطة إلى منخفضة" if deep_focus > 2 else "مرتفعة جداً ⚠️")
-        st.write("إذا كانت مدة التركيز قصيرة، فهذا يعكس ارتفاع عتبة المقاومة العصبية لبدء المهام الصعبة.")
+        st.metric(label="مؤشر الحمل المعرفي", value=f"{cognitive_load:.1f}%")
+        st.write("معدل استهلاك طاقة الذاكرة العاملة.")
+    with c3:
+        st.metric(label="مؤشر التوازن العصبي", value=f"{neuro_balance:.1f}%")
+        st.write("مقياس الاستشفاء الجسدي والعقلي العام.")
 
 
 with tab3:
@@ -127,10 +131,10 @@ with tab3:
         st.info("🔄 **التوجيه الأمثل:** يمكنك توزيع المهام على فترتين متوازنتين بعد عصراً وبعد العشاء مباشرة.")
         
     st.markdown("### 📚 جدول التكرار المتباعد الموصى به لتثبيت الذاكرة:")
-    st.write("- **المراجعة الأولى:** بعد 24 ساعة من تلقي المعرفة.")
-    - **المراجعة الثانية:** بعد 3 أيام.")
-    - **المراجعة الثالثة:** بعد 7 أيام.")
-    - **المراجعة الرابعة:** بعد 30 تثبيتاً في الذاكرة طويلة المدى.")
+    st.markdown("- **المراجعة الأولى:** بعد 24 ساعة من تلقي المعرفة.")
+    st.markdown("- **المراجعة الثانية:** بعد 3 أيام.")
+    st.markdown("- **المراجعة الثالثة:** بعد 7 أيام.")
+    st.markdown("- **المراجعة الرابعة:** بعد 30 يوماً لتثبيت الذاكرة طويلة المدى.")
 
 
 with tab4:
@@ -151,7 +155,7 @@ with tab4:
         elif "أدرس لأكثر من 6 ساعات" in user_hurdle:
             st.info("**التوجيه:** المشكلة هنا في 'الكم المشتت مقابل الكيف المركز'. 3 ساعات من التركيز النقي تفوق 8 ساعات من الدراسة المتقطعة بوجود مشتتات.")
         else:
-            st.info("**التوجيه:** راجع مخزون الماء لديك وجودة التهوية في الغرفة، فالخمول غالبًا ناتج عن ارتفاع مستويات ثاني أكسيد الكربون أو انخفاض الجلوكوز الدماغي المفاجئ.")
+            st.info("**التوجيه:** راجع مخزون الماء لديك وجودة التهوية في الغرفة، فالخمول غالباً ناتج عن ارتفاع مستويات ثاني أكسيد الكربون أو انخفاض الجلوكوز الدماغي المفاجئ.")
 
 
 with tab5:

@@ -2,14 +2,14 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# إعداد الصفحة بنمط سطح المكتب
+# إعداد الصفحة بنمط سطح المكتب المتقدم
 st.set_page_config(
     page_title="Cognitive OS | وعلم الإنسان ما لم يعلم",
     page_icon="💠",
     layout="wide"
 )
 
-# تصميم واجهة مستخدم فاخرة تحاكي أنظمة التشغيل الحديثة (Windows / Desktop OS Theme)
+# تصميم واجهة مستخدم فاخرة تحاكي أنظمة التشغيل المستقبلية (Advanced Glassmorphic OS Theme)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -20,65 +20,65 @@ st.markdown("""
     }
 
     .main {
-        background-color: #05070b;
-        color: #f1f5f9;
+        background-color: #030712;
+        color: #f8fafc;
     }
 
     /* محاكاة شريط نظام التشغيل العلوي (OS Window Header) */
     .os-header {
         background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-        padding: 16px 24px;
-        border-radius: 14px 14px 0 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 18px 28px;
+        border-radius: 16px 16px 0 0;
+        border: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
     }
 
     .os-title {
         font-weight: 900;
-        font-size: 1.4rem;
-        background: linear-gradient(90deg, #60a5fa, #c084fc);
+        font-size: 1.5rem;
+        background: linear-gradient(90deg, #38bdf8, #c084fc, #f472b6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    /* تصميم البطاقات الزجاجية (Glassmorphic Cards) */
+    /* تصميم البطاقات الزجاجية الحديثة */
     .os-card {
-        background: rgba(15, 23, 42, 0.75);
+        background: rgba(15, 23, 42, 0.85);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 20px;
-        backdrop-filter: blur(16px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        margin-bottom: 20px;
+        border-radius: 14px;
+        padding: 24px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
+        margin-bottom: 22px;
     }
 
-    /* تخصيص التبويبات لتشبه نوافذ النظام */
+    /* تخصيص التبويبات لتشبه نوافذ النظام الاحترافية */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background-color: #0b0f17;
-        padding: 10px;
-        border-radius: 12px;
+        gap: 10px;
+        background-color: #0b0f19;
+        padding: 12px;
+        border-radius: 14px;
         border: 1px solid #1e293b;
     }
     
     .stTabs [data-baseweb="tab"] {
         background-color: #111827;
         color: #94a3b8;
-        border-radius: 8px;
-        padding: 10px 22px;
+        border-radius: 10px;
+        padding: 12px 24px;
         font-weight: 700;
         border: 1px solid #1f2937;
         transition: all 0.3s ease;
     }
 
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        background: linear-gradient(135deg, #2563eb, #9333ea);
         color: white !important;
         border-color: #60a5fa !important;
-        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.4);
+        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.5);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -86,36 +86,37 @@ st.markdown("""
 # واجهة الهيدر التي تشبه نظام التشغيل
 st.markdown("""
     <div class="os-header">
-        <div class="os-title">⚡ النظام التحليلي المعرفي العالي (Cognitive OS v2.5)</div>
-        <div style="color: #94a3b8; font-size: 0.9rem;">«وعلم الإنسان ما لم يعلم» — بيئة الأبحاث العصبية السلوكية</div>
+        <div class="os-title">💠 النظام التحليلي المعرفي (Cognitive OS v3.0)</div>
+        <div style="color: #94a3b8; font-size: 0.95rem;">«وعلم الإنسان ما لم يعلم» — بيئة الأبحاث العصبية السلوكية</div>
     </div>
 """, unsafe_allow_html=True)
 
 st.write("")
 
-# تقسيم المنصة إلى تبويبات نظام التشغيل
+# تقسيم المنصة إلى تبويبات نظام التشغيل الاحترافية
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 لوحة القيادة المركزية", 
-    "🧠 ماتريكس الكفاءة العصبية", 
+    "🧠 شبكة الكفاءة والاستشفاء", 
     "⏰ الإيقاع الحيوي والذاكرة", 
     "🛠️ مختبر تحليل العقبات", 
     "📋 منصة عرض الحكام الرسمية"
 ])
 
-# الشريط الجانبي المحاكي للوحة التحكم (Control Panel)
+# الشريط الجانبي المحاكي لوحة التحكم (Control Panel)
 st.sidebar.markdown("### 🎛️ لوحة تحكم المتغيرات العضوية")
 st.sidebar.markdown("---")
 sleep_hours = st.sidebar.slider("ساعات النوم اليومية", 3.0, 10.0, 7.5, 0.5)
 sleep_quality = st.sidebar.slider("جودة الاستشفاء النومى (1-10)", 1, 10, 8)
 total_study = st.sidebar.slider("إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.5)
 deep_focus = st.sidebar.slider("مدة التركيز النقي (Deep Work)", 0.5, 8.0, 3.0, 0.5)
-study_method = st.sidebar.selectbox("أسلوب معالجة وتثبيت المعرفة", ["التسجيل النشط والخرائط العصبية", "حل التطبيقات والمسائل الرياضية", "القراءة التكرارية السلبية"])
+study_method = st.sidebar.selectbox("أسلوب معالجة وتثبيت المعرفة", ["التسجيل النشط والخرائط الذهنية", "حل التطبيقات والمسائل الرياضية", "القراءة التكرارية السلبية"])
 chronotype = st.sidebar.selectbox("الذروة الحيوية للإيقاع العصبي", ["صباحي مبكر (كفاءة الفجر)", "مسائي عميق (تركيز الليل)", "مرن / متوازن"])
 environment_noise = st.sidebar.selectbox("مستوى العزل البيئي والمشتتات", ["هادئ ومفصول عن الأجهزة", "متوسط (ضوضاء خلفية خفيفة)", "مرتفع (تنبيهات ومشتتات محيطة)"])
+hydration_level = st.sidebar.slider("مستوى ترطيب الجسم وشرب الماء (أكواب يومياً)", 1, 12, 7)
 
 # خوارزمية الحساب المعرفي الدقيقة
-base_score = 42 + (sleep_hours * 3.1) + (sleep_quality * 1.7) + (total_study * 0.7) + (deep_focus * 4.4)
-if study_method == "التسجيل النشط والخرائط العصبية": 
+base_score = 42 + (sleep_hours * 3.1) + (sleep_quality * 1.7) + (total_study * 0.7) + (deep_focus * 4.4) + (hydration_level * 0.4)
+if study_method == "التسجيل النشط والخرائط الذهنية": 
     base_score += 11
 elif study_method == "حل التطبيقات والمسائل الرياضية": 
     base_score += 13
@@ -125,12 +126,13 @@ if environment_noise == "هادئ ومفصول عن الأجهزة":
 elif environment_noise == "مرتفع (تنبيهات ومشتتات محيطة)": 
     base_score -= 9
 
-predicted_grade = min(max(base_score, 35.0), 99.8)
+predicted_grade = min(max(base_score, 35.0), 99.9)
 ffr_ratio = (deep_focus / total_study) * 100 if total_study > 0 else 0
 sleep_debt = max(0, (7.5 - sleep_hours) * 6)
 
 cognitive_load = min(100, (total_study * 7.5) - (deep_focus * 4.5))
-neuro_balance = min(100, max(0, (sleep_quality * 6.5) + (sleep_hours * 4.2) - (sleep_debt * 0.4)))
+neuro_balance = min(100, max(0, (sleep_quality * 6.0) + (sleep_hours * 3.8) + (hydration_level * 1.5) - (sleep_debt * 0.4)))
+energy_recovery = min(100, (sleep_quality * 5) + (hydration_level * 3) + (max(0, 8 - (total_study - deep_focus)) * 2))
 
 
 with tab1:
@@ -138,13 +140,13 @@ with tab1:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("🎯 الماتريكس التنبؤية لتحصيل المعرفة")
+        st.subheader("🎯 مخطط التنبؤ لتحصيل المعرفة")
         st.metric(label="مؤشر الكفاءة الأكاديمية المتوقع", value=f"{predicted_grade:.1f}%")
         
         if sleep_hours < 5:
             st.error("⚠️ **تنبيه حرج للنظام العضوي:** نقص النوم المتراكم يضعف شبكات الذاكرة العاملة وكفاءة اتخاذ القرار البشري بنسبة تصل إلى 45%.")
         elif ffr_ratio > 65 and sleep_quality >= 7:
-            st.success("✨ **حالة التدفق الذهني القصوى (Flow State):** توازن مثالي بين جودة الاستشفاء العصبي وعمق التركيز.")
+            st.success("✨ **حالة التدفق الذهني القصوى (Flow State):** توازن مثالي بين جودة الاستشفاء العصبي وعمق التركيز النقي.")
         else:
             st.info("⚖️ **حالة استقرار تشغيلي:** الأداء ضمن المدى الطبيعي مع فرصة حقيقية للرفع عبر ترشيد وقت التركيز النقي.")
             
@@ -154,10 +156,10 @@ with tab1:
         st.progress(min(int(ffr_ratio), 100))
 
     with col2:
-        st.subheader("⚖️ الأوزان النسبية للمتغيرات")
+        st.subheader("⚖️ شبكة الأوزان النسبية للمتغيرات")
         importance_df = pd.DataFrame({
             'المتغير': ['التركيز النقي', 'جودة النوم', 'طريقة المعالجة', 'العزل البيئي'],
-            'التأثير (%)': [39, 26, 21, 14]
+            'التأثير (%)': [38, 26, 22, 14]
         })
         st.bar_chart(importance_df.set_index('المتغير'))
     st.markdown('</div>', unsafe_allow_html=True)
@@ -165,7 +167,7 @@ with tab1:
 
 with tab2:
     st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    st.subheader("🧠 نظام تشخيص الإرهاق والديون النومية التراكمية")
+    st.subheader("🧠 شبكة تشخيص الإرهاق والاستشفاء العصبي-الجسدي")
     c1, c2, c3 = st.columns(3)
     with c1:
         st.metric(label="عجز الاستشفاء المتراكم", value=f"{sleep_debt:.1f} نقطة")
@@ -174,8 +176,11 @@ with tab2:
         st.metric(label="مؤشر الحمل المعرفي", value=f"{cognitive_load:.1f}%")
         st.write("معدل استهلاك طاقة الذاكرة المؤقتة.")
     with c3:
-        st.metric(label="التوازن العصبي-الجسدي", value=f"{neuro_balance:.1f}%")
-        st.write("كفاءة طاقة الجسد والعقل الكلية.")
+        st.metric(label="معامل استرداد الطاقة الحيوية", value=f"{energy_recovery:.1f}%")
+        st.write("تقييم مدى جاهزية الجسد لاستيعاب المعرفة.")
+    
+    st.markdown("---")
+    st.metric(label="مؤشر التوازن العصبي العام", value=f"{neuro_balance:.1f}%")
     st.markdown('</div>', unsafe_allow_html=True)
 
 

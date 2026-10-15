@@ -111,9 +111,9 @@ st.markdown("""
 
 st.write("")
 
-# التبويبات الرئيسية (مرتبة بدون زحمة)
+# التبويبات الرئيسية (مرتبة ومنظمة بدون زحمة)
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📊 لوحة التنبؤ (من 400)", 
+    "📊 لوحة التنبؤ الشامل (من 500)", 
     "🔋 بطارية الطاقة والاستشفاء", 
     "🤖 المساعد التحليلي والبرومبتات", 
     "⚖️ مختبر المحاكاة التنبؤي", 
@@ -121,7 +121,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📋 خطة المذاكرة الشخصية"
 ])
 
-# لوحة التحكم الجانبية (منظمة وواضحة)
+# لوحة التحكم الجانبية (منظمة وواضحة - مقاييس من 15)
 st.sidebar.markdown("### 🎛️ لوحة القياسات الحيوية والدراسية")
 st.sidebar.markdown("---")
 
@@ -139,7 +139,7 @@ study_method = st.sidebar.selectbox("أسلوب دراستك ومعرفتك", ["
 chronotype = st.sidebar.selectbox("ذروة نشاطك العصبي", ["الصبح بدري (نشاط الصباح الصافي)", "المساء والليل (تركيز متأخر وهادئ)", "مرن ومتوازن"])
 phone_isolation = st.sidebar.selectbox("مكان هاتفك الخلوي أثناء الدراسة", ["مفصول تماماً في غرفة ثانية", "قريب بصامت", "في اليد وبجانب الكتاب"])
 
-# معادلة حساب المعدل المستقرة والدقيقة جداً (من 400 نقطة)
+# معادلة حساب المعدل المحكمة والدقيقة جداً (من 500 نقطة - ثابتة وصارمة)
 nq = sleep_quality / 15.0
 nc = sleep_consistency / 15.0
 nf = deep_focus / 12.0
@@ -148,30 +148,31 @@ nm = motivation_level / 15.0
 nh = hydration_level / 15.0
 ne = environment_lighting / 15.0
 
-score_400 = 150.0  # نقطة أساسية مستقرة
-score_400 += (sleep_hours / 12.0) * 50.0
-score_400 += nq * 45.0
-score_400 += nc * 25.0
-score_400 += nf * 70.0
-score_400 += nm * 35.0
-score_400 += nh * 20.0
-score_400 += ne * 25.0
-score_400 += ((15 - stress_level) / 14.0) * 30.0
+# قاعدة أساسية من 180 نقطة، ويجب موازنة كل العوامل للوصول للحد الأقصى (500)
+score_500 = 180.0  
+score_500 += (sleep_hours / 12.0) * 60.0
+score_500 += nq * 55.0
+score_500 += nc * 30.0
+score_500 += nf * 85.0
+score_500 += nm * 40.0
+score_500 += nh * 25.0
+score_500 += ne * 30.0
+score_500 += ((15 - stress_level) / 14.0) * 35.0
 
 if study_method == "التسجيل النشط والخرائط الذهنية": 
-    score_400 += 25.0
+    score_500 += 30.0
 elif study_method == "حل التطبيقات والمسائل الرياضية": 
-    score_400 += 30.0
+    score_500 += 35.0
 else:
-    score_400 += 10.0
+    score_500 += 10.0
 
 if phone_isolation == "مفصول تماماً في غرفة ثانية": 
-    score_400 += 20.0
+    score_500 += 25.0
 elif phone_isolation == "في اليد وبجانب الكتاب": 
-    score_400 -= 25.0
+    score_500 -= 30.0
 
-final_score_400 = min(max(score_400, 100.0), 400.0)
-percentage_equivalent = (final_score_400 / 400.0) * 100
+final_score_500 = min(max(score_500, 120.0), 500.0)
+percentage_equivalent = (final_score_500 / 500.0) * 100
 focus_efficiency = (deep_focus / total_study) * 100 if total_study > 0 else 0
 accumulated_sleep_debt = max(0.0, (8.0 - sleep_hours) * 5.5)
 mental_battery_index = min(100.0, max(10.0, (nq * 40) + (nm * 30) + (nh * 15) - (ns * 25)))
@@ -185,26 +186,26 @@ with tab1:
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.subheader("🎯 مؤشر التنبؤ الأكاديمي الشامل (من 400)")
-        st.metric(label="رصيد التحصيل المعرفي الإجمالي", value=f"{final_score_400:.1f} / 400 نقطة")
+        st.subheader("🎯 مؤشر التنبؤ الأكاديمي الشامل (من 500)")
+        st.metric(label="رصيد التحصيل المعرفي الإجمالي", value=f"{final_score_500:.1f} / 500 نقطة")
         st.write(f"النسبة المعيارية المكافئة: **{percentage_equivalent:.2f}%**")
         
-        if final_score_400 >= 320:
-            st.success("🌟 **أداء استثنائي:** نظامك العصبي والبيئي في أعلى حالات الاستعداد والتحصيل.")
-        elif final_score_400 >= 260:
-            st.info("👍 **أداء مستقر:** تحصيلك ممتاز، ويمكنك بلوغ القمة برفع ساعات التركيز النقي.")
+        if final_score_500 >= 400:
+            st.success("🌟 **أداء استثنائي:** توازن كامل في مقاييسك العصبية والبيئية يضعك في قمة الجاهزية.")
+        elif final_score_500 >= 320:
+            st.info("👍 **أداء مستقر:** تحصيلك ممتاز وثابت، وموازنة بسيطة في التركيز تضمن لك العلامة الكاملة.")
         else:
-            st.warning("⚠️ **تنبيه:** هناك ضغوطات أو مشتتات تؤثر بشكل ملحوظ على رصيدك المعرفي.")
+            st.warning("⚠️ **تنبيه:** هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
             
         st.markdown("---")
-        st.subheader("📈 كفاءة التركيز الصافي")
-        st.write(f"نسبة التركيز الخالي من المشتتات إلى الوقت الكلي: **{focus_efficiency:.1f}%**")
-        st.progress(min(int(focus_efficiency), 100))
+        st.subheader("📈 مؤشر استقرار وثبات المؤشرات (Stability Index)")
+        st.write("يقيس مدى توازن المدخلات وعدم تأثر النتيجة بالتقلبات العشوائية.")
+        st.progress(min(int(percentage_equivalent), 100))
 
     with col2:
-        st.subheader("⚖️ الأوزان النسبية")
+        st.subheader("⚖️ الأوزان النسبية للعوامل")
         factors_df = pd.DataFrame({
-            'المؤشر': ['التركيز الصافي', 'جودة النوم', 'الدافعية والحماس', 'إدارة التوتر', 'البيئة والماء'],
+            'المؤشر': ['التركيز الصافي', 'جودة النوم', 'الدافعية', 'التوتر', 'البيئة والماء'],
             'التأثير (%)': [32, 24, 18, 14, 12]
         })
         st.bar_chart(factors_df.set_index('المؤشر'))
@@ -229,84 +230,29 @@ with tab2:
     st.markdown("---")
     col_n1, col_n2 = st.columns(2)
     with col_n1:
-        st.info(f"🧠 **مُقيّم إرهاق الذاكرة العاملة:** {memory_fatigue}")
+        st.info(f"🧠 **مُقيّم إرهاق الذاكرة العاملة الفرعي:** {memory_fatigue}")
     with col_n2:
-        st.success(f"⏰ **زمن الاستيعاب الأمثل:** {retention_window}")
+        st.success(f"⏰ **نافذة الاستيعاب الأمثل الفرعية:** {retention_window}")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🤖 المساعد التحليلي والبرومبتات الذكية")
+    st.subheader("🤖 المساعد التحليلي والبرومبتات الذكية المتعددة")
     st.write("اختر أمراً تحليلياً لتوليد تقرير استشاري دقيق مخصص حسب مقاييسك الحالية:")
     
     selected_prompt = st.selectbox("اختر البرومْت التحليلي المطلوب:", [
-        "1. تحليل فجوة الانتباه ومقاومة التشتت",
-        "2. استراتيجية استشفاء الدماغ وتثبيت النوم",
-        "3. تفكيك التسويف الدراسي ومعالجة الخمول",
-        "4. هندسة تثبيت الذاكرة بعيدة المدى"
+        "1. تحليل فجوة الانتباه ومقاومة التشتت الخارجي",
+        "2. استراتيجية استشفاء الدماغ وتثبيت ساعات النوم",
+        "3. تفكيك التسويف الدراسي ومعالجة الخمول المعرفي",
+        "4. هندسة وتثبيت الذاكرة بعيدة المدى والتكرار"
     ])
     
-    if st.button("تنفيذ البرومْت وتوليد التقرير"):
+    if st.button("تنفيذ البرومْت وتوليد التقرير المخصص"):
         st.markdown("### 📑 مخرجات التقرير المخصص:")
         if "1." in selected_prompt:
-            st.info(f"**تقرير الانتباه:** التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ **{100 - focus_efficiency:.1f}%**. التوصية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
+            st.info(f"**تقرير الانتباه:** التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ **{100 - focus_efficiency:.1f}%**. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
         elif "2." in selected_prompt:
-            st.info(f"**تقرير الاستشفاء:** جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية: ثبت وقت الاستيقاظ الصبح بدري يومياً.")
+            st.info(f"**تقرير الاستشفاء:** جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً.")
         elif "3." in selected_prompt:
-            st.info(f"**تقرير مقاومة التسويف:** الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط).")
-        else:
-            st.info(f"**تقرير الذاكرة:** الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab4:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("⚖️ مختبر المحاكاة التنبؤي المتقدم")
-    st.write("اختبر أثر تحسين بعض العادات على رصيدك الكلي من 400:")
-    
-    sim_sleep = st.slider("إضافة ساعات نوم إضافية مقترحة", 0.0, 3.0, 1.0, 0.5)
-    sim_focus = st.slider("زيادة ساعات التركيز النقي المقترحة", 0.0, 4.0, 1.0, 0.5)
-    
-    simulated_score = min(400.0, final_score_400 + (sim_sleep * 12.0) + (sim_focus * 18.0))
-    diff_score = simulated_score - final_score_400
-    
-    col_s1, col_s2 = st.columns(2)
-    with col_s1:
-        st.metric(label="رصيدك الحالي", value=f"{final_score_400:.1f} / 400")
-    with col_s2:
-        st.metric(label="رصيدك المتوقع بعد التعديل", value=f"{simulated_score:.1f} / 400", delta=f"+{diff_score:.1f} نقطة")
-    
-    st.success(f"💡 **رأي المحاكي:** الالتزام بهذه التعديلات البسيطة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab5:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("❓ تحدي الاسترجاع الذاتي والتدريب")
-    st.write("تحدًّ نشط لتثبيت الفهم بناءً على نمط دراستك:")
-    
-    domain_choice = st.selectbox("اختر المجال للاختبار:", ["العلوم والرياضيات التطبيقية", "المواد الأدبية والنصوص", "الحفظ والمفاهيم العامة"])
-    
-    if st.button("بدء التحدي النشط"):
-        if "العلوم" in domain_choice:
-            st.warning("🧩 **التحدي:** اشرح بخطوات متسلسلة القانون أو القاعدة التي درستها اليوم وكيف تطبقها على مسألة جديدة دون النظر للمرجع.")
-        elif "المواد الأدبية" in domain_choice:
-            st.warning("🧩 **التحدي:** أعد صياغة القاعدة أو الفكرة الرئيسية بأسلوبك الخاص وبناء ثلاثة أمثلة جديدة كلياً.")
-        else:
-            st.warning("🧩 **التحدي:** ارسم خريطة ذهنية سريعة على ورقة فارغة لأهم 5 مفاهيم رئيسية حفظتها اليوم خلال 5 دقائق.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab6:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("📋 خطة المذاكرة الشخصية وتقرير الجاهزية الشامل")
-    
-    exam_readiness = min(100, int((percentage_equivalent + mental_battery_index) / 2))
-    
-    st.markdown(f"""
-    * **رصيدك التحليلي الإجمالي:** **{final_score_400:.1f} / 400 نقطة** (النسبة المعيارية: **{percentage_equivalent:.2f}%**)
-    * **مؤشر جاهزية الامتحانات الشامل:** **{exam_readiness}%**
-    * **ساعات النوم المسجلة:** {sleep_hours} ساعات (جودة الاستشفاء {sleep_quality}/15)
-    * **ساعات التركيز النقي:** {deep_focus} ساعات صافية خالية من المشتتات
-    * **التوصية الخاصة لك:** نظراً لأن
+            st.info(f"**تقرير مقاومة التسويف:** الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/

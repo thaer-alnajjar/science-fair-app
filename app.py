@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# إعداد الصفحة
+# إعداد الصفحة وتكوين العرض
 st.set_page_config(
     page_title="وعلم الإنسان ما لم يعلم | النظام التحليلي المتطور",
     page_icon="🎓",
@@ -136,7 +136,7 @@ hydration_level = st.sidebar.slider("مستوى ترطيب الجسم وشرب �
 environment_lighting = st.sidebar.slider("جودة الإضاءة والهدوء البيئي (من 15)", 1, 15, 12)
 
 study_method = st.sidebar.selectbox("أسلوب دراستك ومعرفتك", ["التسجيل النشط والخرائط الذهنية", "حل التطبيقات والمسائل الرياضية", "القراءة التكرارية الصامتة"])
-chronotype = st.sidebar.selectbox("ذروة نشاطك العصبي", ["الصبح بدري (نشاط الصباح الصافي)", "المساء والليل (تركيز متأخر وهادئ)", "مرن ومتوازن"])
+chronotype = st.sidebar.selectbox("ذروة نشاطك العصبي", ["الصبح بدري (نشاط الصباح الصافي)", "المساء والليل (تركيز هادئ ومتأخر)", "مرن ومتوازن"])
 phone_isolation = st.sidebar.selectbox("مكان هاتفك الخلوي أثناء الدراسة", ["مفصول تماماً في غرفة ثانية", "قريب بصامت", "في اليد وبجانب الكتاب"])
 
 # معادلة حساب المعدل المحكمة والدقيقة جداً (من 500 نقطة - ثابتة وصارمة)
@@ -148,7 +148,6 @@ nm = motivation_level / 15.0
 nh = hydration_level / 15.0
 ne = environment_lighting / 15.0
 
-# قاعدة أساسية من 180 نقطة، ويجب موازنة كل العوامل للوصول للحد الأقصى (500)
 score_500 = 180.0  
 score_500 += (sleep_hours / 12.0) * 60.0
 score_500 += nq * 55.0
@@ -251,8 +250,74 @@ with tab3:
     if st.button("تنفيذ البرومْت وتوليد التقرير المخصص"):
         st.markdown("### 📑 مخرجات التقرير المخصص:")
         if "1." in selected_prompt:
-            st.info(f"**تقرير الانتباه:** التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ **{100 - focus_efficiency:.1f}%**. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
+            report_msg_1 = f"**تقرير الانتباه:** التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ **{100 - focus_efficiency:.1f}%**. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة."
+            st.info(report_msg_1)
         elif "2." in selected_prompt:
-            st.info(f"**تقرير الاستشفاء:** جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً.")
+            report_msg_2 = f"**تقرير الاستشفاء:** جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً."
+            st.info(report_msg_2)
         elif "3." in selected_prompt:
-            st.info(f"**تقرير مقاومة التسويف:** الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/
+            report_msg_3 = f"**تقرير مقاومة التسويف:** الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط)."
+            st.info(report_msg_3)
+        else:
+            report_msg_4 = f"**تقرير الذاكرة:** الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً."
+            st.info(report_msg_4)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+with tab4:
+    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+    st.subheader("⚖️ مختبر المحاكاة التنبؤي المتقدم")
+    st.write("اختبر أثر تحسين بعض العادات على رصيدك الكلي من 500:")
+    
+    sim_sleep = st.slider("إضافة ساعات نوم إضافية مقترحة", 0.0, 3.0, 1.0, 0.5)
+    sim_focus = st.slider("زيادة ساعات التركيز النقي المقترحة", 0.0, 4.0, 1.0, 0.5)
+    
+    simulated_score = min(500.0, final_score_500 + (sim_sleep * 15.0) + (sim_focus * 22.0))
+    diff_score = simulated_score - final_score_500
+    
+    col_s1, col_s2 = st.columns(2)
+    with col_s1:
+        st.metric(label="رصيدك الحالي", value=f"{final_score_500:.1f} / 500")
+    with col_s2:
+        st.metric(label="رصيدك المتوقع بعد التعديل", value=f"{simulated_score:.1f} / 500", delta=f"+{diff_score:.1f} نقطة")
+    
+    st.success("💡 **رأي المحاكي الفرعي:** الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+with tab5:
+    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+    st.subheader("❓ تحدي الاسترجاع الذاتي والتدريب النشط")
+    st.write("تحدًّ نشط لتثبيت الفهم بناءً على نمط دراستك:")
+    
+    domain_choice = st.selectbox("اختر المجال للاختبار:", ["العلوم والرياضيات التطبيقية", "المواد الأدبية والنصوص", "الحفظ والمفاهيم العامة"])
+    
+    if st.button("بدء التحدي النشط"):
+        if "العلوم" in domain_choice:
+            st.warning("🧩 **التحدي:** اشرح بخطوات متسلسلة القانون أو القاعدة التي درستها اليوم وكيف تطبقها على مسألة جديدة دون النظر للمرجع.")
+        elif "المواد الأدبية" in domain_choice:
+            st.warning("🧩 **التحدي:** أعد صياغة القاعدة أو الفكرة الرئيسية بأسلوبك الخاص وبناء ثلاثة أمثلة جديدة كلياً.")
+        else:
+            st.warning("🧩 **التحدي:** ارسم خريطة ذهنية سريعة على ورقة فارغة لأهم 5 مفاهيم رئيسية حفظتها اليوم خلال 5 دقائق.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+with tab6:
+    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+    st.subheader("📋 خطة المذاكرة الشخصية وتقرير الجاهزية الشامل")
+    
+    exam_readiness = min(100, int((percentage_equivalent + mental_battery_index) / 2))
+    
+    report_lines = [
+        f"• **رصيدك التحليلي الإجمالي:** **{final_score_500:.1f} / 500 نقطة** (النسبة المعيارية: **{percentage_equivalent:.2f}%**)",
+        f"• **مؤشر جاهزية الامتحانات الشامل:** **{exam_readiness}%**",
+        f"• **ساعات النوم المسجلة:** {sleep_hours} ساعات (جودة الاستشفاء {sleep_quality}/15)",
+        f"• **ساعات التركيز النقي:** {deep_focus} ساعات صافية خالية من المشتتات",
+        f"• **التوصية الخاصة لك:** نظراً لأن ذروتك الحيوية في **{chronotype}**، احرص على استغلال وقت الصبح بدري للمادة الصعبة لتضمن أعلى حصيلة معرفية دون إرهاق."
+    ]
+    
+    st.markdown("\n\n".join(report_lines))
+    st.markdown('</div>', unsafe_allow_html=True)
+
+st.write("---")
+st.caption("Cognitive OS Pro Deluxe — مشروع معرض العلوم المتقدم (الصف العاشر).")

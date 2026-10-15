@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# تصميم واجهة مستخدم أسطورية (خلفية هادئة، كحلي، برتقالي، واللون الثالث الإنديجو #4f46e5)
+# تصميم واجهة مستخدم أسطورية (دمج الكحلي، الأرجواني الفاتح، والبرتقالي بلمسات راقية)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -25,21 +25,20 @@ st.markdown("""
         color: #0f172a;
     }
 
-    /* العنوان الرئيسي الفخم بلمسات الكحلي والإنديجو والبرتقالي */
+    /* العنوان الرئيسي الفخم بدمج الكحلي والأرجواني والبرتقالي */
     .hero-container {
-        background: #ffffff;
-        padding: 30px;
-        border-radius: 16px;
-        border: 2px solid #1e293b;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        padding: 32px;
+        border-radius: 18px;
+        border: 2px solid #4f46e5;
         border-right: 6px solid #ea580c;
-        border-left: 6px solid #4f46e5;
         text-align: center;
         margin-bottom: 24px;
-        box-shadow: 0 6px 25px rgba(30, 41, 59, 0.08);
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.2);
     }
 
     .hero-verse {
-        font-size: 1.4rem;
+        font-size: 1.45rem;
         font-weight: 700;
         color: #ea580c;
         margin-bottom: 6px;
@@ -47,21 +46,21 @@ st.markdown("""
 
     .hero-title {
         font-weight: 900;
-        font-size: 1.9rem;
-        color: #1e293b;
+        font-size: 1.95rem;
+        color: #ffffff;
         margin-bottom: 4px;
     }
 
     .hero-subtitle {
-        color: #475569;
+        color: #94a3b8;
         font-size: 0.95rem;
     }
 
-    /* بطاقات بيضاء نظيفة بإطار إنديجو خفيف */
+    /* بطاقات بيضاء نظيفة بإطار إنديجو وكحلي خفيف */
     .clean-card {
         background-color: #ffffff;
         border: 1px solid #cbd5e1;
-        border-top: 3px solid #4f46e5;
+        border-top: 3px solid #1e293b;
         border-radius: 14px;
         padding: 24px;
         margin-bottom: 20px;
@@ -87,10 +86,10 @@ st.markdown("""
     }
 
     .stTabs [aria-selected="true"] {
-        background: #4f46e5 !important;
+        background: #1e293b !important;
         color: white !important;
-        border-color: #4f46e5 !important;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+        border-color: #1e293b !important;
+        box-shadow: 0 4px 12px rgba(30, 41, 59, 0.25);
     }
 
     .stButton>button {
@@ -110,11 +109,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# العنوان الرئيسي في المنتصف
+# العنوان الرئيسي في المنتصف بالهيدر الكحلي الفخم
 st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        <div class="hero-title">🚀 النظام التحليلي الذكي للأداء الدراسي (Deluxe Pro) ⚡</div>
+        <div class="hero-title">🚀 النظام التحليلي الذكي للأداء الدراسي ⚡</div>
         <div class="hero-subtitle">معرض العلوم والابتكار — منصة قياس الأنماط المعرفية والبيئة العصبية السلوكية المتقدمة</div>
     </div>
 """, unsafe_allow_html=True)
@@ -208,7 +207,7 @@ with tab1:
             st.warning("⚠️ تنبيه: هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
             
         st.markdown("---")
-        st.subheader("📈 مؤشر استقرار النمط الأسبوعي (ميزة فرعية)")
+        st.subheader("📈 مؤشر استقرار النمط الأسبوعي")
         st.write(f"حالة اتساق العادات اليومية: **{pattern_stability}**")
         st.progress(min(int(percentage_equivalent), 100))
 
@@ -240,10 +239,10 @@ with tab2:
     st.markdown("---")
     col_n1, col_n2 = st.columns(2)
     with col_n1:
-        st.info(f"🧠 مُقيّم إرهاق الذاكرة العاملة الفرعي: {memory_fatigue}")
+        st.info(f"🧠 مُقيّم إرهاق الذاكرة العاملة: {memory_fatigue}")
     with col_n2:
         hydration_synergy = "ممتازة وتدعم اليقظة 💧" if hydration_level >= 10 else "تحتاج زيادة لدعم الخلايا ⚠️"
-        st.success(f"💧 مؤشر استجابة الترطيب العصبي (ميزة فرعية): {hydration_synergy}")
+        st.success(f"💧 مؤشر استجابة الترطيب العصبي: {hydration_synergy}")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -271,7 +270,7 @@ with tab3:
             st.info(f"💡 تقرير الذاكرة: الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً.")
             
     st.markdown("---")
-    st.subheader("⚡ محطة توليد الأسئلة التكيفية الذكية (الميزة المطورة)")
+    st.subheader("⚡ محطة توليد الأسئلة التكيفية الذكية")
     st.write("يقوم النظام بتحليل اختيارك وتوليد **3 مستويات من التحديات المعرفية الفورية**:")
     
     if st.button("توليد حزمة الأسئلة التكيفية المتقدمة"):
@@ -301,11 +300,11 @@ with tab4:
     with col_s2:
         st.metric(label="رصيدك المتوقع بعد التعديل", value=f"{simulated_score:.1f} / 500", delta=f"+{diff_score:.1f} نقطة")
     
-    st.success("💡 رأي المحاكي الفرعي: الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
+    st.success("💡 رأي المحاكي: الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
     
     st.markdown("---")
     lost_time_recovery = int((100 - focus_efficiency) * 0.4)
-    st.info(f"⏳ حاسبة استرداد الوقت الضائع (ميزة فرعية): تحتاج حوالي **{lost_time_recovery} دقائق** من التركيز النقي الخالي من أي مشتتات لتعويض آثار التشتت السابق اليوم.")
+    st.info(f"⏳ حاسبة استرداد الوقت الضائع: تحتاج حوالي **{lost_time_recovery} دقائق** من التركيز النقي الخالي من أي مشتتات لتعويض آثار التشتت السابق اليوم.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -314,7 +313,6 @@ with tab5:
     st.subheader("❓ بنك الـ 20 تحدياً الاسترجاعياً الديناميكي (بدون تكرار)")
     st.write("بنك تحديات ضخم ومتنوع يولد لك أسئلة عشوائية وغير مكررة في كل مرة تستخدمه لتنشيط الذاكرة:")
     
-    # قائمة الـ 20 تحدياً وسؤالاً غير المكررة
     all_challenges = [
         "🧬 تحدي الفيزياء الحيوية: اشرح بأسلوبك كيف يتحول الجلوكوز في الدم إلى طاقة لتشغيل خلايا الدماغ أثناء التركيز النقي.",
         "🧠 تحدي الذاكرة العاملة: اذكر 5 مفاهيم رئيسية حفظتها اليوم دون النظر لأي مرجع، ثم اربط بين مفهومين بطريقة مبتكرة.",
@@ -344,7 +342,7 @@ with tab5:
             st.warning(f"**التحدي الفرعي #{idx}:** {ch}")
             
     st.markdown("---")
-    st.success("🏆 مسجل مسار الانتصارات الذهنية (ميزة فرعية): تتبع استمرارك بالتحديات يرفع ثقتك المعرفية بنسبة 35%!")
+    st.success("🏆 مسجل مسار الانتصارات الذهنية: تتبع استمرارك بالتحديات يرفع ثقتك المعرفية بنسبة 35%!")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -389,4 +387,4 @@ with tab6:
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("---")
-st.caption("Cognitive OS Pro Deluxe — مشروع معرض العلوم المتقدم (الصف العاشر).")
+st.caption("النظام التحليلي المتطور — مشروع معرض العلوم المتقدم (الصف العاشر).")

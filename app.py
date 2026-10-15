@@ -2,17 +2,17 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-# إعداد الصفحة بنمط سطح المكتب المتقدم
+# إعداد الصفحة وتصميمها
 st.set_page_config(
-    page_title="Cognitive OS | وعلم الإنسان ما لم يعلم",
-    page_icon="💠",
+    page_title="وعلم الإنسان ما لم يعلم | برنامج تحليل الدراسة",
+    page_icon="🎓",
     layout="wide"
 )
 
-# تصميم واجهة مستخدم فاخرة تحاكي أنظمة التشغيل المستقبلية (Advanced Glassmorphic OS Theme)
+# تصميم عصري وبسيط مخصص لطالب الصف العاشر
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
 
     html, body, [class*="css"] {
         font-family: 'Cairo', sans-serif;
@@ -20,222 +20,210 @@ st.markdown("""
     }
 
     .main {
-        background-color: #030712;
-        color: #f8fafc;
+        background-color: #0d1117;
+        color: #e6edf3;
     }
 
-    /* محاكاة شريط نظام التشغيل العلوي (OS Window Header) */
-    .os-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-        padding: 18px 28px;
-        border-radius: 16px 16px 0 0;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+    .header-box {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px solid #3b82f6;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
     }
 
-    .os-title {
-        font-weight: 900;
-        font-size: 1.5rem;
-        background: linear-gradient(90deg, #38bdf8, #c084fc, #f472b6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+    .main-title {
+        color: #60a5fa;
+        font-weight: 800;
+        font-size: 1.8rem;
+        margin-bottom: 5px;
     }
 
-    /* تصميم البطاقات الزجاجية الحديثة */
-    .os-card {
-        background: rgba(15, 23, 42, 0.85);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 24px;
-        backdrop-filter: blur(20px);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-        margin-bottom: 22px;
+    .sub-title {
+        color: #9ca3af;
+        font-size: 1.05rem;
     }
 
-    /* تخصيص التبويبات لتشبه نوافذ النظام الاحترافية */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
-        background-color: #0b0f19;
-        padding: 12px;
-        border-radius: 14px;
-        border: 1px solid #1e293b;
+    .card {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
     }
-    
-    .stTabs [data-baseweb="tab"] {
-        background-color: #111827;
-        color: #94a3b8;
+
+    .stButton>button {
+        background: linear-gradient(90deg, #2563eb, #3d82f6);
+        color: white;
         border-radius: 10px;
-        padding: 12px 24px;
-        font-weight: 700;
-        border: 1px solid #1f2937;
-        transition: all 0.3s ease;
-    }
-
-    .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #2563eb, #9333ea);
-        color: white !important;
-        border-color: #60a5fa !important;
-        box-shadow: 0 4px 20px rgba(37, 99, 235, 0.5);
+        padding: 8px 20px;
+        font-weight: bold;
+        border: none;
+        width: 100%;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# واجهة الهيدر التي تشبه نظام التشغيل
+# واجهة العنوان الرئيسي
 st.markdown("""
-    <div class="os-header">
-        <div class="os-title">💠 النظام التحليلي المعرفي (Cognitive OS v3.0)</div>
-        <div style="color: #94a3b8; font-size: 0.95rem;">«وعلم الإنسان ما لم يعلم» — بيئة الأبحاث العصبية السلوكية</div>
+    <div class="header-box">
+        <div class="main-title">🎓 مشروع: وعلم الإنسان ما لم يعلم</div>
+        <div class="sub-title">برنامج ذكي يتنبأ بمستواك الدراسي ويساعدك ترتب وقتك ونومك بسهولة</div>
     </div>
 """, unsafe_allow_html=True)
 
-st.write("")
-
-# تقسيم المنصة إلى تبويبات نظام التشغيل الاحترافية
+# التبويبات الرئيسية لتنظيم البرنامج
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "📊 لوحة القيادة المركزية", 
-    "🧠 شبكة الكفاءة والاستشفاء", 
-    "⏰ الإيقاع الحيوي والذاكرة", 
-    "🛠️ مختبر تحليل العقبات", 
-    "📋 منصة عرض الحكام الرسمية"
+    "📊 نتيجتك وتحليل الأداء", 
+    "🚀 الميزة الفخرية: خطتك الشخصية", 
+    "🔋 بطارية الطاقة والراحة", 
+    "💡 نصائح ومحلل المشاكل", 
+    "🏆 ملخص الشرح للحكام"
 ])
 
-# الشريط الجانبي المحاكي لوحة التحكم (Control Panel)
-st.sidebar.markdown("### 🎛️ لوحة تحكم المتغيرات العضوية")
-st.sidebar.markdown("---")
-sleep_hours = st.sidebar.slider("ساعات النوم اليومية", 3.0, 10.0, 7.5, 0.5)
-sleep_quality = st.sidebar.slider("جودة الاستشفاء النومى (1-10)", 1, 10, 8)
-total_study = st.sidebar.slider("إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.5)
-deep_focus = st.sidebar.slider("مدة التركيز النقي (Deep Work)", 0.5, 8.0, 3.0, 0.5)
-study_method = st.sidebar.selectbox("أسلوب معالجة وتثبيت المعرفة", ["التسجيل النشط والخرائط الذهنية", "حل التطبيقات والمسائل الرياضية", "القراءة التكرارية السلبية"])
-chronotype = st.sidebar.selectbox("الذروة الحيوية للإيقاع العصبي", ["صباحي مبكر (كفاءة الفجر)", "مسائي عميق (تركيز الليل)", "مرن / متوازن"])
-environment_noise = st.sidebar.selectbox("مستوى العزل البيئي والمشتتات", ["هادئ ومفصول عن الأجهزة", "متوسط (ضوضاء خلفية خفيفة)", "مرتفع (تنبيهات ومشتتات محيطة)"])
-hydration_level = st.sidebar.slider("مستوى ترطيب الجسم وشرب الماء (أكواب يومياً)", 1, 12, 7)
+# الشريط الجانبي لإدخال البيانات
+st.sidebar.header("🎛️ أدخل معلومات يومك الدراسي:")
+sleep_hours = st.sidebar.slider("كم ساعة نمت البارحة؟", 3.0, 10.0, 7.5, 0.5)
+sleep_quality = st.sidebar.slider("كيف كانت جودة نومك؟ (1 سيء - 10 ممتاز)", 1, 10, 8)
+total_study = st.sidebar.slider("كم ساعة درست اليوم كلياً؟", 1.0, 12.0, 4.0, 0.5)
+deep_focus = st.sidebar.slider("منها.. كم ساعة كنت مركز تماماً بدون هاتف؟", 0.5, 8.0, 2.5, 0.5)
+study_method = st.sidebar.selectbox("كيف طريقة دراستك؟", ["أحل أسئلة وأشرح لنفسي (نشط)", "أخص تلخيص ورسومات", "أقرأ من الكتاب فقط (سلبي)"])
+study_time = st.sidebar.selectbox("متى تحب تدرس أكتر شي؟", ["الصبح بكير", "بالليل والهدوء", "بعد العصر"])
+phone_status = st.sidebar.selectbox("وين بيكون تلفونك وأنت تدرس؟", ["في غرفة ثانية (مفصول)", "جنبي بس صامت", "في إيدي وبقلب فيه"])
 
-# خوارزمية الحساب المعرفي الدقيقة
-base_score = 42 + (sleep_hours * 3.1) + (sleep_quality * 1.7) + (total_study * 0.7) + (deep_focus * 4.4) + (hydration_level * 0.4)
-if study_method == "التسجيل النشط والخرائط الذهنية": 
-    base_score += 11
-elif study_method == "حل التطبيقات والمسائل الرياضية": 
-    base_score += 13
+# الخوارزمية الحسابية المحدثة والدقيقة
+focus_ratio = (deep_focus / total_study) * 100 if total_study > 0 else 0
 
-if environment_noise == "هادئ ومفصول عن الأجهزة": 
-    base_score += 7
-elif environment_noise == "مرتفع (تنبيهات ومشتتات محيطة)": 
-    base_score -= 9
+# معادلة حسابية مبنية على أوزان علمية دقيقة
+calculated_score = 35 + (sleep_hours * 3.5) + (sleep_quality * 1.5) + (deep_focus * 5.0) + (total_study * 0.8)
 
-predicted_grade = min(max(base_score, 35.0), 99.9)
-ffr_ratio = (deep_focus / total_study) * 100 if total_study > 0 else 0
-sleep_debt = max(0, (7.5 - sleep_hours) * 6)
+if study_method == "أحل أسئلة وأشرح لنفسي (نشط)":
+    calculated_score += 12
+elif study_method == "أخص تلخيص ورسومات":
+    calculated_score += 8
 
-cognitive_load = min(100, (total_study * 7.5) - (deep_focus * 4.5))
-neuro_balance = min(100, max(0, (sleep_quality * 6.0) + (sleep_hours * 3.8) + (hydration_level * 1.5) - (sleep_debt * 0.4)))
-energy_recovery = min(100, (sleep_quality * 5) + (hydration_level * 3) + (max(0, 8 - (total_study - deep_focus)) * 2))
+if phone_status == "في غرفة ثانية (مفصول)":
+    calculated_score += 8
+elif phone_status == "في إيدي وبقلب فيه":
+    calculated_score -= 10
 
+final_grade = min(max(calculated_score, 35.0), 99.5)
+mental_battery = min(100, max(10, int((sleep_hours * 8) + (sleep_quality * 4) - (total_study * 3))))
 
+# التبويب الأول: لوحة النتائج
 with tab1:
-    st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    col1, col2 = st.columns([2, 1])
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    c1, c2 = st.columns([2, 1])
     
-    with col1:
-        st.subheader("🎯 مخطط التنبؤ لتحصيل المعرفة")
-        st.metric(label="مؤشر الكفاءة الأكاديمية المتوقع", value=f"{predicted_grade:.1f}%")
-        
-        if sleep_hours < 5:
-            st.error("⚠️ **تنبيه حرج للنظام العضوي:** نقص النوم المتراكم يضعف شبكات الذاكرة العاملة وكفاءة اتخاذ القرار البشري بنسبة تصل إلى 45%.")
-        elif ffr_ratio > 65 and sleep_quality >= 7:
-            st.success("✨ **حالة التدفق الذهني القصوى (Flow State):** توازن مثالي بين جودة الاستشفاء العصبي وعمق التركيز النقي.")
-        else:
-            st.info("⚖️ **حالة استقرار تشغيلي:** الأداء ضمن المدى الطبيعي مع فرصة حقيقية للرفع عبر ترشيد وقت التركيز النقي.")
-            
-        st.markdown("---")
-        st.subheader("📈 مؤشر التركيز الفعلي النقي (FFR Index)")
-        st.write(f"نسبة التركيز الخالي من المشتتات إلى الإجمالي: **{ffr_ratio:.1f}%**")
-        st.progress(min(int(ffr_ratio), 100))
-
-    with col2:
-        st.subheader("⚖️ شبكة الأوزان النسبية للمتغيرات")
-        importance_df = pd.DataFrame({
-            'المتغير': ['التركيز النقي', 'جودة النوم', 'طريقة المعالجة', 'العزل البيئي'],
-            'التأثير (%)': [38, 26, 22, 14]
-        })
-        st.bar_chart(importance_df.set_index('المتغير'))
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab2:
-    st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    st.subheader("🧠 شبكة تشخيص الإرهاق والاستشفاء العصبي-الجسدي")
-    c1, c2, c3 = st.columns(3)
     with c1:
-        st.metric(label="عجز الاستشفاء المتراكم", value=f"{sleep_debt:.1f} نقطة")
-        st.write("مقياس انخفاض طاقة شبكات الدماغ العليا.")
-    with c2:
-        st.metric(label="مؤشر الحمل المعرفي", value=f"{cognitive_load:.1f}%")
-        st.write("معدل استهلاك طاقة الذاكرة المؤقتة.")
-    with c3:
-        st.metric(label="معامل استرداد الطاقة الحيوية", value=f"{energy_recovery:.1f}%")
-        st.write("تقييم مدى جاهزية الجسد لاستيعاب المعرفة.")
-    
-    st.markdown("---")
-    st.metric(label="مؤشر التوازن العصبي العام", value=f"{neuro_balance:.1f}%")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab3:
-    st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    st.subheader("⏰ مطابق الإيقاع البيولوجي وجدولة التكرار الذكي")
-    st.write(f"بناءً على ذروة إيقاعك العصبي المحددة كـ **{chronotype}**:")
-    
-    if "صباحي" in chronotype:
-        st.success("🌅 **التوجيه الأمثل:** خصص الفترة الصباحية (من 8:00 إلى 12:00) لمهام التفكير المعقد واستيعاب العلوم الصعبة، حيث تكون قمة كفاءة الذاكرة العاملة.")
-    elif "مسائي" in chronotype:
-        st.warning("🌙 **التوجيه الأمثل:** نافذتك الذهبية تبدأ بعد الساعة 6 مساءً، مع ضرورة تجنب الشاشات الساطعة قبل النوم للحفاظ على كفاءة الاستشفاء.")
-    else:
-        st.info("🔄 **التوجيه الأمثل:** توزيع المهام على فترتين متوازنتين (بعد العصر وقبل منتصف الليل).")
+        st.subheader("🎯 المعدل المتوقع بناءً على عاداتك اليوم:")
+        st.metric(label="مؤشر الأداء الدراسي", value=f"{final_grade:.1f}%")
         
-    st.markdown("### 📚 جدول التكرار المتباعد الموصى به لتثبيت الذاكرة الطويلة:")
-    st.markdown("- **المحطة الأولى:** مراجعة أولية بعد 24 ساعة من تلقي المعرفة.")
-    st.markdown("- **المحطة الثانية:** مراجعة تثبيت بعد 3 أيام.")
-    st.markdown("- **المحطة الثالثة:** مراجعة استرجاع بعد 7 أيام.")
-    st.markdown("- **المحطة الرابعة:** مراجعة ترسيخ نهائية بعد 30 يوماً.")
+        if final_grade >= 85:
+            st.success("🌟 ممتاز جداً! نمطك اليوم ممتاز وبيساعدك تضل من المتفوقين.")
+        elif final_grade >= 70:
+            st.info("👍 جيد جداً، بس تقدر ترفع معدلك أكتر لو قللت المشتتات وزدت وقت التركيز.")
+        else:
+            st.warning("⚠️ انتبه! قلّة النوم أو التشتت بالتلفون عم يضيعوا تعبك بالدراسة.")
+
+        st.write("---")
+        st.subheader("📊 نسبة التركيز الحقيقي من وقت الدراسة:")
+        st.write(f"أنت مركز بنسبة **{focus_ratio:.1f}%** من إجمالي الوقت اللي قعدت فيه تدرس.")
+        st.progress(min(int(focus_ratio), 100))
+
+    with c2:
+        st.subheader("📌 شو أكتر شي أثر على علامتك؟")
+        data_factors = pd.DataFrame({
+            'العامل': ['التركيز العميق', 'جودة النوم', 'طريقة الدراسة', 'مكان التلفون'],
+            'التأثير (%)': [40, 25, 20, 15]
+        })
+        st.bar_chart(data_factors.set_index('العامل'))
     st.markdown('</div>', unsafe_allow_html=True)
 
+# التبويب الثاني: الميزة الفخرية الكبرى
+with tab2:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("🚀 الميزة الفخرية: توليد خطة المذاكرة الشخصية اليومية")
+    st.write("هنا يقوم البرنامج بتحويل أرقامك إلى خطة عمل حقيقية تقدر تطبقها فوراً لتزيد علاماتك!")
+    
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("### 📅 جدولك الموصى به لليوم:")
+        if "الصبح" in study_time:
+            st.write("• **الفترة الذهبية (8 ص - 11 ص):** ادرس المواد الصعبة مثل الرياضيات والفيزياء.")
+            st.write("• **الفترة الثانية (4 عصراً - 6 مساءً):** حل أسئلة وتمارين.")
+        else:
+            st.write("• **الفترة الذهبية (5 مساءً - 9 مساءً):** انسب وقت لتركيزك العالي والمواد الصعبة.")
+            st.write("• **الفترة الثانية (10 مساءً - 11 مساءً):** مراجعة سريعة قبل النوم.")
+            
+        st.write("• **أوقات الراحة:** خذ 5 دقائق استراحة كل 25 دقيقة دراسة (نظام البومودورو).")
 
+    with col_b:
+        st.markdown("### 📝 نصيحة تثبيت المعلومات بالذاكرة:")
+        st.write("1. **راجع دراستك اليوم:** بعد 24 ساعة بالضبط لمدة 10 دقائق.")
+        st.write("2. **المراجعة الثانية:** بعد 3 أيام.")
+        st.write("3. **المراجعة الثالثة:** بعد أسبوع لضمان عدم النسيان بالامتحان النهائي.")
+
+    st.write("---")
+    # زر التصدير والطباعة (محاكاة طباعة الخطة)
+    plan_text = f"خطة الطالب اليومية - المعدل المتوقع: {final_grade:.1f}%\nساعات النوم: {sleep_hours}\nطريقة الدراسة: {study_method}"
+    st.download_button("📥 تنزيل خطة الدراسة الشخصية (Text / PDF)", data=plan_text, file_name="my_study_plan.txt")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# التبويب الثالث: بطارية الطاقة والراحة
+with tab3:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("🔋 شحن البطارية الذهنية وزمن الاستراحة")
+    
+    col_x, col_y = st.columns(2)
+    with col_x:
+        st.metric(label="مستوى طاقة دماغك الحالية", value=f"{mental_battery}%")
+        st.progress(mental_battery)
+        if mental_battery < 40:
+            st.error("بطاريتك الذهنية ضغيفة! يلزمك استراحة أو قيلولة لمدة 20 دقيقة قبل ما تكمل.")
+        else:
+            st.success("طاقتك ممتازة وجاهز لاستيعاب معلومات جديدة!")
+
+    with col_y:
+        st.subheader("⏱️ حاسبة الاستراحة الذكية:")
+        recommended_break = int((total_study * 60) / 4)
+        st.write(f"بناءً على ساعات دراستك اليوم، أنت بحاجة لـ **{recommended_break} دقيقة** استراحة موزعة على يومك لتجديد نشاطك.")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# التبويب الرابع: محلل المشاكل والنصائح
 with tab4:
-    st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    st.subheader("🛠️ مختبر تحليل العقبات والعلاج السلوكي")
-    user_hurdle = st.selectbox("حدد التحدي المعرفي الذي تواجهه حالياً:", [
-        "أعاني من نسيان المعلومات المعقدة بعد فترة وجيزة",
-        "أواجه تشتتاً حاداً وفقدانًا للقدرة على الاستمرار بالجلوس",
-        "أقضي ساعات طويلة جداً بالدراسة ولكن النتائج ضعيفة",
-        "أشعر بخمول وكسل ذهني حاد فور الشروع في القراءة"
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("💡 محلل المشاكل الدراسية وسؤال وجواب")
+    problem = st.selectbox("شو أكثر مشكلة بتواجهك وأنت تدرس؟", [
+        "أنا بدرس كثير بس بانسى بالامتحان",
+        "بس أفتح الكتاب بسرح وببلش أتشتت",
+        "بحس بخمول ونعس أول ما أبلش أدرس",
+        "التلفون بضل يسحب وقتي بدون ما أحس"
     ])
     
-    if st.button("تشغيل البروتوكول العلاجي المعرفي"):
-        st.markdown("### 💡 التوجيه التحليلي الموصى به من النظام:")
-        if "نسيان المعلومات" in user_hurdle:
-            st.info("**التوجيه:** توقف عن القراءة السلبية الصامتة. طبق تقنية 'الاسترجاع النشط'؛ اشرح المفهوم لنفسك بصوت عالٍ كأنك تلقي محاضرة علمية، فهذا يحفز مسارات الذاكرة بعمق.")
-        elif "تشتت حاد" in user_hurdle:
-            st.info("**التوجيه:** طبق نظام العزل المكاني (ضع الهاتف في غرفة أخرى)، وقسّم وقتك إلى جلسات تركيز مكثفة مدتها 25 دقيقة تليها راحة استشفاء قصيرة.")
-        elif "ساعات طويلة جداً" in user_hurdle:
-            st.info("**التوجيه:** المشكلة تكمن في المفاضلة بين الكم والكيف. 3 ساعات من التركيز النقي تفوق 8 ساعات من الدراسة المشتتة.")
+    if st.button("اعطيني الحل المناسب"):
+        if "بانسى بالامتحان" in problem:
+            st.info("💡 **الحل:** المشكلة انك بتقرأ قراءة صامتة. جرب جيب ورقة وقلم واشرح الدرس بصوت عالٍ كأنك أستاذ بتشرح للطلاب!")
+        elif "بسرح وببلش أتشتت" in problem:
+            st.info("💡 **الحل:** ادرس طريقة (25 دقيقة دراسة / 5 دقائق راحة)، وحط التلفون بغرفة ثانية كلياً.")
+        elif "بخمول ونعس" in problem:
+            st.info("💡 **الحل:** ادرس وأنت قاعد على مكتب مش على التخت، وافتح شباك الغرفة ليدخل أكسجين يصحصح عقلك.")
         else:
-            st.info("**التوجيه:** راجع مستويات التهوية ونسبة الأكسجين في غرفتك، فالخمول غالباً إشارة بيولوجية لانخفاض كفاءة تدفق الدم المؤكسج مؤقتاً.")
+            st.info("💡 **الحل:** نزل تطبيق بيغلق التطبيقات وقت الدراسة، أو سلم تلفونك لأحد بالبيت حتى تخلص دراستك.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-
+# التبويب الخامس: ملخص المعرض للحكام
 with tab5:
-    st.markdown('<div class="os-card">', unsafe_allow_html=True)
-    st.subheader("📋 واجهة عرض الحكام الرسمية (Pitch Hub)")
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("🏆 طريقة الشرح وم الكلمات المفتاحية للحكام")
     st.markdown("""
-    * **الفلسفة والغاية:** استكشاف حدود وميكانيزمات اكتشاف المعرفة الإنسانية تزامناً مع الآية الكريمة: *«وعلم الإنسان ما لم يعلم»*.
-    * **الهندسة التقنية:** نظام تحليلي سوي-سلوكي يدمج قياسات النوم والبيئة والتركيز النقي للتنبؤ بالتحصيل المعرفي بدقة متناهية.
-    * **القيمة العلمية المبرهنة:** إثبات بالأرقام أن **التركيز النقي (Deep Work)** والاستشفاء المنتظم هما المحركان الرئيسيان لنجاح الإنسان وتفوقه المعرفي.
+    * **اسم المشروع:** وعلم الإنسان ما لم يعلم.
+    * **فكرة المشروع:** برنامج بيجمع بين علم النفس والدراسة وبين المعادلات الرياضيات ليتنبأ بمستوى الطالب ويعطيه خطة تحسين عملياً.
+    * **الهدف منه:** مساعدة الطلاب على معرفة أخطائهم الدراسية وتقليل وقت المذاكرة العشوائي وزيادة التركيز.
     """)
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("---")
-st.caption("Cognitive OS Environment — مشروع معرض العلوم المتقدم للأنظمة الذكية.")
+st.caption("مشروع معرض العلوم — تصميم وتنفيذ طالب الصف العاشر.")

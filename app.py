@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# تصميم واجهة مستخدم بيضاء، نظيفة، وحيوية (Minimalist Light Mode with Soul)
+# تصميم واجهة مستخدم بيضاء نظيفة مع لمسات كحلية وبرتقالية فخمة (Clean White & Navy/Orange Touches)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -24,15 +24,16 @@ st.markdown("""
         color: #0f172a;
     }
 
-    /* العنوان الرئيسي الفخم في المنتصف بخلفية بيضاء وبطاقة نظيفة وحيوية */
+    /* العنوان الرئيسي بلمسات كحلية خفيفة وظريفة */
     .hero-container {
         background: #ffffff;
         padding: 30px;
         border-radius: 16px;
-        border: 2px solid #ea580c;
+        border: 2px solid #1e293b;
+        border-right: 6px solid #ea580c;
         text-align: center;
         margin-bottom: 24px;
-        box-shadow: 0 6px 25px rgba(234, 88, 12, 0.08);
+        box-shadow: 0 6px 25px rgba(30, 41, 59, 0.06);
     }
 
     .hero-verse {
@@ -54,14 +55,15 @@ st.markdown("""
         font-size: 0.95rem;
     }
 
-    /* بطاقات بيضاء نظيفة ومنظمة ذات مظهر حيوي */
+    /* بطاقات بيضاء نظيفة بإطار كحلي خفيف */
     .clean-card {
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
+        border-top: 3px solid #1e293b;
         border-radius: 14px;
         padding: 24px;
         margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 
     /* تنسيق التبويبات الفخمة */
@@ -75,7 +77,7 @@ st.markdown("""
     
     .stTabs [data-baseweb="tab"] {
         background-color: #ffffff;
-        color: #475569;
+        color: #1e293b;
         border-radius: 8px;
         padding: 10px 20px;
         font-weight: 700;
@@ -83,10 +85,10 @@ st.markdown("""
     }
 
     .stTabs [aria-selected="true"] {
-        background: #ea580c !important;
+        background: #1e293b !important;
         color: white !important;
-        border-color: #ea580c !important;
-        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+        border-color: #1e293b !important;
+        box-shadow: 0 4px 12px rgba(30, 41, 59, 0.2);
     }
 
     .stButton>button {
@@ -117,13 +119,13 @@ st.markdown("""
 
 st.write("")
 
-# التبويبات الرئيسية (مرتبة وحيوية)
+# التبويبات الرئيسية
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 لوحة التنبؤ (من 500)", 
     "🔋 الطاقة والاستشفاء", 
-    "🤖 المساعد والبرومبتات", 
+    "🤖 المساعد والتوليد الذكي", 
     "⚖️ مختبر المحاكاة", 
-    "❓ تحدي الاسترجاع", 
+    "❓ تحدي الاسترجاع النشط", 
     "📋 خطة المذاكرة"
 ])
 
@@ -145,7 +147,7 @@ study_method = st.sidebar.selectbox("📚 أسلوب دراستك ومعرفتك
 chronotype = st.sidebar.selectbox("🌅 ذروة نشاطك العصبي", ["الصبح بدري (نشاط الصباح الصافي)", "المساء والليل (تركيز هادئ ومتأخر)", "مرن ومتوازن"])
 phone_isolation = st.sidebar.selectbox("📵 مكان هاتفك الخلوي أثناء الدراسة", ["مفصول تماماً في غرفة ثانية", "قريب بصامت", "في اليد وبجانب الكتاب"])
 
-# معادلة حساب المعدل المحكمة والدقيقة جداً (من 500 نقطة - ثابتة وصارمة)
+# معادلة حساب المعدل المحكمة والدقيقة جداً (من 500 نقطة)
 nq = sleep_quality / 15.0
 nc = sleep_consistency / 15.0
 nf = deep_focus / 12.0
@@ -184,8 +186,6 @@ mental_battery_index = min(100.0, max(10.0, (nq * 40) + (nm * 30) + (nh * 15) - 
 
 retention_window = "الفترة الصباحية (الصبح بدري - صفاء ذهني عالي)" if "الصبح" in chronotype else "الفترة المسائية (تركيز هادئ ومتأخر)"
 memory_fatigue = "منخفض ومستقر ✅" if deep_focus < 7 else "مرتفع ويحتاج استراحة قصيرة ⚠️"
-
-# حساب الميزة الفرعية الأولى: مؤشر استقرار النمط الأسبوعي
 pattern_stability = "مستقر وثابت 📈" if (sleep_consistency >= 10 and stress_level <= 8) else "متذبذب ويحتاج انضباط 📉"
 
 
@@ -206,7 +206,6 @@ with tab1:
             st.warning("⚠️ تنبيه: هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
             
         st.markdown("---")
-        # الميزة الفرعية 1 مضمنة هنا
         st.subheader("📈 مؤشر استقرار النمط الأسبوعي (ميزة فرعية)")
         st.write(f"حالة اتساق العادات اليومية: **{pattern_stability}**")
         st.progress(min(int(percentage_equivalent), 100))
@@ -241,7 +240,6 @@ with tab2:
     with col_n1:
         st.info(f"🧠 مُقيّم إرهاق الذاكرة العاملة الفرعي: {memory_fatigue}")
     with col_n2:
-        # الميزة الفرعية 2 مضمنة هنا
         hydration_synergy = "ممتازة وتدعم اليقظة 💧" if hydration_level >= 10 else "تحتاج زيادة لدعم الخلايا ⚠️"
         st.success(f"💧 مؤشر استجابة الترطيب العصبي (ميزة فرعية): {hydration_synergy}")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -249,8 +247,8 @@ with tab2:
 
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🤖 المساعد التحليلي والبرومبتات الذكية المتعددة")
-    st.write("اختر أمراً تحليلياً لتوليد تقرير استشاري دقيق مخصص حسب مقاييسك الحالية:")
+    st.subheader("🤖 المساعد التحليلي ومحطة توليد الأسئلة التكيفية المطورة")
+    st.write("اختر أمراً تحليلياً لتوليد تقرير استشاري وتوليد أسئلة اختبارية مخصصة فوراً:")
     
     selected_prompt = st.selectbox("اختر البرومْت التحليلي المطلوب:", [
         "1. تحليل فجوة الانتباه ومقاومة التشتت الخارجي",
@@ -259,22 +257,29 @@ with tab3:
         "4. هندسة وتثبيت الذاكرة بعيدة المدى والتكرار"
     ])
     
-    if st.button("تنفيذ البرومْت وتوليد التقرير المخصص"):
+    if st.button("تنفيذ البرومْت وتوليد التقرير المعرفي"):
         st.markdown("### 📑 مخرجات التقرير المخصص:")
         if "1." in selected_prompt:
-            st.info(f"💡 تقرير الانتباه: التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ {100 - focus_efficiency:.1f}%. التوصية الفرعية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
+            st.info(f"💡 تقرير الانتباه: التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ {100 - focus_efficiency:.1f}%. التوصية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
         elif "2." in selected_prompt:
-            st.info(f"💡 تقرير الاستشفاء: جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية الفرعية: ثبت وقت الاستيقاظ الصبح بدري يومياً.")
+            st.info(f"💡 تقرير الاستشفاء: جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية: ثبت وقت الاستيقاظ الصبح بدري يومياً.")
         elif "3." in selected_prompt:
             st.info(f"💡 تقرير مقاومة التسويف: الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط).")
         else:
             st.info(f"💡 تقرير الذاكرة: الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً.")
             
     st.markdown("---")
-    # الميزة الفرعية 3 مضمنة هنا
-    st.subheader("⚡ مولد الأسئلة التكيفية السريعة (ميزة فرعية)")
-    if st.button("توليد سؤال تكيفى فوري حسب البرومْت"):
-        st.success("🧩 سؤال تفكيري مقترح: بناءً على اختيارك التحليلي، حاول كتابة تلخيص في سطرين للمفهوم الأكثر صعوبة الذي واجهته اليوم.")
+    # المحطة المطورة كلياً لتوليد الأسئلة التكيفية حسب البرومْت
+    st.subheader("⚡ محطة توليد الأسئلة التكيفية الذكية (الميزة المطورة)")
+    st.write("يقوم النظام بتحليل اختيارك وتوليد **3 مستويات من التحديات المعرفية الفورية**:")
+    
+    if st.button("توليد حزمة الأسئلة التكيفية المتقدمة"):
+        st.markdown("""
+        * **المستوى الأول (الفهم والاسترجاع):** ما هو المعيار الأكبر الذي أثر سلباً على رصيدك المعرفي اليوم؟ وكيف ستعالجه غداً؟
+        * **المستوى الثاني (التحليل والاستدلال):** لو قمت بنقل وقت مذاكرتك ليكون **الصبح بدري**، كم تتبلور نسبة صفاء ذهنك مقارنة بالوضع الحالي؟
+        * **المستوى الثالث (التطبيق العملي):** صغ مفهوماً واحداً من دروسك اليوم بطريقة 'الاسترجاع النشط' في ثلاثة أسطر فقط دون النظر للمرجع.
+        """)
+        st.success("✨ تم توليد التحديات بنجاح! استخدمها الآن لتقييم استيعابك الفعلي.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -298,7 +303,6 @@ with tab4:
     st.success("💡 رأي المحاكي الفرعي: الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
     
     st.markdown("---")
-    # الميزة الفرعية 4 مضمنة هنا
     lost_time_recovery = int((100 - focus_efficiency) * 0.4)
     st.info(f"⏳ حاسبة استرداد الوقت الضائع (ميزة فرعية): تحتاج حوالي **{lost_time_recovery} دقائق** من التركيز النقي الخالي من أي مشتتات لتعويض آثار التشتت السابق اليوم.")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -320,7 +324,6 @@ with tab5:
             st.warning("🧩 التحدي: ارسم خريطة ذهنية سريعة على ورقة فارغة لأهم 5 مفاهيم رئيسية حفظتها اليوم خلال 5 دقائق.")
             
     st.markdown("---")
-    # الميزة الفرعية 5 مضمنة هنا
     st.success("🏆 مسجل مسار الانتصارات الذهنية (ميزة فرعية): لقد أكملت حتى الآن محطات التحدي الاسترجاعي بكفاءة عالية، استمر لتعزيز ثقتك قبل الامتحان!")
     st.markdown('</div>', unsafe_allow_html=True)
 

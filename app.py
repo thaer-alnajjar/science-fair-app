@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
 import random
@@ -29,7 +30,7 @@ if "unlocked_trees" not in st.session_state:
 if "active_tree" not in st.session_state:
     st.session_state.active_tree = "🌸 شجرة الساكورا اليابانية"
 
-# CSS للرسوم الواقعية والأنيميشن الاحترافي للشجار الـ 10
+# CSS العام للتصميم النظيف
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -76,20 +77,6 @@ st.markdown("""
         padding: 22px;
         margin-bottom: 18px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
-    }
-
-    /* المسرح السينمائي العام للرسم الواقعي */
-    .realistic-stage {
-        position: relative;
-        width: 100%;
-        height: 450px;
-        border-radius: 20px;
-        overflow: hidden;
-        border: 3px solid #334155;
-        box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
     .stButton>button {
@@ -207,19 +194,18 @@ with tab4:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
-# --- TAB 5: معارض الأشجار الـ 10 الواقعية والأنيميشن ---
+# --- TAB 5: معارض الأشجار الـ 10 الواقعية عبر st.components ---
 # ==========================================
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🌳 المعرض الفني للأشجار الواقعية المتقدمة")
-    st.write("رسم هندسي دقيق وعالي التفاصيل (SVG/CSS) مع أنيميشن حركة الرياح وتساقط العناصر بدقة فائقة:")
+    st.write("رسم هندسي دقيق وعالي التفاصيل مع أنيميشن احترافي:")
 
     active = st.session_state.active_tree
 
-    # رسم SVG واقعي ومفصل لكل شجرة بناءً على الاختيار
     svg_tree_render = ""
     
-    if "الساكورا" in active: # 1. الساكورا اليابانية
+    if "الساكورا" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs>
@@ -230,59 +216,48 @@ with tab5:
             <path d="M230 450 L230 280 C230 240 210 200 180 170 C240 180 260 210 270 280 L270 450 Z" fill="#451a03"/>
             <path d="M245 330 C200 300 120 280 90 250 C130 240 190 260 245 300 Z" fill="#5c2c16"/>
             <path d="M255 310 C300 280 380 260 410 230 C370 220 310 240 255 280 Z" fill="#5c2c16"/>
-            <!-- تجمعات أوراق الساكورا الواقعية المتعددة -->
             <circle cx="180" cy="160" r="85" fill="url(#pinkBlob)" opacity="0.9"/>
             <circle cx="310" cy="170" r="80" fill="url(#pinkBlob)" opacity="0.9"/>
             <circle cx="245" cy="110" r="95" fill="url(#pinkBlob)" opacity="0.95"/>
             <circle cx="130" cy="220" r="60" fill="#f472b6" opacity="0.85"/>
             <circle cx="370" cy="210" r="65" fill="#f472b6" opacity="0.85"/>
-            <!-- بتلات متساقطة -->
             <circle cx="200" cy="350" r="4" fill="#fbcfe8"/><circle cx="320" cy="380" r="5" fill="#fbcfe8"/><circle cx="150" cy="400" r="4" fill="#fbcfe8"/>
         </svg>
         """
-    elif "الصنوبر" in active: # 2. الصنوبر الثلجية
+    elif "الصنوبر" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
-            <defs>
-                <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#bae6fd"/></linearGradient>
-            </defs>
+            <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#bae6fd"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky2)"/>
             <rect x="235" y="300" width="30" height="150" fill="#291203" rx="5"/>
-            <!-- طبقات صنوبر مثلثية واقعية مع ثلج -->
             <polygon points="250,60 140,180 360,180" fill="#0369a1"/>
-            <polygon points="250,60 140,180 360,180" fill="#ffffff" opacity="0.3" clip-path="polygon(250,60 180,130 320,130)"/>
             <polygon points="250,130 120,270 380,270" fill="#0284c7"/>
             <polygon points="250,200 100,360 400,360" fill="#0ea5e9"/>
         </svg>
         """
-    elif "الفطر" in active: # 3. شجرة الفطر الساحرة
+    elif "الفطر" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2e1065"/><stop offset="100%" stop-color="#581c87"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky3)"/>
-            <!-- ساق ضخمة -->
             <path d="M200 450 C210 320 220 280 230 200 L270 200 C280 280 290 320 300 450 Z" fill="#fbcfe8"/>
-            <!-- قبعة الفطر العملاقة الساحرة -->
             <path d="M125 200 C125 100 375 100 375 200 C320 220 180 220 125 200 Z" fill="#ef4444"/>
             <circle cx="200" cy="150" r="18" fill="#ffffff"/><circle cx="280" cy="140" r="22" fill="#ffffff"/><circle cx="330" cy="180" r="12" fill="#ffffff"/><circle cx="160" cy="170" r="15" fill="#ffffff"/>
         </svg>
         """
-    elif "النخيل" in active: # 4. النخيل الاستوائية
+    elif "النخيل" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky4)"/>
-            <!-- جذع منحني واقعي -->
             <path d="M220 450 Q 280 280 250 150 L270 150 Q 300 280 240 450 Z" fill="#78350f"/>
-            <!-- سعف النخيل الموزع -->
             <path d="M260 160 Q 380 100 450 140 Q 360 180 260 160 Z" fill="#15803d"/>
             <path d="M260 160 Q 400 200 440 260 Q 360 220 260 160 Z" fill="#16a34a"/>
             <path d="M260 160 Q 140 100 50 140 Q 150 180 260 160 Z" fill="#15803d"/>
             <path d="M260 160 Q 100 200 60 260 Q 160 220 260 160 Z" fill="#16a34a"/>
-            <path d="M260 160 Q 260 40 260 10 Q 280 80 260 160 Z" fill="#22c55e"/>
         </svg>
         """
-    elif "القيقب" in active: # 5. القيقب الخريفي
+    elif "القيقب" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffedd5"/><stop offset="100%" stop-color="#fed7aa"/></linearGradient></defs>
@@ -294,78 +269,70 @@ with tab5:
             <circle cx="250" cy="180" r="90" fill="#f59e0b" opacity="0.9"/>
         </svg>
         """
-    elif "الويسترليا" in active: # 6. الويسترليا الساحرة
+    elif "الويسترليا" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="100%" stop-color="#e9d5ff"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky6)"/>
             <path d="M230 450 L230 280 C230 230 210 190 170 160 C240 180 260 210 270 280 L270 450 Z" fill="#3b0764"/>
             <circle cx="250" cy="140" r="110" fill="#c084fc" opacity="0.85"/>
-            <!-- عناقيد زهور متدلية -->
             <path d="M180 180 Q 170 250 160 300" stroke="#a855f7" stroke-width="12" stroke-linecap="round" fill="none"/>
             <path d="M220 190 Q 210 270 200 330" stroke="#c084fc" stroke-width="14" stroke-linecap="round" fill="none"/>
             <path d="M280 190 Q 290 270 300 330" stroke="#a855f7" stroke-width="14" stroke-linecap="round" fill="none"/>
             <path d="M320 180 Q 330 250 340 300" stroke="#c084fc" stroke-width="12" stroke-linecap="round" fill="none"/>
         </svg>
         """
-    elif "الكريستال" in active: # 7. شجرة الكريستال
+    elif "الكريستال" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#1e293b"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky7)"/>
             <rect x="235" y="280" width="30" height="170" fill="#334155" rx="5"/>
-            <!-- بلورات كريستالية متوهجة -->
             <polygon points="250,40 290,120 250,200 210,120" fill="#38bdf8" opacity="0.9"/>
             <polygon points="180,100 230,160 180,220 130,160" fill="#0284c7" opacity="0.9"/>
             <polygon points="320,100 370,160 320,220 270,160" fill="#7dd3fc" opacity="0.9"/>
-            <polygon points="250,150 300,220 250,290 200,220" fill="#38bdf8" opacity="0.85"/>
         </svg>
         """
-    elif "البنساي" in active: # 8. البنساي العتيقة
+    elif "البنساي" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky8" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf4ff"/><stop offset="100%" stop-color="#fae8ff"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky8)"/>
-            <!-- صخرة القاعدة -->
             <ellipse cx="250" cy="400" rx="120" ry="30" fill="#78716c"/>
-            <!-- جذع متلوّي وعريق -->
             <path d="M200 400 C150 350 300 250 220 180 C180 150 210 100 250 80 C290 100 320 160 260 220 Z" fill="#292524" stroke="#1c1917" stroke-width="4"/>
-            <!-- وسائد أوراق البنساي الخضراء المنسقة -->
             <ellipse cx="250" cy="70" rx="60" ry="25" fill="#15803d"/>
             <ellipse cx="170" cy="140" rx="45" ry="20" fill="#16a34a"/>
             <ellipse cx="330" cy="160" rx="50" ry="20" fill="#15803d"/>
         </svg>
         """
-    elif "البامبو" in active: # 9. غابة البامبو
+    elif "البامبو" in active:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky9" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f0fdf4"/><stop offset="100%" stop-color="#dcfce7"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky9)"/>
-            <!-- سيقان البامبو متعددة وواقعية -->
-            <rect x="150" y="20" width="25" height="430" fill="#16a34a" rx="5"/><line x1="150" y1="120" x2="175" y2="120" stroke="#14532d" stroke-width="4"/><line x1="150" y1="240" x2="175" y2="240" stroke="#14532d" stroke-width="4"/><line x1="150" y1="360" x2="175" y2="360" stroke="#14532d" stroke-width="4"/>
-            <rect x="230" y="0" width="35" height="450" fill="#15803d" rx="5"/><line x1="230" y1="100" x2="265" y2="100" stroke="#14532d" stroke-width="5"/><line x1="230" y1="220" x2="265" y2="220" stroke="#14532d" stroke-width="5"/><line x1="230" y1="340" x2="265" y2="340" stroke="#14532d" stroke-width="5"/>
-            <rect x="320" y="40" width="22" height="410" fill="#22c55e" rx="4"/><line x1="320" y1="150" x2="342" y2="150" stroke="#16a34a" stroke-width="3"/><line x1="320" y1="280" x2="342" y2="280" stroke="#16a34a" stroke-width="3"/>
+            <rect x="150" y="20" width="25" height="430" fill="#16a34a" rx="5"/>
+            <rect x="230" y="0" width="35" height="450" fill="#15803d" rx="5"/>
+            <rect x="320" y="40" width="22" height="410" fill="#22c55e" rx="4"/>
         </svg>
         """
-    else: # 10. العنقاء النارية
+    else:
         svg_tree_render = """
         <svg viewBox="0 0 500 450" width="100%" height="100%">
             <defs><linearGradient id="sky10" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18181b"/><stop offset="100%" stop-color="#27272a"/></linearGradient></defs>
             <rect width="500" height="450" fill="url(#sky10)"/>
             <path d="M230 450 L230 280 C230 230 210 190 170 160 C240 180 260 210 270 280 L270 450 Z" fill="#09090b"/>
-            <!-- ألسنة اللهب النارية المشتعلة واقعياً -->
             <circle cx="250" cy="140" r="110" fill="#ef4444" opacity="0.9"/>
             <circle cx="250" cy="130" r="85" fill="#f97316" opacity="0.95"/>
             <circle cx="250" cy="110" r="55" fill="#fde047" opacity="0.95"/>
         </svg>
         """
 
-    # عرض المسرح الفني
-    st.markdown(f"""
-    <div class="realistic-stage">
+    # استخدام مكونات HTML المعزولة لضمان ظهور الرسم الهندسي الحقيقي بدون أي أكواد نصية
+    components.html(f"""
+    <div style="width: 100%; height: 460px; border-radius: 20px; overflow: hidden; border: 3px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.15);">
         {svg_tree_render}
     </div>
-    """, unsafe_allow_html=True)
+    """, height=470)
 
     st.markdown(f"### 🌲 الشجرة النشطة حالياً: **{active}**")
     st.info("✨ هذه الشجرة مرسومة بدقة هندسية عالية وتمثل البيئة المعرفية الافتراضية الخاصة بك.")
@@ -415,7 +382,7 @@ with tab5:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
-# --- TAB 6: منصة الحكام والاستثمار (مبسطة وهادئة وثقة تامة) ---
+# --- TAB 6: منصة الحكام والاستثمار ---
 # ==========================================
 with tab6:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)

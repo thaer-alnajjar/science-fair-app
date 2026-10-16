@@ -2,15 +2,25 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import random
+import datetime
 
-# إعداد الصفحة
+# ==========================================
+# 1. إعدادات الصفحة والتصميم العرفي
+# ==========================================
 st.set_page_config(
-    page_title="وعلم الإنسان ما لم يعلم | النظام التحليلي المتطور",
+    page_title="وعلم الإنسان ما لم يعلم | النظام التحليلي المتطور v2",
     page_icon="🎓",
     layout="wide"
 )
 
-# تصميم واجهة مستخدم أسطورية (دمج الكحلي، الأرجواني الفاتح، والبرتقالي بلمسات راقية وخلفية بيضاء نظيفة)
+# تهيئة ذاكرة الجلسة لحفظ السجلات
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+if "mind_dump" not in st.session_state:
+    st.session_state.mind_dump = []
+
+# CSS لتجميل الواجهة
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -25,82 +35,48 @@ st.markdown("""
         color: #0f172a;
     }
 
-    /* العنوان الرئيسي الفخم بدمج الكحلي والأرجواني والبرتقالي */
     .hero-container {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 32px;
+        padding: 30px;
         border-radius: 18px;
         border: 2px solid #4f46e5;
         border-right: 6px solid #ea580c;
         text-align: center;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.2);
+        margin-bottom: 20px;
+        box-shadow: 0 8px 30px rgba(15, 23, 42, 0.15);
     }
 
     .hero-verse {
-        font-size: 1.45rem;
+        font-size: 1.4rem;
         font-weight: 700;
         color: #ea580c;
-        margin-bottom: 6px;
+        margin-bottom: 5px;
     }
 
     .hero-title {
         font-weight: 900;
-        font-size: 1.95rem;
+        font-size: 1.85rem;
         color: #ffffff;
         margin-bottom: 4px;
     }
 
-    .hero-subtitle {
-        color: #94a3b8;
-        font-size: 0.95rem;
-    }
-
-    /* بطاقات بيضاء نظيفة بإطار إنديجو وكحلي خفيف */
     .clean-card {
         background-color: #ffffff;
         border: 1px solid #cbd5e1;
         border-top: 3px solid #1e293b;
         border-radius: 14px;
-        padding: 24px;
+        padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-    }
-
-    /* تنسيق التبويبات الفخمة */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        background-color: #e2e8f0;
-        padding: 8px;
-        border-radius: 12px;
-        border: 1px solid #cbd5e1;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        background-color: #ffffff;
-        color: #1e293b;
-        border-radius: 8px;
-        padding: 10px 20px;
-        font-weight: 700;
-        border: 1px solid #cbd5e1;
-    }
-
-    .stTabs [aria-selected="true"] {
-        background: #1e293b !important;
-        color: white !important;
-        border-color: #1e293b !important;
-        box-shadow: 0 4px 12px rgba(30, 41, 59, 0.25);
     }
 
     .stButton>button {
         background: #ea580c;
         color: white;
         border-radius: 10px;
-        padding: 10px 20px;
+        padding: 8px 16px;
         font-weight: bold;
         border: none;
-        width: 100%;
-        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);
     }
     
     .stButton>button:hover {
@@ -109,301 +85,312 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# العنوان الرئيسي في المنتصف بالهيدر الكحلي الفخم
+# الهيدر الرئيسي
 st.markdown("""
     <div class="hero-container">
-        <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        <div class="hero-title">🚀 النظام التحليلي الذكي للأداء الدراسي ⚡</div>
-        <div class="hero-subtitle">معرض العلوم والابتكار — منصة قياس الأنماط المعرفية والبيئة العصبية السلوكية المتقدمة</div>
+        <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
+        <div class="hero-title">🚀 النظام التحليلي الذكي للأداء الدراسي والتتبع الخماسي ⚡</div>
     </div>
 """, unsafe_allow_html=True)
 
-st.write("")
+# ==========================================
+# 2. اللوحة الجانبية: نموذج إدخال البيانات (Form)
+# ==========================================
+with st.sidebar.form(key="biometric_form"):
+    st.markdown("### 🎛️ لوحة الإدخال والقياس الحيوية")
+    st.caption("أدخل بياناتك ثم اضغط زر الإرسال للحفظ والتحليل")
+    
+    sleep_hours = st.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.5)
+    sleep_quality = st.slider("✨ جودة الاستشفاء النومى (1-15)", 1, 15, 11)
+    sleep_consistency = st.slider("📅 انتظام أوقات النوم (1-15)", 1, 15, 12)
+    
+    screen_hours = st.slider("📱/🖥️ ساعات استخدام الشاشات اليومية", 1.0, 14.0, 5.0, 0.5) # فكرة 1: التعب البصري
+    total_study = st.slider("⏱️ إجمالي ساعات الدراسة", 1.0, 12.0, 4.0, 0.5)
+    deep_focus = st.slider("🎯 التركيز النقي (ساعات)", 0.5, 12.0, 3.5, 0.5)
+    
+    room_temp = st.slider("🌡️ درجة حرارة الغرفة (مئوية)", 16, 35, 23) # فكرة 3: المناخ
+    overthinking_mins = st.slider("🌀 دقائق التفكير الزائد والقلق اليومي", 0, 120, 25, 5) # فكرة 16: التفكير الزائد
+    
+    stress_level = st.slider("⚠️ مستوى التوتر (1-15)", 1, 15, 5)
+    motivation_level = st.slider("🔥 الدافعية والحماس (1-15)", 1, 15, 11)
+    hydration_level = st.slider("💧 مستوى الترطيب والماء (1-15)", 1, 15, 10)
+    
+    snack_type = st.selectbox("🍏 نوع الوجبة الخفيفة قبل المذاكرة", ["فواكه/مكسرات (خفيفة)", "وجبة ثقيلة/سكريات", "صائم/بدون وجبة"]) # فكرة 13: وجبات ذكية
+    study_method = st.selectbox("📚 أسلوب الدراسة", ["التسجيل النشط والخرائط الذهنية", "حل التطبيقات والمسائل", "القراءة التكرارية الصامتة"])
+    chronotype = st.selectbox("🌅 ذروة النشاط", ["الصباح المبكر", "المساء والليل", "مرن ومتوازن"])
+    phone_isolation = st.selectbox("📵 مكان الهاتف", ["مفصول تماماً في غرفة ثانية", "قريب بصامت", "في اليد وبجانب الكتاب"])
 
-# التبويبات الرئيسية (شاملة منصة الحكام)
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "📊 لوحة التنبؤ (من 500)", 
-    "🔋 الطاقة والاستشفاء", 
-    "🤖 المساعد والتوليد الذكي", 
-    "⚖️ مختبر المحاكاة", 
-    "❓ بنك الـ 20 تحدياً", 
-    "📋 خطة المذاكرة والنصائح",
-    "🏛️ منصة الحكام والملخص"
+    submit_button = st.form_submit_button(label="🚀 إرسال وتحليل البيانات")
+
+# ==========================================
+# 3. معالجة البيانات والحسابات عند الإرسال
+# ==========================================
+if submit_button:
+    # خوارزمية حساب النتيجة من 500
+    score = 180.0
+    score += (sleep_hours / 12.0) * 50.0
+    score += (sleep_quality / 15.0) * 50.0
+    score += (deep_focus / 12.0) * 90.0
+    score += (motivation_level / 15.0) * 40.0
+    score += (hydration_level / 15.0) * 25.0
+    score -= (stress_level / 15.0) * 30.0
+    score -= (screen_hours / 14.0) * 20.0 # خصم التعب البصري
+    score -= (overthinking_mins / 120.0) * 25.0 # خصم التفكير الزائد
+    
+    if study_method != "القراءة التكرارية الصامتة":
+        score += 30.0
+    if phone_isolation == "مفصول تماماً في غرفة ثانية":
+        score += 25.0
+    elif phone_isolation == "في اليد وبجانب الكتاب":
+        score -= 30.0
+        
+    final_score = min(max(score, 100.0), 500.0)
+    
+    # حفظ الإدخال في القائمة
+    entry = {
+        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "score": round(final_score, 1),
+        "sleep": sleep_hours,
+        "focus": deep_focus,
+        "stress": stress_level,
+        "screen": screen_hours,
+        "overthinking": overthinking_mins,
+        "temp": room_temp
+    }
+    st.session_state.history.append(entry)
+    st.success("✅ تم حفظ البيانات وتحليلها بنجاح!")
+
+# ==========================================
+# 4. التنبيهات الرئيسية وتغطية الموجز الخماسي
+# ==========================================
+total_entries = len(st.session_state.history)
+
+if total_entries > 0:
+    latest = st.session_state.history[-1]
+    
+    # تنبيهات الصفحة الرئيسية بناءً على التقدم والضعف
+    if total_entries >= 2:
+        prev_score = st.session_state.history[-2]["score"]
+        diff = latest["score"] - prev_score
+        if diff > 0:
+            st.balloons()
+            st.success(f"🎉 **إنجاز متصاعد!** ارتفاع في أدائك اليوم بمقدار **+{diff:.1f} نقطة** مقارنة بالإدخال السابق.")
+        elif diff < 0:
+            st.warning(f"⚠️ **تنبيه انخفاض أداء:** تراجع أدائك بمقدار **{diff:.1f} نقطة**. يرجى مراجعة التوصيات والنوم بالقدر الكافي.")
+        else:
+            st.info("⚖️ **أداء مستقر:** مستوى أدائك اليوم يطابق الإدخال السابق تماماً.")
+
+    # نظام الموجز التراكمي الشامل (كل 5 إدخالات)
+    if total_entries % 5 == 0 and total_entries > 0:
+        st.markdown("---")
+        st.markdown(f"## 📋 الموجز التراكمي الشامل (تقرير الـ {total_entries} إدخالات)")
+        
+        last_5 = st.session_state.history[-5:]
+        df_5 = pd.DataFrame(last_5)
+        
+        # تحليل التقدم خلال الـ 5 أيام
+        first_5_score = last_5[0]["score"]
+        last_5_score = last_5[-1]["score"]
+        overall_change = last_5_score - first_5_score
+        
+        c_m1, c_m2, c_m3 = st.columns(3)
+        with c_m1:
+            st.metric("متوسط النقاط في الموجز", f"{df_5['score'].mean():.1f} / 500")
+        with c_m2:
+            st.metric("معدل التغير عبر الـ 5 جلسات", f"{overall_change:+.1f} نقطة")
+        with c_m3:
+            status = "📈 تقدم ممتاز" if overall_change > 10 else ("📉 تراجع يتطلب التدخل" if overall_change < -10 else "⚖️ استقرار")
+            st.subheader(f"الحالة: {status}")
+            
+        # رسم بياني بسيط جداً
+        st.markdown("#### 📊 منحنى التطور خلال الجلسات الخمس الأخيرة:")
+        st.line_chart(df_5.set_index("timestamp")["score"])
+        
+        # وضع خطة التطوير
+        st.markdown("### 🛠️ خطة التطوير التكيفية للمرحلة القادمة:")
+        avg_screen = df_5["screen"].mean()
+        avg_sleep = df_5["sleep"].mean()
+        
+        dev_plan = []
+        if avg_screen > 6:
+            dev_plan.append("• **تقليل ساعات الشاشة:** متوسط استخدامك للشاشات مرتفع، خفضه بمعدل ساعة يومياً لحماية البصر.")
+        if avg_sleep < 7:
+            dev_plan.append("• **تثبيت وقت النوم:** ارفع معدل نومك ليكون 7.5 ساعات على الأقل لتحسين الاسترجاع الذهني.")
+        if overall_change <= 0:
+            dev_plan.append("• **تغيير أسلوب المذاكرة:** جرب الاعتماد على حل المسائل والتسجيل النشط بدلاً من القراءة الصامتة.")
+        else:
+            dev_plan.append("• **الاستمرار على النمط الجيد:** حافظ على ساعات التركيز النقي الحالية مع زيادة فترات الاستراحة.")
+            
+        for plan in dev_plan:
+            st.info(plan)
+        st.markdown("---")
+
+# ==========================================
+# 5. التبويبات الرئيسية (تطبيق الأفكار 1-16)
+# ==========================================
+tab_dash, tab_ideas1_8, tab_ideas9_16 = st.tabs([
+    "📊 لوحة التحليل الحالية", 
+    "🧠 الأدوات التفاعلية (الأفكار 1-8)", 
+    "⚡ الأدوات التفاعلية (الأفكار 9-16)"
 ])
 
-# لوحة التحكم الجانبية
-st.sidebar.markdown("### 🎛️ لوحة القياسات الحيوية")
-st.sidebar.markdown("---")
+# --- تبويب لوحة التحليل ---
+with tab_dash:
+    if total_entries == 0:
+        st.info("👈 يرجى إدخال البيانات من اللوحة الجانبية والضغط على زر 'إرسال وتحليل البيانات'.")
+    else:
+        st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+        col_a, col_b = st.columns([2, 1])
+        with col_a:
+            st.subheader("🎯 مؤشر التحصيل الأكاديمي الحركي")
+            st.metric("النتيجة الحالية", f"{latest['score']} / 500 نقطة")
+            st.progress(int((latest['score']/500)*100))
+            
+            # فكرة 3: منبه الإيقاع التكيفي
+            suggested_wake = "06:30 صباحاً" if latest['sleep'] >= 7 else "08:00 صباحاً (لتعويض النوم)"
+            st.info(f"⏰ **منبه الإيقاع التكيفي المقترح:** ينصح بالاستيقاظ غداً الساعة **{suggested_wake}** بناءً على ساعات نومك اليوم.")
+            
+        with col_b:
+            # فكرة 4: شجرة الإنتاجية الافتراضية
+            st.subheader("🌳 شجرة الإنتاجية")
+            focus_hrs = latest['focus']
+            if focus_hrs >= 6:
+                st.success("🌳 شجرة مثمرة وافرة الأوراق! (إنجاز أسطوري)")
+            elif focus_hrs >= 3:
+                st.warning("🌿 شجرة متوسطة النمو (أداء جيد)")
+            else:
+                st.error("🌱 شجيرة صغيرة (تحتاج المزيد من سقي التركيز)")
+        st.markdown('</div>', unsafe_allow_html=True)
 
-sleep_hours = st.sidebar.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.5)
-sleep_quality = st.sidebar.slider("✨ جودة الاستشفاء النومى (من 15)", 1, 15, 11)
-sleep_consistency = st.sidebar.slider("📅 انتظام أوقات النوم (من 15)", 1, 15, 12)
-total_study = st.sidebar.slider("⏱️ إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.5)
-deep_focus = st.sidebar.slider("🎯 مدة التركيز النقي بدون مشتتات (من 15)", 0.5, 12.0, 4.0, 0.5)
-stress_level = st.sidebar.slider("⚠️ مستوى التوتر والضغط العصبي (من 15)", 1, 15, 5)
-motivation_level = st.sidebar.slider("🔥 مستوى الدافعية والحماس (من 15)", 1, 15, 11)
-hydration_level = st.sidebar.slider("💧 مستوى ترطيب الجسم (من 15)", 1, 15, 10)
-environment_lighting = st.sidebar.slider("💡 جودة الإضاءة والهدوء البيئي (من 15)", 1, 15, 12)
-
-study_method = st.sidebar.selectbox("📚 أسلوب دراستك ومعرفتك", ["التسجيل النشط والخرائط الذهنية", "حل التطبيقات والمسائل الرياضية", "القراءة التكرارية الصامتة"])
-chronotype = st.sidebar.selectbox("🌅 ذروة نشاطك العصبي", ["الصباح المبكر (نشاط الصباح الصافي)", "المساء والليل (تركيز هادئ ومتأخر)", "مرن ومتوازن"])
-phone_isolation = st.sidebar.selectbox("📵 مكان هاتفك الخلوي أثناء الدراسة", ["مفصول تماماً في غرفة ثانية", "قريب بصامت", "في اليد وبجانب الكتاب"])
-
-# معادلة حساب المعدل المحكمة والدقيقة جداً (من 500 نقطة)
-nq = sleep_quality / 15.0
-nc = sleep_consistency / 15.0
-nf = deep_focus / 12.0
-ns = stress_level / 15.0
-nm = motivation_level / 15.0
-nh = hydration_level / 15.0
-ne = environment_lighting / 15.0
-
-score_500 = 180.0  
-score_500 += (sleep_hours / 12.0) * 60.0
-score_500 += nq * 55.0
-score_500 += nc * 30.0
-score_500 += nf * 85.0
-score_500 += nm * 40.0
-score_500 += nh * 25.0
-score_500 += ne * 30.0
-score_500 += ((15 - stress_level) / 14.0) * 35.0
-
-if study_method == "التسجيل النشط والخرائط الذهنية": 
-    score_500 += 30.0
-elif study_method == "حل التطبيقات والمسائل الرياضية": 
-    score_500 += 35.0
-else:
-    score_500 += 10.0
-
-if phone_isolation == "مفصول تماماً في غرفة ثانية": 
-    score_500 += 25.0
-elif phone_isolation == "في اليد وبجانب الكتاب": 
-    score_500 -= 30.0
-
-final_score_500 = min(max(score_500, 120.0), 500.0)
-percentage_equivalent = (final_score_500 / 500.0) * 100
-focus_efficiency = (deep_focus / total_study) * 100 if total_study > 0 else 0
-accumulated_sleep_debt = max(0.0, (8.0 - sleep_hours) * 5.5)
-mental_battery_index = min(100.0, max(10.0, (nq * 40) + (nm * 30) + (nh * 15) - (ns * 25)))
-
-retention_window = "الفترة الصباحية (الصباح المبكر - صفاء ذهني عالي)" if "الصباح" in chronotype else "الفترة المسائية (تركيز هادئ ومتأخر)"
-memory_fatigue = "منخفض ومستقر ✅" if deep_focus < 7 else "مرتفع ويحتاج استراحة قصيرة ⚠️"
-pattern_stability = "مستقر وثابت 📈" if (sleep_consistency >= 10 and stress_level <= 8) else "متذبذب ويحتاج انضباط 📉"
-
-
-with tab1:
+# --- تبويب الأفكار من 1 إلى 8 ---
+with tab_ideas1_8:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    col1, col2 = st.columns([2, 1])
+    st.subheader("💡 تطبيقات الأفكار الذكية (1 - 8)")
+    
+    col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🎯 مؤشر التنبؤ الأكاديمي الشامل (من 500)")
-        st.metric(label="رصيد التحصيل المعرفي الإجمالي", value=f"{final_score_500:.1f} / 500 نقطة")
-        st.write(f"النسبة المعيارية المكافئة: **{percentage_equivalent:.2f}%**")
-        
-        if final_score_500 >= 400:
-            st.success("🌟 أداء استثنائي: توازن كامل في مقاييسك العصبية والبيئية يضعك في قمة الجاهزية الأكاديمية.")
-        elif final_score_500 >= 320:
-            st.info("👍 أداء مستقر: تحصيلك ممتاز وثابت، وموازنة بسيطة في التركيز تضمن لك العلامة الكاملة.")
+        # فكرة 1: تتبع معدل التعب البصري
+        st.markdown("#### 1️⃣ مقياس التعب البصري")
+        if total_entries > 0:
+            eye_fatigue = min(100, int((latest['screen'] / 12.0) * 100))
+            st.write(f"مستوى إجهاد العين المتوقع: **{eye_fatigue}%**")
+            st.progress(eye_fatigue)
+            if eye_fatigue > 60:
+                st.caption("⚠️ ينصح بطبيق قاعدة 20-20-20 لإراحة العين فوراً.")
         else:
-            st.warning("⚠️ تنبيه: هناك تفاوت في مقاييس النوم أو التوتر يتطلب ضبطاً لرفع رصيدك المعرفي.")
-            
+            st.write("أدخل البيانات أولاً لتفعيل المقياس.")
+
+        # فكرة 2: ربط المذاكرة بالمناخ
         st.markdown("---")
-        st.subheader("📈 مؤشر استقرار النمط الأسبوعي")
-        st.write(f"حالة اتساق العادات اليومية: **{pattern_stability}**")
-        st.progress(min(int(percentage_equivalent), 100))
+        st.markdown("#### 2️⃣ مؤشر المذاكرة والمناخ")
+        if total_entries > 0:
+            temp = latest['temp']
+            if 20 <= temp <= 24:
+                st.success(f"🌡️ حرارة الغرفة ({temp}°م) مثالية جداً للاستيعاب والتركيز.")
+            else:
+                st.warning(f"🌡️ حرارة الغرفة ({temp}°م) قد تسبب الخمول أو المشتتات، يفضل تعديل التكييف.")
+                
+        # فكرة 6: محلل تهوية الغرفة
+        st.markdown("---")
+        st.markdown("#### 6️⃣ محلل تهوية الغرفة الافتراضي")
+        if total_entries > 0 and latest['focus'] > 2:
+            st.info("🚪 **تنبيه الأكسجين:** قمت بجلسة تركيز طويلة، فتح النافذة لمدة 5 دقائق يجدد نشاط الدماغ.")
 
     with col2:
-        st.subheader("⚖️ الأوزان النسبية للعوامل")
-        factors_df = pd.DataFrame({
-            'المؤشر': ['التركيز الصافي', 'جودة النوم', 'الدافعية', 'التوتر', 'البيئة والماء'],
-            'التأثير (%)': [32, 24, 18, 14, 12]
-        })
-        st.bar_chart(factors_df.set_index('المؤشر'))
+        # فكرة 5: حاسبة سرعة البديهة
+        st.markdown("#### 5️⃣ اختبار سرعة البديهة والجاهزية")
+        if st.button("⚡ اضغط هنا لقياس الجاهزية العصبية"):
+            st.success("🎯 استجابة ممتازة! عقلك جاهز لاستقبال المعلومات المعقدة.")
+            
+        # فكرة 7: تحدي الرفاق الآمن
+        st.markdown("---")
+        st.markdown("#### 7️⃣ تحدي الرفاق الآمن (دون كشف الخصوصية)")
+        peer_avg = 340.0
+        if total_entries > 0:
+            user_s = latest['score']
+            st.write(f"رصيدك الحالي: **{user_s}** | متوسط الزملاء الإفتراضي: **{peer_avg}**")
+            if user_s >= peer_avg:
+                st.success("🏆 أداؤك أعلى من المتوسط هذا الأسبوع!")
+            else:
+                st.info("💪 تفصلك نقاط قليلة للوصول للصدارة.")
+
+        # فكرة 8: صندوق التفريغ الذهني
+        st.markdown("---")
+        st.markdown("#### 8️⃣ صندوق التفريغ الذهني")
+        thought = st.text_input("اكتب الفكرة المشتتة لتنظيف الذاكرة المؤقتة:")
+        if st.button("حفظ الفكرة وإفراغ الذهن"):
+            if thought:
+                st.session_state.mind_dump.append(thought)
+                st.success("تم إفراغ الفكرة بنجاح من عقلك! ركز في دراستك الآن.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-with tab2:
+# --- تبويب الأفكار من 9 إلى 16 ---
+with tab_ideas9_16:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🔋 بطارية الطاقة الذهنية والاستشفاء العصبي")
+    st.subheader("⚡ تطبيقات الأفكار الذكية (9 - 16)")
     
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric(label="مؤشر شحن البطارية", value=f"{mental_battery_index:.1f}%")
-        st.progress(int(mental_battery_index))
-    with c2:
-        st.metric(label="عجز النوم المتراكم", value=f"{accumulated_sleep_debt:.1f} نقطة")
-        st.write("أثر نقص النوم على الذاكرة العاملة.")
-    with c3:
-        st.metric(label="مستوى التوتر", value=f"{stress_level} / 15")
-        st.write("مقياس الإرهاق العصبي المؤثر.")
+    col3, col4 = st.columns(2)
     
-    st.markdown("---")
-    col_n1, col_n2 = st.columns(2)
-    with col_n1:
-        st.info(f"🧠 مُقيّم إرهاق الذاكرة العاملة: {memory_fatigue}")
-    with col_n2:
-        hydration_synergy = "ممتازة وتدعم اليقظة 💧" if hydration_level >= 10 else "تحتاج زيادة لدعم الخلايا ⚠️"
-        st.success(f"💧 مؤشر استجابة الترطيب العصبي: {hydration_synergy}")
-    st.markdown('</div>', unsafe_allow_html=True)
+    with col3:
+        # فكرة 9: حاسبة استهلاك الطاقة الحرارية
+        st.markdown("#### 9️⃣ حاسبة السعرات الحرارية للدماغ")
+        if total_entries > 0:
+            brain_cals = int(latest['focus'] * 65.0)
+            st.write(f"🔥 استهلك دماغك ما يقارب **{brain_cals} سعرة حرارية** أثناء التركيز اليوم.")
+            
+        # فكرة 10: الخريطة الحرارية لأوقات التشتت
+        st.markdown("---")
+        st.markdown("#### 🔟 خريطة أوقات التشتت المتوقعة")
+        st.caption("أوقات يفضل تجنب المذاكرة المكثفة فيها:")
+        st.error("⏰ الفترة من 2:00 ظهراً إلى 4:00 عصراً (انخفاض طبيعي بالطاقة)")
 
-
-with tab3:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🤖 المساعد التحليلي ومحطة توليد الأسئلة التكيفية المطورة")
-    st.write("اختر أمراً تحليلياً لتوليد تقرير استشاري وتوليد أسئلة اختبارية مخصصة فوراً:")
-    
-    selected_prompt = st.selectbox("اختر البرومْت التحليلي المطلوب:", [
-        "1. تحليل فجوة الانتباه ومقاومة التشتت الخارجي",
-        "2. استراتيجية استشفاء الدماغ وتثبيت ساعات النوم",
-        "3. تفكيك التسويف الدراسي ومعالجة الخمول المعرفي",
-        "4. هندسة وتثبيت الذاكرة بعيدة المدى والتكرار"
-    ])
-    
-    if st.button("تنفيذ البرومْت وتوليد التقرير المعرفي"):
-        st.markdown("### 📑 مخرجات التقرير المخصص:")
-        if "1." in selected_prompt:
-            st.info(f"💡 تقرير الانتباه: التركيز النقي ({deep_focus} ساعة) من أصل ({total_study} ساعة) يوضح نسبة تشتت تقدر بـ {100 - focus_efficiency:.1f}%. التوصية: ابعد الهاتف تماماً وطبق فترات الراحة القصيرة.")
-        elif "2." in selected_prompt:
-            st.info(f"💡 تقرير الاستشفاء: جودة نومك ({sleep_quality}/15) وساعاتك ({sleep_hours}) تعني عجز نوم بمقدار {accumulated_sleep_debt:.1f} نقطة. التوصية: ثبت وقت الاستيقاظ الصباح المبكر يومياً.")
-        elif "3." in selected_prompt:
-            st.info(f"💡 تقرير مقاومة التسويف: الدافعية ({motivation_level}/15) مع التوتر ({stress_level}/15) تتطلب البدء البسيط جداً (قاعدة الـ 5 دقائق الأولى دون ضغط).")
+        # فكرة 11: محامي الدماغ المنطقي
+        st.markdown("---")
+        st.markdown("#### 1️⃣1️⃣ محامي الدماغ المنطقي")
+        lazy_excuse = st.selectbox("اختر عذر الكسل المتكرر:", ["أشعر بالنعاس", "المادة صعبة جداً", "لا يوجد وقت كافٍ"])
+        if lazy_excuse == "أشعر بالنعاس":
+            st.info("⚖️ **الرد العلمي:** شرب كوب ماء والحركة لمدة دقيقتين يزيل النعاس الكاذب فوراً!")
+        elif lazy_excuse == "المادة صعبة جداً":
+            st.info("⚖️ **الرد العلمي:** قسم المادة لمقاطع صغيرة مدتها 5 دقائق وسيزول التعقيد.")
         else:
-            st.info(f"💡 تقرير الذاكرة: الاعتماد على '{study_method}' مع بيئة إضاءة ({environment_lighting}/15) يحتم استخدام 'التكرار المتباعد' لتثبيت المعلومات نهائياً.")
+            st.info("⚖️ **الرد العلمي:** 15 دقيقة من التركيز النقي تعادل ساعتين من المذاكرة المشتتة.")
+
+        # فكرة 12: مولد القصص المعرفية
+        st.markdown("---")
+        st.markdown("#### 2️⃣1️⃣ مولد القصص المعرفية")
+        if st.button("📖 تحويل مفهوم معقد إلى قصة"):
+            st.write("📖 **قصة الموصلات:** تخيل الإلكترونات كسيارات سريعة في طريق سريع بدون إشارات مرور!")
+
+    with col4:
+        # فكرة 13: سجل الوجبات الذكية
+        st.markdown("#### 3️⃣1️⃣ أثر الوجبة الخفيفة")
+        if total_entries > 0:
+            st.write("تقييم الوجبة الخفيفة المحددة ودورها في اليقظة.")
+
+        # فكرة 14: تنبيه وضعية الجلوس
+        st.markdown("---")
+        st.markdown("#### 4️⃣1️⃣ تنبيه وضعية الجلوس")
+        st.warning("🦴 **تذكير:** اعد ضبط استقامة ظهرك وكتفيك الآن لحماية عمودك الفقري.")
+
+        # فكرة 15: مكافأة الإنجاز الصامت
+        st.markdown("---")
+        st.markdown("#### 5️⃣1️⃣ وسام الإنجاز الصامت")
+        if total_entries > 0 and latest['focus'] >= 4:
+            st.success("🎖️ **وسام المحارب الصامت:** أتممت جلسة تركيز استثنائية!")
+        else:
+            st.caption("أنجز 4 ساعات تركيز للحصول على الوسام.")
+
+        # فكرة 16: حاسبة التفكير الزائد
+        st.markdown("---")
+        st.markdown("#### 6️⃣1️⃣ حاسبة الوقت المسترد من التفكير الزائد")
+        if total_entries > 0:
+            lost_mins = latest['overthinking']
+            st.write(f"دقائق قلق اليوم: **{lost_mins} دقيقة**.")
+            st.info(f"💡 تحويل هذه الدقائق إلى أفعال يمنحك قراءة **{int(lost_mins*1.5)} صفحة** إضافية!")
             
-    st.markdown("---")
-    st.subheader("⚡ محطة توليد الأسئلة التكيفية الذكية")
-    st.write("يقوم النظام بتحليل اختيارك وتوليد **3 مستويات من التحديات المعرفية الفورية**:")
-    
-    if st.button("توليد حزمة الأسئلة التكيفية المتقدمة"):
-        st.markdown("""
-        * **المستوى الأول (الفهم والاسترجاع):** ما هو المعيار الأكبر الذي أثر سلباً على رصيدك المعرفي اليوم؟ وكيف ستعالجه غداً؟
-        * **المستوى الثاني (التحليل والاستدلال):** لو قمت بنقل وقت مذاكرتك ليكون في **الصباح المبكر**، كم تتبلور نسبة صفاء ذهنك مقارنة بالوضع الحالي؟
-        * **المستوى الثالث (التطبيق العملي):** صغ مفهوماً واحداً من دروسك اليوم بطريقة الاسترجاع النشط في ثلاثة أسطر فقط دون النظر للمرجع.
-        """)
-        st.success("✨ تم توليد التحديات بنجاح! استخدمها الآن لتقييم استيعابك الفعلي.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-
-with tab4:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("⚖️ مختبر المحاكاة التنبؤي المتقدم")
-    st.write("اختبر أثر تحسين بعض العادات على رصيدك الكلي من 500:")
-    
-    sim_sleep = st.slider("🌙 إضافة ساعات نوم إضافية مقترحة", 0.0, 3.0, 1.0, 0.5)
-    sim_focus = st.slider("🎯 زيادة ساعات التركيز النقي المقترحة", 0.0, 4.0, 1.0, 0.5)
-    
-    simulated_score = min(500.0, final_score_500 + (sim_sleep * 15.0) + (sim_focus * 22.0))
-    diff_score = simulated_score - final_score_500
-    
-    col_s1, col_s2 = st.columns(2)
-    with col_s1:
-        st.metric(label="رصيدك الحالي", value=f"{final_score_500:.1f} / 500")
-    with col_s2:
-        st.metric(label="رصيدك المتوقع بعد التعديل", value=f"{simulated_score:.1f} / 500", delta=f"+{diff_score:.1f} نقطة")
-    
-    st.success("💡 رأي المحاكي: الالتزام بهذه التعديلات الموازنة سيرفع رصيدك المعرفي بشكل ملموس ومستقر!")
-    
-    st.markdown("---")
-    lost_time_recovery = int((100 - focus_efficiency) * 0.4)
-    st.info(f"⏳ حاسبة استرداد الوقت الضائع: تحتاج حوالي **{lost_time_recovery} دقائق** من التركيز النقي الخالي من أي مشتتات لتعويض آثار التشتت السابق اليوم.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab5:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("❓ بنك الـ 20 تحدياً الاسترجاعياً الديناميكي (بدون تكرار)")
-    st.write("بنك تحديات ضخم ومتنوع يولد لك أسئلة عشوائية وغير مكررة في كل مرة تستخدمه لتنشيط الذاكرة:")
-    
-    all_challenges = [
-        "🧬 تحدي الفيزياء الحيوية: اشرح بأسلوبك كيف يتحول الجلوكوز في الدم إلى طاقة لتشغيل خلايا الدماغ أثناء التركيز النقي.",
-        "🧠 تحدي الذاكرة العاملة: اذكر 5 مفاهيم رئيسية حفظتها اليوم دون النظر لأي مرجع، ثم اربط بين مفهومين بطريقة مبتكرة.",
-        "📐 تحدي الاستدلال المنطقي: لو تضاعفت ساعات التركيز ونقص النوم للنصف، كيف تتأثر كفاءة الذاكرة طويلة المدى رياضياً حسب النموذج؟",
-        "🗺️ تحدي الخريطة العصبية: ارسم في ذهنك شبكة ربط بين المادة التي تدرسها وبين تطبيقها الحقيقي في الحياة اليومية خلال دقيقة.",
-        "⚗️ تحدي الكيمياء الحيوية: لماذا يؤدي الجفاف (نقص شرب الماء) إلى انخفاض سرعة انتقال النواقل العصبية؟ فسر علمياً.",
-        "🔄 تحدي التكرار المتباعد: متى يجب أن تكون محطتك الثانية لمراجعة درس اليوم لتثبيته في الذاكرة الدائمة؟",
-        "⏱️ تحدي إدارة الوقت المعرفي: كيف تطبق قاعدة 25 دقيقة تركيز على مادة معقدة مثل الرياضيات أو الفيزياء الصعبة؟",
-        "🔍 تحدي تحليل الأخطاء: ما هو الخطأ المتكرر الذي تفعله في امتحاناتك السابقة وكيف ستعدله من جذوره؟",
-        "🗣️ تحدي الاسترجاع الصوتي: قف واشرح بصوت عالٍ وبثقة كأنك تلقي محاضرة أمام 100 شخص لدرس اليوم.",
-        "💡 تحدي البيئة الصامتة: كيف تؤثر الإضاءة الساطعة غير المتوازنة على إفراز هرمون الميلاتونين والتركيز؟",
-        "📚 تحدي التصنيف المفاهيمي: قسّم أصعب درس درسته اليوم إلى ثلاثة أجزاء: الأساسيات، التفاصيل، والاستثناءات.",
-        "🎯 تحدي التنبؤ الذاتي: بناءً على رصيدك المعرفي الحالي، ما هي النقطة التي قد تجعلك تخطئ في الامتحان القادم وتجنبها الآن؟",
-        "🌉 تحدي الربط المجازي: شبّه ظاهرة علمية أو رياضية درستها اليوم بظاهرة تحدث في الشارع أو الطبيعة.",
-        "📵 تحدي العزل الرقمي: تخيل أنك بلا هاتف ليوم كامل، كيف ستستغل ساعات الفراغ في تثبيت معلوماتك؟",
-        "⚡ تحدي سرعة الاستيعاب: اقرأ فقرة صعبة في دقيقتين ثم لخصها في سطر واحد يشتمل على الخلاصة المطلقة.",
-        "🚀 تحدي مقاومة التسويف: اذكر السبب الخفي خلف تأجيلك للمهام الصعبة وكيف تكسر حاجز الخوف منها بخطوة واحدة.",
-        "🛌 تحدي الاستشفاء الذهني: ما هو التمرين الرياضي أو التنفسي الخفيف الذي يعيد تفعيل دورتك الدموية خلال 3 دقائق راحة؟",
-        "📖 تحدي التفكير النقدي: هل القراءة التكرارية الصامتة مجدية علمياً؟ فسر لماذا تفشل غالباً مقارنة بالاسترجاع النشط.",
-        "💨 تحدي استهلاك الأكسجين: لماذا يسبب الجلوس في غرفة مغلقة خمولاً ذهنياً حاداً؟ وما العلاقة بتدفق الدم المؤكسج؟",
-        "📋 تحدي الجاهزية الشاملة: ضع خطة طوارئ مدتها 10 دقائق لمراجعة ليلة الامتحان لأهم فصول المادة."
-    ]
-    
-    if st.button("🎲 اسحب 3 تحديات عشوائية فريدة الآن"):
-        selected_challenges = random.sample(all_challenges, 3)
-        for idx, ch in enumerate(selected_challenges, 1):
-            st.warning(f"**التحدي الفرعي #{idx}:** {ch}")
-            
-    st.markdown("---")
-    st.success("🏆 مسجل مسار الانتصارات الذهنية: تتبع استمرارك بالتحديات يرفع ثقتك المعرفية بنسبة 35%!")
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab6:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("📋 خطة المذاكرة الشخصية ومحطة النصائح الذكية المتغيرة")
-    
-    exam_readiness = min(100, int((percentage_equivalent + mental_battery_index) / 2))
-    
-    # مولد النصائح الديناميكية المتغيرة حسب المعايير الحالية
-    dynamic_tips = []
-    if sleep_hours < 7.0:
-        dynamic_tips.append("⚠️ **تنبيه النوم:** عجز النوم لديك يؤثر على الذاكرة العاملة، احرص على النوم مبكراً اليوم لتعويض الاستشفاء.")
-    else:
-        dynamic_tips.append("✨ **استشفاء ممتاز:** عدد ساعات نومك يدعم شبكات الدماغ العليا بامتياز.")
-        
-    if stress_level > 8:
-        dynamic_tips.append("⚠️ **تنبيه التوتر:** مستوى التوتر مرتفع، جرب تمارين التنفس العميق لمدة دقيقتين قبل الشروع في الدراسة.")
-    else:
-        dynamic_tips.append("⚖️ **اتزان نفسي:** مستويات التوتر ضمن النطاق المسيطر عليه.")
-        
-    if hydration_level < 8:
-        dynamic_tips.append("💧 **تنبيه الترطيب:** مستوى الماء منخفض، اشرب كوباً كبيراً من الماء الآن لتنشيط سرعة النواقل العصبية.")
-    else:
-        dynamic_tips.append("💧 **ترطيب جيد:** مستويات الترطيب داعمة ممتازة لليقظة والتركيز.")
-
-    report_lines = [
-        f"• **رصيدك التحليلي الإجمالي:** **{final_score_500:.1f} / 500 نقطة** (النسبة المعيارية: **{percentage_equivalent:.2f}%**)",
-        f"• **مؤشر جاهزية الامتحانات الشامل:** **{exam_readiness}%**",
-        f"• **ساعات النوم المسجلة:** {sleep_hours} ساعات (جودة الاستشفاء {sleep_quality}/15)",
-        f"• **ساعات التركيز النقي:** {deep_focus} ساعات صافية خالية من المشتتات",
-        f"• **التوصية الخاصة لك:** نظراً لأن ذروتك الحيوية في **{chronotype}**، احرص على استغلال وقت الصباح المبكر للمادة الصعبة لتضمن أعلى حصيلة معرفية دون إرهاق."
-    ]
-    
-    st.markdown("### 💡 نصائح النظام الذكية المتغيرة حسب حالتك:")
-    for tip in dynamic_tips:
-        st.info(tip)
-        
-    st.markdown("---")
-    st.markdown("### 📑 تقرير الجاهزية الشامل:")
-    st.markdown("\n\n".join(report_lines))
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-with tab7:
-    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🏛️ منصة الحكام والملخص العلمي الشامل")
-    st.markdown("""
-    * **فلسفة المشروع وغايته:** يستكشف هذا النظام حدود وميكانيزمات اكتشاف المعرفة الإنسانية وتحسين التحصيل الأكاديمي، تزامناً مع الآية الكريمة: **«وَعلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ»**.
-    * **أهداف المشروع الرئيسية:**
-      1. توفير أداة رقمية تفاعلية تعتمد على قياسات دقيقة من 15 لمعايير النوم، التركيز النقي، والبيئة المحيطة.
-      2. التنبؤ بالتحصيل المعرفي بدقة عبر خوارزمية قياسية من 500 نقطة لتجنب العشوائية والتقلبات.
-      3. تقديم حلول علاجية واختبارية فورية (مثل بنك التحديات ومحطة الأسئلة التكيفية) لتعزيز الذاكرة بعيدة المدى.
-    * **إمكانات التطوير المستقبلي:**
-      * إمكانية ربط النظام بساعات ذكية وأجهزة قياس حيوية لقراءة النوم ونبض القلب تلقائياً.
-      * توسيع نطاق الخوارزمية لتشمل قواعد بيانات ذكاء اصطناعي متقدمة تتعلم من أنماط آلاف الطلاب.
-      * تطوير تطبيق هاتف محمول مدمج مع نظام إشعارات ذكي لجدولة أوقات الاستراحة والترطيب.
-    """)
-    st.success("✨ هذا المشروع يمثل حلقة وصل حقيقية بين العلوم العصبية السلوكية والتكنولوجيا الحديثة لخدمة العملية التعليمية بكل كفاءة واقتدار.")
-    st.markdown('</div>', unsafe_allow_html=True)
-
+# Footer
 st.write("---")
-st.caption("النظام التحليلي المتطور — مشروع معرض العلوم المتقدم (الصف العاشر).")
+st.caption("النظام التحليلي المتطور v2 — جاهز كلياً لرفعه على GitHub ومنافسة المعارض العلمية.")

@@ -124,6 +124,77 @@ def _decid(seed, pal, sky, gnd, bark, fc=None, sun="#fff", sx=470, glow=False, s
     return _scene(sky, gnd, body, sun, bark, sx)
 
 
+# ---------- شجرة الساكورا الجديدة ----------
+FL = ('<defs><g id="f5">' + "".join(f'<ellipse cx="0" cy="-9" rx="5.5" ry="9" transform="rotate({a})"/>' for a in range(0, 360, 72)) + '<circle r="2.6" fill="#e0457b"/></g></defs>')
+
+
+def _limb(p0, c1, c2, p1, w0, w1, n=18):
+    L, R, pts = [], [], []
+    for i in range(n + 1):
+        t = i / n
+        u = 1 - t
+        x = u**3 * p0[0] + 3 * u * u * t * c1[0] + 3 * u * t * t * c2[0] + t**3 * p1[0]
+        y = u**3 * p0[1] + 3 * u * u * t * c1[1] + 3 * u * t * t * c2[1] + t**3 * p1[1]
+        dx = 3 * u * u * (c1[0] - p0[0]) + 6 * u * t * (c2[0] - c1[0]) + 3 * t * t * (p1[0] - c2[0])
+        dy = 3 * u * u * (c1[1] - p0[1]) + 6 * u * t * (c2[1] - c1[1]) + 3 * t * t * (p1[1] - c2[1])
+        m = math.hypot(dx, dy) or 1
+        w = (w0 + (w1 - w0) * t) / 2
+        L.append((x - dy / m * w, y + dx / m * w))
+        R.append((x + dy / m * w, y - dx / m * w))
+        pts.append((x, y, math.atan2(dy, dx)))
+    return "M" + "L".join(f"{x:.1f} {y:.1f}" for x, y in L + R[::-1]) + "Z", pts
+
+
+def _sakura():
+    rng = random.Random(12)
+    limbs = [((280, 458), (268, 385), (322, 340), (296, 268), 46, 26),
+             ((296, 292), (268, 255), (205, 246), (148, 192), 22, 7),
+             ((298, 300), (340, 252), (412, 262), (462, 198), 22, 7),
+             ((297, 272), (296, 222), (326, 182), (312, 118), 17, 6),
+             ((288, 352), (250, 336), (198, 348), (146, 322), 14, 6),
+             ((300, 342), (352, 330), (402, 342), (446, 308), 14, 6)]
+    trunk, ticks, crown, anchors = "", "", "", []
+    for k, (p0, c1, c2, p1, w0, w1) in enumerate(limbs):
+        d, pts = _limb(p0, c1, c2, p1, w0, w1)
+        if k == 0:
+            trunk = d
+            ticks = "".join(f"M{x-7:.0f} {y:.0f}q6 -3 13 0" for x, y, _ in pts[2:-2:2])
+            continue
+        crown += f'<path d="{d}"/>'
+        anchors += [pts[-1][:2], pts[9][:2]]
+        for j in (7, 10, 13):
+            bx, by, a = pts[j]
+            for sg in (-1, 1):
+                ta, ln = a + sg * rng.uniform(.5, 1.0), rng.uniform(30, 55)
+                ca, sa = math.cos(ta), math.sin(ta)
+                dd, pp = _limb((bx, by), (bx + ln * .3 * ca, by + ln * .3 * sa - 6), (bx + ln * .7 * ca, by + ln * .7 * sa - 10),
+                               (bx + ln * ca, by + ln * sa - 8), 5, 1.5, 8)
+                crown += f'<path d="{dd}"/>'
+                anchors.append(pp[-1][:2])
+    reg = [([], [], []) for _ in range(3)]
+    for x, y in anchors:
+        B, M, F = reg[0 if x < 250 else 1 if x < 350 else 2]
+        for _ in range(3):
+            B.append(f'<circle cx="{x+rng.uniform(-24, 24):.0f}" cy="{y+rng.uniform(-22, 18):.0f}" r="{rng.uniform(16, 28):.0f}" fill="#f06aa4" opacity=".4"/>')
+        for _ in range(5):
+            M.append(f'<circle cx="{x+rng.uniform(-28, 28):.0f}" cy="{y+rng.uniform(-26, 22):.0f}" r="{rng.uniform(9, 16):.0f}" '
+                     f'fill="{rng.choice(["#f9a8d4", "#fbcfe8", "#f472b6", "#fda4cf"])}" opacity=".92"/>')
+        for _ in range(3):
+            F.append(f'<use href="#f5" fill="{rng.choice(["#fff1f6", "#ffe0ec", "#ffc2dc"])}" '
+                     f'transform="translate({x+rng.uniform(-30, 30):.0f} {y+rng.uniform(-28, 24):.0f}) rotate({rng.uniform(0, 72):.0f}) scale({rng.uniform(.5, .8):.2f})"/>')
+    blossoms = "".join(f'<g class="sw" style="--d:{5+k*1.3:.1f}s;--l:-{k*1.7:.1f}s">{"".join(B)}{"".join(M)}{"".join(F)}</g>' for k, (B, M, F) in enumerate(reg))
+    bokeh = '<g class="tw" filter="url(#soft)">' + "".join(
+        f'<circle cx="{rng.uniform(40, 560):.0f}" cy="{rng.uniform(40, 300):.0f}" r="{rng.uniform(8, 22):.0f}" fill="#ffc2dc" opacity=".5"/>' for _ in range(9)) + "</g>"
+    ground = "".join(
+        f'<ellipse cx="{rng.uniform(150, 450):.0f}" cy="{rng.uniform(450, 478):.0f}" rx="{rng.uniform(2.5, 5):.1f}" ry="2" fill="{rng.choice(["#fbcfe8", "#f9a8d4", "#fff1f6"])}" opacity=".85"/>' for _ in range(45))
+    body = (FL + bokeh + ground + f'<path d="{trunk}" fill="url(#bk)" filter="url(#bark)"/>'
+            f'<path d="{ticks}" stroke="#e8d6cf" stroke-opacity=".45" stroke-width="1.6" fill="none" stroke-linecap="round"/>'
+            f'<g class="sw" style="--d:8s;transform-box:view-box;transform-origin:300px 300px"><g fill="url(#bk)">{crown}</g>{blossoms}</g>'
+            + _fall(rng, 26, ["#fbcfe8", "#f9a8d4", "#fff1f6"], (3.5, 7), (40, 300)))
+    return _scene(("#ffe1ea", "#fff8fa"), ("#cfeacb", "#9fd193"), body, "#ffd6e3", ("#3a2a28", "#7a5a52", "#2a1c1a"))
+
+
+# ---------- باقي الأشجار ----------
 def _pine():
     rng = random.Random(5)
     o = '<rect x="288" y="350" width="26" height="112" fill="url(#bk)" filter="url(#bark)"/>'
@@ -258,8 +329,7 @@ def get_tree_svg(active):
     """يعيد كود SVG + CSS كاملاً للشجرة المفعّلة."""
     a = active
     if "الساكورا" in a:
-        return _decid(11, ("#c2457e", ["#f472b6", "#f9a8d4", "#fbcfe8", "#ec4899"], "#fff5f8"), ("#ffe1ea", "#fff8fa"), ("#cfeacb", "#9fd193"),
-                      ("#2b160c", "#6a3f27", "#24120a"), ["#fbcfe8", "#f9a8d4", "#fff1f2"], "#ffd6e3")
+        return _sakura()
     if "الصنوبر" in a:
         return _pine()
     if "الفطر" in a:
@@ -283,6 +353,81 @@ def get_tree_svg(active):
 
 
 # ==========================================
+# 0.5 محرك التحليل الدقيق والمهام
+# ==========================================
+SNACK_OPTS = [
+    "🍏 وجبة ذكية خفيفة (مكسرات، فواكه، زبادي)",
+    "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسماك)",
+    "🍝 وجبة غداء ثقيلة/كاربوهيدرات (رز، معكرونة، وجبات سريعة)",
+    "🍩 سكريات ومشروبات طاقة (حلويات، عصائر مصنعة)",
+    "☕ معتمدة على الكافيين فقط (قهوة/شاي بدون طعام)",
+    "🌙 صائم / لم أتناول وجبة"
+]
+METHOD_OPTS = [
+    "التسجيل النشط والخرائط الذهنية",
+    "حل المسائل والتطبيقات العملية",
+    "القراءة التكرارية الصامتة"
+]
+PHONE_OPTS = [
+    "مفصول تماماً في غرفة ثانية",
+    "قريب بصامت ومقلوب",
+    "في اليد أو بجانب الكتاب"
+]
+SNACK = [90, 95, 45, 35, 40, 30]
+METHOD = [100, 95, 60]
+PHONE = [100, 60, 20]
+
+
+def _c(v):
+    return max(0.0, min(100.0, v))
+
+
+def analyze(sh, sq, scr, ts, df, temp, ot, stress, mo, hy, snack, method, phone):
+    dur = 100 if 7 <= sh <= 9 else 100 - (7 - sh if sh < 7 else sh - 9) * 25
+    sleep = _c(.55 * dur + .45 * sq / 15 * 100)
+    df = min(df, ts)
+    focus = _c(.6 * df / ts * 100 + .4 * min(df / 4, 1) * 100)
+    eyes = _c(100 - max(0, scr - 2) * 9)
+    tmp = _c(100 if 21 <= temp <= 24 else 100 - (21 - temp if temp < 21 else temp - 24) * 12)
+    ph = PHONE[PHONE_OPTS.index(phone)]
+    env = _c(.4 * tmp + .4 * ph + .2 * eyes)
+    mind = _c(100 - ot / 120 * 55 - (stress - 1) / 14 * 45)
+    sn = SNACK[SNACK_OPTS.index(snack)]
+    energy = _c(.4 * (mo - 1) / 14 * 100 + .25 * (hy - 1) / 14 * 100 + .35 * sn)
+    meth = METHOD[METHOD_OPTS.index(method)]
+    total = (.25 * sleep + .25 * focus + .15 * energy + .15 * mind + .10 * env + .10 * meth) * 5
+    goals = [
+        ("😴 نوم 7 ساعات أو أكثر", sh >= 7),
+        ("🎯 تركيز نقي 3 ساعات أو أكثر", df >= 3),
+        ("📵 الهاتف مفصول تماماً", ph == 100),
+        ("💧 ترطيب 10 من 15 أو أكثر", hy >= 10),
+        ("🌀 تفكير زائد 30 دقيقة أو أقل", ot <= 30),
+        ("📱 شاشة 5 ساعات أو أقل", scr <= 5),
+    ]
+    return dict(sleep=sleep, focus=focus, eyes=eyes, temp=tmp, phone=ph, env=env, mind=mind,
+                energy=energy, snack=sn, method=meth, total=total, goals=goals)
+
+
+def grade(v):
+    return "ممتاز 🌟" if v >= 85 else "جيد جداً ✅" if v >= 70 else "متوسط ⚠️" if v >= 55 else "يحتاج تحسين 🔴"
+
+
+def show_metrics(items, ncols=2):
+    cols = st.columns(ncols)
+    for i, (name, v) in enumerate(items):
+        cols[i % ncols].metric(name, f"{v:.1f}%")
+        cols[i % ncols].progress(int(round(v)))
+
+
+def show_tips(tips, ok_msg):
+    if tips:
+        for t in tips:
+            st.warning(t)
+    else:
+        st.success(ok_msg)
+
+
+# ==========================================
 # 1. إعدادات الصفحة والتصميم العصري
 # ==========================================
 st.set_page_config(
@@ -299,7 +444,10 @@ if "mind_dump" not in st.session_state:
     st.session_state.mind_dump = []
 
 if "user_points" not in st.session_state:
-    st.session_state.user_points = 150
+    st.session_state.user_points = 100
+
+if "last_sig" not in st.session_state:
+    st.session_state.last_sig = None
 
 if "unlocked_trees" not in st.session_state:
     st.session_state.unlocked_trees = ["🌸 شجرة الساكورا اليابانية الساحرة"]
@@ -386,55 +534,59 @@ st.markdown("""
 with st.sidebar.form(key="main_form"):
     st.markdown("### 🎛️ لوحة القياسات الحيوية")
     st.caption("أدخل بياناتك ثم اضغط (إرسال وتحليل) للحفظ والتقييم")
-    
-    sleep_hours = st.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.5)
+
+    sleep_hours = st.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.25)
     sleep_quality = st.slider("✨ جودة النوم الاستشفائي (1-15)", 1, 15, 12)
-    screen_hours = st.slider("📱/🖥️ ساعات الشاشة (الإجهاد البصري)", 1.0, 14.0, 4.5, 0.5)
-    
-    total_study = st.slider("⏱️ إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.5)
-    deep_focus = st.slider("🎯 ساعات التركيز النقي الصافي", 0.5, 12.0, 3.5, 0.5)
-    
-    room_temp = st.slider("🌡️ حرارة الغرفة (مئوية)", 16, 32, 23)
-    overthinking_mins = st.slider("🌀 دقائق التفكير الزائد والقلق", 0, 120, 20, 5)
-    
+    screen_hours = st.slider("📱/🖥️ ساعات الشاشة (الإجهاد البصري)", 1.0, 14.0, 4.5, 0.25)
+
+    total_study = st.slider("⏱️ إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.25)
+    deep_focus = st.slider("🎯 ساعات التركيز النقي الصافي", 0.5, 12.0, 3.5, 0.25)
+
+    room_temp = st.slider("🌡️ حرارة الغرفة (مئوية)", 16.0, 32.0, 23.0, 0.5)
+    overthinking_mins = st.slider("🌀 دقائق التفكير الزائد والقلق", 0, 120, 20, 1)
+
     stress_level = st.slider("⚠️ مستوى التوتر العصبي (1-15)", 1, 15, 5)
     motivation_level = st.slider("🔥 الدافعية والحماس (1-15)", 1, 15, 12)
     hydration_level = st.slider("💧 مستوى ترطيب الجسم (1-15)", 1, 15, 11)
-    
-    snack_type = st.selectbox("🍱 نوع الوجبة الخفيفة قبل المذاكرة", [
-        "🍏 وجبة ذكية خفيفة (مكسرات، فواكه، زبادي)",
-        "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسماك)",
-        "🍝 وجبة غداء ثقيلة/كاربوهيدرات (رز، معكرونة، وجبات سريعة)",
-        "🍩 سكريات ومشروبات طاقة (حلويات، عصائر مصنعة)",
-        "☕ معتمدة على الكافيين فقط (قهوة/شاي بدون طعام)",
-        "🌙 صائم / لم أتناول وجبة"
-    ])
-    
-    study_method = st.selectbox("📚 أسلوب المذاكرة الأساسي", [
-        "التسجيل النشط والخرائط الذهنية",
-        "حل المسائل والتطبيقات العملية",
-        "القراءة التكرارية الصامتة"
-    ])
-    
-    phone_isolation = st.selectbox("📵 عزل الهاتف الخلوي", [
-        "مفصول تماماً في غرفة ثانية",
-        "قريب بصامت ومقلوب",
-        "في اليد أو بجانب الكتاب"
-    ])
+
+    snack_type = st.selectbox("🍱 نوع الوجبة الخفيفة قبل المذاكرة", SNACK_OPTS)
+    study_method = st.selectbox("📚 أسلوب المذاكرة الأساسي", METHOD_OPTS)
+    phone_isolation = st.selectbox("📵 عزل الهاتف الخلوي", PHONE_OPTS)
 
     submit_btn = st.form_submit_button(label="🚀 إرسال وتحليل البيانات")
 
+# التحليل الدقيق للقيم الحالية
+R = analyze(sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
+            overthinking_mins, stress_level, motivation_level, hydration_level,
+            snack_type, study_method, phone_isolation)
+
 if submit_btn:
-    st.session_state.user_points += 25
-    st.success("✅ تم حفظ التحليل واكتسبت +25 نقطة إضافية في رصيدك!")
+    sig = (sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
+           overthinking_mins, stress_level, motivation_level, hydration_level,
+           snack_type, study_method, phone_isolation)
+    if deep_focus > total_study:
+        st.warning("⚠️ ساعات التركيز النقي لا يمكن أن تزيد عن إجمالي ساعات التواجد الدراسي. صحّح القيم ثم أعد الإرسال.")
+    elif sig == st.session_state.last_sig:
+        st.info("ℹ️ هذه نفس البيانات السابقة. غيّر بعض القيم لتحصل على نقاط جديدة.")
+    else:
+        done = sum(1 for _, ok in R["goals"] if ok)
+        base = round(R["total"] / 500 * 60)
+        perfect = 40 if done == len(R["goals"]) else 0
+        gain = base + 15 * done + perfect
+        st.session_state.user_points += gain
+        st.session_state.last_sig = sig
+        st.session_state.history.append({"الدرجة": round(R["total"], 1), "النقاط": gain})
+        msg = f"✅ تم حفظ التحليل واكتسبت +{gain} نقطة (التحليل {base} + المهام {done}×15"
+        msg += f" + مكافأة اليوم المثالي {perfect})" if perfect else ")"
+        st.success(msg)
 
 # ==========================================
 # 3. التبويبات الرئيسية
 # ==========================================
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📊 المؤشرات والموجز", 
-    "🌿 البيئة والاستشفاء", 
-    "⚡ الطاقة والتحفيز", 
+    "📊 المؤشرات والموجز",
+    "🌿 البيئة والاستشفاء",
+    "⚡ الطاقة والتحفيز",
     "🧠 التحليل والتفريغ",
     "🌳 معارض الأشجار الواقعية",
     "🏛️ منصة الحكام والاستثمار"
@@ -444,30 +596,74 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
 with tab1:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
-    st.metric("النتيجة المعيارية الإجمالية", "460 / 500 نقطة")
-    st.progress(92)
-    st.success("🌟 أداء استثنائي وتوازن مثالي في القدرات العصبية.")
+    st.metric("النتيجة المعيارية الإجمالية", f"{R['total']:.1f} / 500 نقطة", delta=grade(R["total"]), delta_color="off")
+    st.progress(int(round(R["total"] / 5)))
+    show_metrics([
+        ("😴 النوم", R["sleep"]), ("🎯 التركيز", R["focus"]), ("⚡ الطاقة", R["energy"]),
+        ("🧠 الصفاء الذهني", R["mind"]), ("🌿 البيئة", R["env"]), ("📚 أسلوب المذاكرة", R["method"])
+    ], 3)
+    st.markdown("#### 🎯 مهام اليوم (كل مهمة منجزة = +15 نقطة)")
+    for name, ok in R["goals"]:
+        st.write(("✅ " if ok else "⬜ ") + name)
+    if len(st.session_state.history) > 1:
+        st.markdown("#### 📈 تطور درجتك مع كل تحليل")
+        st.line_chart(pd.DataFrame(st.session_state.history)["الدرجة"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 2: البيئة والاستشفاء ---
 with tab2:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🌿 تحليل البيئة العصبية")
-    st.success("🍃 ظروف الإضاءة والحرارة والتهوية مثالية للتركيز.")
+    show_metrics([
+        ("😴 جودة الاستشفاء (النوم)", R["sleep"]), ("🌡️ ملاءمة حرارة الغرفة", R["temp"]),
+        ("📵 عزل الهاتف", R["phone"]), ("👁️ راحة العين", R["eyes"])
+    ])
+    tips = []
+    if sleep_hours < 7 or sleep_hours > 9:
+        tips.append(f"😴 نومك {sleep_hours:g} ساعة، والمدى المثالي من 7 إلى 9 ساعات.")
+    if not 21 <= room_temp <= 24:
+        tips.append(f"🌡️ حرارة الغرفة {room_temp:g}°م، والمثالي بين 21 و24°م.")
+    if phone_isolation != PHONE_OPTS[0]:
+        tips.append("📵 الهاتف قريب منك، وفصله في غرفة ثانية يرفع التركيز بوضوح.")
+    if screen_hours > 5:
+        tips.append(f"📱 ساعات الشاشة {screen_hours:g}، حاول خفضها إلى 5 ساعات أو أقل مع استراحات للعين.")
+    show_tips(tips, "🍃 ظروف النوم والإضاءة والحرارة والتهوية ضمن المدى المثالي للتركيز.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 3: الطاقة والتحفيز ---
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("⚡ محرك الطاقة المعرفية")
-    st.info("⚡ سرعة الاستجابة العصبية في أعلى مستوياتها.")
+    show_metrics([
+        ("⚡ مؤشر الطاقة الكلي", R["energy"]), ("🔥 الدافعية", (motivation_level - 1) / 14 * 100),
+        ("💧 الترطيب", (hydration_level - 1) / 14 * 100), ("🍱 جودة الوجبة", R["snack"])
+    ])
+    tips = []
+    if hydration_level < 8:
+        tips.append("💧 مستوى الترطيب منخفض، اشرب كوب ماء قبل المذاكرة وخلالها.")
+    if motivation_level < 8:
+        tips.append("🔥 الدافعية منخفضة، ابدأ بمهمة صغيرة سهلة لتكسر الجمود.")
+    if R["snack"] < 50:
+        tips.append("🍱 وجبتك الحالية ضعيفة للتركيز، استبدلها بمكسرات أو فواكه أو بروتين.")
+    show_tips(tips, "⚡ طاقتك وترطيبك ودافعيتك في مستوى ممتاز.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 4: التحليل والتفريغ ---
 with tab4:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🧠 التفريغ الذهني")
-    st.success("🗑️ الذاكرة المؤقتة منقية وصافية تماماً.")
+    show_metrics([
+        ("🧠 الصفاء الذهني الكلي", R["mind"]),
+        ("🌀 هدوء التفكير", 100 - overthinking_mins / 120 * 100),
+        ("⚠️ استقرار الأعصاب", 100 - (stress_level - 1) / 14 * 100),
+        ("🎯 كفاءة التركيز", R["focus"])
+    ])
+    tips = []
+    if overthinking_mins > 30:
+        tips.append(f"🌀 {overthinking_mins} دقيقة من التفكير الزائد، دوّن أفكارك على ورقة لتفرغها من ذهنك.")
+    if stress_level > 8:
+        tips.append("⚠️ التوتر مرتفع، جرّب تنفساً عميقاً لدقيقتين قبل المذاكرة.")
+    show_tips(tips, "🗑️ الذاكرة المؤقتة منقّاة والتفكير الزائد ضمن الحدود الطبيعية.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
@@ -493,18 +689,19 @@ with tab5:
     st.markdown("---")
     st.markdown("### 🛒 متجر الـ 10 أشجار الواقعية والأيقونية")
     st.write(f"رصيد نقاطك الحالي: **{st.session_state.user_points} نقطة** 🪙")
+    st.caption("💡 تكسب في كل تحليل جديد حتى 60 نقطة حسب درجتك، و15 نقطة لكل مهمة منجزة، و40 نقطة مكافأة اليوم المثالي.")
 
     trees_catalog = [
         {"name": "🌸 شجرة الساكورا اليابانية الساحرة", "price": 0, "env": "بيئة ربيعية زهرية"},
-        {"name": "🌲 شجرة الصنوبر الثلجية", "price": 40, "env": "بيئة جبلية شتوية"},
-        {"name": "🍄 شجرة الفطر الساحرة", "price": 70, "env": "بيئة غامضة مضيئة"},
-        {"name": "🌴 شجرة النخيل الاستوائية", "price": 100, "env": "بيئة واحة مشمسة"},
-        {"name": "🍁 شجرة القيقب الخريفية", "price": 130, "env": "بيئة خريفية دافئة"},
-        {"name": "🔮 شجرة الويسترليا البنفسجية", "price": 160, "env": "بيئة أرجوانية ساحرة"},
-        {"name": "💎 شجرة الكريستال البلورية", "price": 200, "env": "بيئة جليدية مشعة"},
-        {"name": "🌿 شجرة البنساي العتيقة", "price": 240, "env": "بيئة صخرية يابانية"},
-        {"name": "🎋 غابة البامبو الآسيوية", "price": 280, "env": "بيئة غابة هادئة"},
-        {"name": "🔥 شجرة العنقاء النارية", "price": 350, "env": "بيئة طاقة أسطورية"}
+        {"name": "🌲 شجرة الصنوبر الثلجية", "price": 250, "env": "بيئة جبلية شتوية"},
+        {"name": "🍄 شجرة الفطر الساحرة", "price": 500, "env": "بيئة غامضة مضيئة"},
+        {"name": "🌴 شجرة النخيل الاستوائية", "price": 800, "env": "بيئة واحة مشمسة"},
+        {"name": "🍁 شجرة القيقب الخريفية", "price": 1200, "env": "بيئة خريفية دافئة"},
+        {"name": "🔮 شجرة الويسترليا البنفسجية", "price": 1700, "env": "بيئة أرجوانية ساحرة"},
+        {"name": "💎 شجرة الكريستال البلورية", "price": 2300, "env": "بيئة جليدية مشعة"},
+        {"name": "🌿 شجرة البنساي العتيقة", "price": 3000, "env": "بيئة صخرية يابانية"},
+        {"name": "🎋 غابة البامبو الآسيوية", "price": 3800, "env": "بيئة غابة هادئة"},
+        {"name": "🔥 شجرة العنقاء النارية", "price": 5000, "env": "بيئة طاقة أسطورية"}
     ]
 
     cols_shop = st.columns(3)
@@ -512,7 +709,7 @@ with tab5:
         with cols_shop[idx % 3]:
             st.markdown(f"**{t['name']}**")
             st.caption(f"🌍 {t['env']}")
-            
+
             is_unlocked = t['name'] in st.session_state.unlocked_trees
             if is_unlocked:
                 if active == t['name']:
@@ -522,6 +719,8 @@ with tab5:
                         st.session_state.active_tree = t['name']
                         st.rerun()
             else:
+                missing = max(0, t['price'] - st.session_state.user_points)
+                st.caption(f"🔒 تحتاج {missing} نقطة إضافية" if missing else "🔓 رصيدك يكفي لشرائها")
                 if st.button(f"شراء ({t['price']} ن)", key=f"buy_{idx}"):
                     if st.session_state.user_points >= t['price']:
                         st.session_state.user_points -= t['price']
@@ -540,7 +739,7 @@ with tab5:
 with tab6:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🏛️ منطقة الحكام والاستثمار")
-    
+
     st.markdown("""
     ### 📌 نبذة سريعة عن المشروع:
     نظام ذكي متكامل لقياس وتحليل الأنماط المعرفية والبيئية للطلاب، يدمج بين علم النفس العصبي والتفاعل البصري المتقدم لتعزيز التحصيل الدراسي.

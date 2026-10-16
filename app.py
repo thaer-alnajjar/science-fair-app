@@ -24,12 +24,12 @@ if "user_points" not in st.session_state:
     st.session_state.user_points = 50
 
 if "unlocked_trees" not in st.session_state:
-    st.session_state.unlocked_trees = ["🌳 شجرة البلوط الخضراء"]
+    st.session_state.unlocked_trees = ["🌳 شجرة البلوط الخضراء الضخمة"]
 
 if "active_tree" not in st.session_state:
-    st.session_state.active_tree = "🌳 شجرة البلوط الخضراء"
+    st.session_state.active_tree = "🌳 شجرة البلوط الخضراء الضخمة"
 
-# CSS للأنيميشن السينمائي والتصميم النظيف
+# CSS للأنيميشن السينمائي المتقدم وتفاصيل الشجرة الكرتونية الضخمة
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -79,104 +79,138 @@ st.markdown("""
     }
 
     /* ==========================================
-       الأنيميشن ورسم الشجرة السينمائية الكرتونية
+       المسرح السينمائي وتفاصيل الشجرة الكرتونية الضخمة
        ========================================== */
     .tree-stage {
         position: relative;
         width: 100%;
-        height: 380px;
-        background: linear-gradient(to bottom, #e0f2fe 0%, #f0fdf4 100%);
+        height: 420px;
+        background: linear-gradient(to bottom, #dbeafe 0%, #f0fdf4 100%);
         border-radius: 24px;
         overflow: hidden;
-        border: 3px solid #0891b2;
-        box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+        border: 3px solid #059669;
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.08);
         display: flex;
         justify-content: center;
         align-items: flex-end;
     }
 
-    /* جذع الشجرة السينمائي */
-    .tree-trunk {
+    /* أرضية خضراء كرتونية */
+    .tree-ground {
         position: absolute;
         bottom: 0;
-        width: 50px;
-        height: 180px;
-        background: linear-gradient(to right, #78350f, #451a03);
-        border-radius: 12px 12px 0 0;
+        width: 100%;
+        height: 35px;
+        background: linear-gradient(to top, #15803d, #22c55e);
+        border-radius: 0 0 20px 20px;
+        z-index: 5;
+    }
+
+    /* جذع الشجرة المتعرج والمفصل */
+    .detailed-trunk {
+        position: absolute;
+        bottom: 30px;
+        width: 60px;
+        height: 190px;
+        background: linear-gradient(90deg, #3f2204, #78350f, #451a03);
+        border-radius: 15px 15px 5px 5px;
         z-index: 2;
+        box-shadow: inset -5px 0 15px rgba(0,0,0,0.5);
     }
 
-    /* تفرع أغصان كرتونية */
-    .tree-trunk::before {
-        content: '';
+    /* أغصان جانبية */
+    .branch-l {
         position: absolute;
-        top: 20px;
-        left: -30px;
-        width: 40px;
-        height: 15px;
-        background: #451a03;
-        transform: rotate(-30deg);
+        top: 30px;
+        left: -35px;
+        width: 50px;
+        height: 18px;
+        background: #572506;
+        transform: rotate(-25deg);
         border-radius: 10px;
-    }
-    .tree-trunk::after {
-        content: '';
-        position: absolute;
-        top: 40px;
-        right: -30px;
-        width: 40px;
-        height: 15px;
-        background: #451a03;
-        transform: rotate(30deg);
-        border-radius: 10px;
+        z-index: 1;
     }
 
-    # تاج الأوراق الضخم */
-    .tree-canopy {
+    .branch-r {
         position: absolute;
-        bottom: 120px;
-        width: 260px;
-        height: 220px;
-        border-radius: 50% 50% 45% 45%;
+        top: 50px;
+        right: -35px;
+        width: 50px;
+        height: 18px;
+        background: #572506;
+        transform: rotate(25deg);
+        border-radius: 10px;
+        z-index: 1;
+    }
+
+    /* تاج الأوراق متعدد الطبقات والضخم (Canopy Layers) */
+    .canopy-container {
+        position: absolute;
+        bottom: 130px;
+        width: 320px;
+        height: 240px;
         z-index: 3;
-        animation: sway 4s ease-in-out infinite alternate;
-        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        animation: treeSway 4.5s ease-in-out infinite alternate;
     }
 
-    /* ألوان وأفكار الشجر السينمائي */
-    .theme-oak { background: radial-gradient(circle, #22c55e 0%, #15803d 100%); }
-    .theme-sakura { background: radial-gradient(circle, #f472b6 0%, #db2777 100%); }
-    .theme-pine { background: radial-gradient(circle, #38bdf8 0%, #0369a1 100%); }
-    .theme-gold { background: radial-gradient(circle, #fbbf24 0%, #b45309 100%); }
-    .theme-magic { background: radial-gradient(circle, #c084fc 0%, #6b21a8 100%); }
-    .theme-autumn { background: radial-gradient(circle, #f97316 0%, #c2410c 100%); }
-    .theme-crystal { background: radial-gradient(circle, #22d3ee 0%, #0e7490 100%); }
-
-    /* حرك الاهتزاز الكرتوني للمجموع الورقي */
-    @keyframes sway {
-        0% { transform: rotate(-2deg) scale(1); }
-        100% { transform: rotate(2deg) scale(1.02); }
-    }
-
-    /* تساقط الأوراق السينمائي الخفيف */
-    .leaf-particle {
+    .leaf-blob {
         position: absolute;
-        width: 14px;
-        height: 14px;
-        border-radius: 0 70% 0 70%;
-        opacity: 0.8;
-        animation: fall 5s linear infinite;
+        border-radius: 50%;
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
+    }
+
+    /* طبقات الأوراق المتداخلة لتكوين شجرة كرتونية غنية */
+    .blob-1 { width: 160px; height: 160px; top: 0px; left: 80px; }
+    .blob-2 { width: 140px; height: 140px; top: 40px; left: 15px; }
+    .blob-3 { width: 130px; height: 130px; top: 40px; right: 15px; }
+    .blob-4 { width: 150px; height: 150px; top: 80px; left: 50px; }
+
+    /* أنيميشن الاهتزاز مع الرياح */
+    @keyframes treeSway {
+        0% { transform: rotate(-1.5deg) scale(1); }
+        100% { transform: rotate(1.5deg) scale(1.02); }
+    }
+
+    /* تساقط الأوراق السينمائي الحقيقي والتفصيلي */
+    .falling-leaf {
+        position: absolute;
+        font-size: 18px;
+        animation: leafFall 6s linear infinite;
         z-index: 4;
+        opacity: 0.85;
     }
 
-    .leaf-1 { left: 45%; animation-delay: 0s; background: #86efac; }
-    .leaf-2 { left: 52%; animation-delay: 1.5s; background: #fbcfe8; }
-    .leaf-3 { left: 40%; animation-delay: 3s; background: #fef08a; }
+    .fl-1 { left: 35%; animation-delay: 0s; }
+    .fl-2 { left: 55%; animation-delay: 2s; }
+    .fl-3 { left: 45%; animation-delay: 4s; }
 
-    @keyframes fall {
-        0% { top: 30%; transform: translateX(0) rotate(0deg); opacity: 1; }
-        50% { transform: translateX(25px) rotate(180deg); }
-        100% { top: 90%; transform: translateX(-20px) rotate(360deg); opacity: 0; }
+    @keyframes leafFall {
+        0% { top: 25px; transform: translateX(0) rotate(0deg); opacity: 1; }
+        50% { transform: translateX(30px) rotate(180deg); }
+        100% { top: 350px; transform: translateX(-25px) rotate(360deg); opacity: 0; }
     }
+
+    /* سمات ثيمات الأشجار الـ 7 التفصيلية */
+    /* 1. البلوط الخضراء */
+    .theme-oak .leaf-blob { background: radial-gradient(circle, #4ade80 0%, #16a34a 60%, #15803d 100%); }
+    
+    /* 2. الساكورا الوردية */
+    .theme-sakura .leaf-blob { background: radial-gradient(circle, #fbcfe8 0%, #f472b6 60%, #db2777 100%); }
+    
+    /* 3. الصنوبر الفضية */
+    .theme-pine .leaf-blob { background: radial-gradient(circle, #7dd3fc 0%, #38bdf8 60%, #0369a1 100%); }
+    
+    /* 4. النخيل الذهبية */
+    .theme-gold .leaf-blob { background: radial-gradient(circle, #fde047 0%, #fbbf24 60%, #b45309 100%); }
+    
+    /* 5. البوباب السحرية */
+    .theme-magic .leaf-blob { background: radial-gradient(circle, #e879f9 0%, #c084fc 60%, #6b21a8 100%); }
+    
+    /* 6. القيقب الحمراء */
+    .theme-autumn .leaf-blob { background: radial-gradient(circle, #fdba74 0%, #f97316 60%, #c2410c 100%); }
+    
+    /* 7. الكريستال الزرقاء */
+    .theme-crystal .leaf-blob { background: radial-gradient(circle, #67e8f9 0%, #22d3ee 60%, #0e7490 100%); }
 
     .stButton>button {
         background: #10b981;
@@ -198,7 +232,7 @@ st.markdown("""
 st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة السينمائية المتحركة</div>
+        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة السينمائية المتحركة مفصلة الرسوم</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -300,7 +334,7 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🌿 البيئة والاستشفاء", 
     "⚡ الطاقة والتحفيز", 
     "🧠 التحليل والتفريغ",
-    "🌳 الشجرة السينمائية والمتجر"
+    "🌳 الشجرة السينمائية المتحركة"
 ])
 
 total_entries = len(st.session_state.history)
@@ -397,62 +431,85 @@ with tab4:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
-# --- TAB 5: الشجرة السينمائية المتحركة والمتجر الخفيف ---
+# --- TAB 5: الشجرة السينمائية المتحركة مفصلة الرسوم والمتجر ---
 # ==========================================
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🌳 الشجرة السينمائية الحية")
+    st.subheader("🌳 الشجرة السينمائية الحية مفصلة الأوراق والجذع")
 
-    # تحديد كلاس المظهر بناءً على الشجرة المحددة
+    # تحديد سمة الثيم وتحديد الميزة لكل شجرة
     theme_class = "theme-oak"
     tree_perk = "ميزة الشجرة: تمنحك +10% ثبات عالي واستقرار في التركيز"
+    leaf_emoji = "🍃"
     
-    if "الكرز" in st.session_state.active_tree:
+    if "الساكورا" in st.session_state.active_tree:
         theme_class = "theme-sakura"
-        tree_perk = "ميزة الشجرة: تمنحك +15% سرعة استيعاب وإبداع"
+        tree_perk = "ميزة الشجرة: تمنحك +15% سرعة استيعاب وإبداع بصري"
+        leaf_emoji = "🌸"
     elif "الصنوبر" in st.session_state.active_tree:
         theme_class = "theme-pine"
-        tree_perk = "ميزة الشجرة: تمنحك +20% صمود ومقاومة للتشتت"
+        tree_perk = "ميزة الشجرة: تمنحك +20% صمود ومقاومة للتشتت الرقمي"
+        leaf_emoji = "🌲"
     elif "النخيل" in st.session_state.active_tree:
         theme_class = "theme-gold"
         tree_perk = "ميزة الشجرة: تمنحك +25% طاقة ذهنية متجددة"
+        leaf_emoji = "✨"
     elif "البوباب" in st.session_state.active_tree:
-        tree_perk = "ميزة الشجرة: تمنحك +30% صفاء وذاكرة بعيدة المدى"
         theme_class = "theme-magic"
+        tree_perk = "ميزة الشجرة: تمنحك +30% صفاء وذاكرة بعيدة المدى"
+        leaf_emoji = "🔮"
     elif "القيقب" in st.session_state.active_tree:
         theme_class = "theme-autumn"
-        tree_perk = "ميزة الشجرة: تمنحك +15% هدوء وتقليل للتوتر"
+        tree_perk = "ميزة الشجرة: تمنحك +15% هدوء وتقليل للتوتر العصبي"
+        leaf_emoji = "🍁"
     elif "الكريستال" in st.session_state.active_tree:
         theme_class = "theme-crystal"
-        tree_perk = "ميزة الشجرة: تمنحك +35% أقصى طاقة استيعابية"
+        tree_perk = "ميزة الشجرة: تمنحك +35% أقصى طاقة استيعابية خرافية"
+        leaf_emoji = "💎"
 
-    # عرض المسرح السينمائي للشجرة بالأنيميشن
+    # عرض المسرح السينمائي للشجرة مع طبقات أوراق متداخلة وأغصان وتساقط واقعي
     st.markdown(f"""
-    <div class="tree-stage">
-        <div class="leaf-particle leaf-1"></div>
-        <div class="leaf-particle leaf-2"></div>
-        <div class="leaf-particle leaf-3"></div>
-        <div class="tree-canopy {theme_class}"></div>
-        <div class="tree-trunk"></div>
+    <div class="tree-stage {theme_class}">
+        <!-- تساقط الأوراق السينمائي -->
+        <div class="falling-leaf fl-1">{leaf_emoji}</div>
+        <div class="falling-leaf fl-2">{leaf_emoji}</div>
+        <div class="falling-leaf fl-3">{leaf_emoji}</div>
+        
+        <!-- تاج الأوراق الضخم متعدد الطبقات -->
+        <div class="canopy-container">
+            <div class="leaf-blob blob-1"></div>
+            <div class="leaf-blob blob-2"></div>
+            <div class="leaf-blob blob-3"></div>
+            <div class="leaf-blob blob-4"></div>
+        </div>
+        
+        <!-- الجذع والأغصان المعقدة -->
+        <div class="detailed-trunk">
+            <div class="branch-l"></div>
+            <div class="branch-r"></div>
+        </div>
+        
+        <!-- الأرضية الخضراء -->
+        <div class="tree-ground"></div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"### 🌲 الشجرة الحالية: **{st.session_state.active_tree}**")
+    st.markdown(f"### 🌲 الشجرة المفعلة حالياً: **{st.session_state.active_tree}**")
     st.info(f"✨ **{tree_perk}**")
 
     st.markdown("---")
     
-    # متجر بسيط وخفيف كروت ملمومة
-    st.markdown("### 🛒 متجر الأشجار الخفيف")
+    # متجر بسيط وخفيف وسلس
+    st.markdown("### 🛒 متجر الأشجار السريع")
     st.write(f"رصيد نقاطك الحالي: **{st.session_state.user_points} نقطة** 🪙")
 
     trees_catalog = [
-        {"name": "🌳 شجرة البلوط الخضراء", "price": 0, "perk": "+10% ثبات واستقرار"},
+        {"name": "🌳 شجرة البلوط الخضراء الضخمة", "price": 0, "perk": "+10% ثبات عالي"},
         {"name": "🌸 شجرة الساكورا الوردية", "price": 30, "perk": "+15% سرعة استيعاب"},
         {"name": "🌲 شجرة الصنوبر الفضية", "price": 60, "perk": "+20% مقاومة للتشتت"},
         {"name": "🌴 شجرة النخيل الذهبية", "price": 90, "perk": "+25% طاقة متجددة"},
         {"name": "🔮 شجرة البوباب السحرية", "price": 120, "perk": "+30% صفاء ذهني"},
-        {"name": "🍁 شجرة القيقب الحمراء", "price": 150, "perk": "+15% تقليل للتوتر"},
+        {"name": "🍁 شجرة القيقب الحمراء", "price": 150, "perk": "+15% تقليل التوتر"},
         {"name": "💎 شجرة الكريستال الزرقاء", "price": 200, "perk": "+35% طاقة خرافية"}
     ]
 
@@ -466,9 +523,9 @@ with tab5:
             
             if is_unlocked:
                 if st.session_state.active_tree == t['name']:
-                    st.success("✅ المفعلة")
+                    st.success("✅ الشجرة المفعلة")
                 else:
-                    if st.button("تفعيل", key=f"act_{idx}"):
+                    if st.button("تفعيل الشجرة", key=f"act_{idx}"):
                         st.session_state.active_tree = t['name']
                         st.rerun()
             else:
@@ -477,10 +534,10 @@ with tab5:
                         st.session_state.user_points -= t['price']
                         st.session_state.unlocked_trees.append(t['name'])
                         st.session_state.active_tree = t['name']
-                        st.success("🎉 تم الشراء والتفعيل!")
+                        st.success("🎉 مبروك! تم الشراء والتفعيل بنجاح!")
                         st.rerun()
                     else:
-                        st.error("❌ النقاط غير كافية!")
+                        st.error("❌ عذراً، نقاطك غير كافية للشراء!")
 
     st.markdown('</div>', unsafe_allow_html=True)
 

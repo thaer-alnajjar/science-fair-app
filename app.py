@@ -20,6 +20,12 @@ if "history" not in st.session_state:
 if "mind_dump" not in st.session_state:
     st.session_state.mind_dump = []
 
+if "tree_customization" not in st.session_state:
+    st.session_state.tree_customization = "شجرة بلوط خضراء 🌳"
+
+if "user_points" not in st.session_state:
+    st.session_state.user_points = 120  # رصيد نقاط افتراضي للتخصيص
+
 # CSS لتصميم نظيف واحترافي
 st.markdown("""
     <style>
@@ -62,7 +68,7 @@ st.markdown("""
     .clean-card {
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
-        border-top: 4px solid #3b82f6;
+        border-top: 4px solid #10b981;
         border-radius: 14px;
         padding: 22px;
         margin-bottom: 18px;
@@ -70,7 +76,7 @@ st.markdown("""
     }
 
     .stButton>button {
-        background: #f97316;
+        background: #10b981;
         color: white;
         border-radius: 10px;
         padding: 8px 18px;
@@ -80,7 +86,7 @@ st.markdown("""
     }
     
     .stButton>button:hover {
-        background: #ea580c;
+        background: #059669;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -114,7 +120,6 @@ with st.sidebar.form(key="main_form"):
     motivation_level = st.slider("🔥 الدافعية والحماس (1-15)", 1, 15, 12)
     hydration_level = st.slider("💧 مستوى ترطيب الجسم (1-15)", 1, 15, 11)
     
-    # خيارات الوجبات والأطعمة الموسعة والمفصلة
     snack_type = st.selectbox("🍱 نوع الوجبة الرئيسية/الخفيفة قبل المذاكرة", [
         "🍏 وجبة ذكية خفيفة (مكسرات، فواكه، زبادي)",
         "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسماك)",
@@ -152,7 +157,6 @@ if submit_btn:
     score -= (screen_hours / 14.0) * 20.0
     score -= (overthinking_mins / 120.0) * 20.0
     
-    # تأثير نوع الوجبة على النتيجة والأداء
     if "ذكية" in snack_type or "بالبروتين" in snack_type:
         score += 20.0
     elif "ثقيلة" in snack_type:
@@ -169,6 +173,9 @@ if submit_btn:
         
     final_score = min(max(score, 100.0), 500.0)
     
+    # زيادة رصيد النقاط تلقائياً عند الإرسال الناجح
+    st.session_state.user_points += 15
+
     entry = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
         "score": round(final_score, 1),
@@ -181,16 +188,17 @@ if submit_btn:
         "snack": snack_type
     }
     st.session_state.history.append(entry)
-    st.success("✅ تم حفظ البيانات وتحليلها بنجاح!")
+    st.success("✅ تم حفظ البيانات وتحليلها بنجاح واكتسبت +15 نقطة إنجاز لشجرتك!")
 
 # ==========================================
-# 4. التبويبات الرئيسية (بدون أرقام علوية)
+# 4. التبويبات الرئيسية (شاملة أيقونة الشجرة المستقلة)
 # ==========================================
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 المؤشرات والموجز", 
     "🌿 البيئة والاستشفاء", 
     "⚡ الطاقة والتحفيز", 
-    "🧠 التحليل والتفريغ"
+    "🧠 التحليل والتفريغ",
+    "🌳 شجرة الإنتاجية الحية"
 ])
 
 total_entries = len(st.session_state.history)
@@ -203,15 +211,14 @@ with tab1:
     else:
         latest = st.session_state.history[-1]
         
-        # تنبيهات التطور أو الانخفاض مقارنة بالإدخال السابق
         if total_entries >= 2:
             prev_score = st.session_state.history[-2].get("score", 0)
             curr_score = latest.get("score", 0)
             diff = curr_score - prev_score
             if diff > 0:
-                st.success(f"🎉 **تقدم أسطوري!** ارتفع رصيدك المعرفي بمقدار **+{diff:.1f} نقطة** مقارنة بالمرة السابقة.")
+                st.success(f"🎉 **تقدم أسطوري!** ارتفع رصيدك المعرفي بمقدار **+{diff:.1f} نقطة** وشجرتك زادت إزهاراً.")
             elif diff < 0:
-                st.warning(f"⚠️ **تنبيه انخفاض أداء:** تراجع أدائك بمقدار **{diff:.1f} نقطة**. تحقق من نصائح الاستشفاء والوجبات.")
+                st.warning(f"⚠️ **تنبيه انخفاض أداء:** تراجع أدائك بمقدار **{diff:.1f} نقطة** (تطايرت ورقة من شجرتك).")
             else:
                 st.info("⚖️ أدائك مستقر تماماً ومماثل للجلسة السابقة.")
 
@@ -233,9 +240,8 @@ with tab1:
         with col_b:
             st.subheader("📈 إحصائيات السجل")
             st.write(f"إجمالي الجلسات المسجلة: **{total_entries}**")
-            st.write(f"تاريخ آخر تحليل: **{latest.get('timestamp', 'غير محدد')}**")
+            st.write(f"رصيد نقاط إنجازك: **{st.session_state.user_points} نقطة** 🪙")
 
-        # نظام الموجز التراكمي الذكي (كل 5 إدخالات)
         if total_entries % 5 == 0 and total_entries > 0:
             st.markdown("---")
             st.markdown(f"### 📋 الموجز التراكمي الشامل (تقرير الـ {total_entries} إدخالات)")
@@ -257,12 +263,6 @@ with tab1:
                 
             st.markdown("#### 📊 منحنى التطور المعرفي عبر الإدخالات الخمسة الأخيرة:")
             st.line_chart(df_5.set_index("timestamp")["score"])
-            
-            st.markdown("### 🛠️ خطة التطوير والمكافأة المقترحة:")
-            if chg <= 0:
-                st.error("• **خطة تعديل المسار:** لوحظ تراجع في نقاطك الأخيرة. ابدأ بتغيير نظام وجبتك قبل المذاكرة، وافصل الهاتف تماماً في غرفة ثانية.")
-            else:
-                st.success("• **خطة تعزيز التفوق:** أداؤك متصاعد بامتياز! استمر على طريقة التسجيل النشط وقم بزيادة فترات الاستراحة القصيرة.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -274,7 +274,6 @@ with tab2:
     col_e1, col_e2 = st.columns(2)
     
     with col_e1:
-        # فكرة 1: تتبع معدل التعب البصري المتطور
         st.markdown("#### 👁️ محلل التعب والإجهاد البصري")
         study_medium = st.radio("مصدر المذاكرة الرئيسي اليوم:", ["كتب وأوراق ورقية 📚", "جهاز لوحي / شاشة 🖥️", "خليط بينهما 📱📚"], horizontal=True)
         if total_entries > 0:
@@ -292,7 +291,6 @@ with tab2:
         else:
             st.caption("أدخل بياناتك أولاً لحساب التعب البصري.")
 
-        # فكرة 2: ربط المذاكرة بالمناخ والطقس
         st.markdown("---")
         st.markdown("#### 🌡️ مستشعر مناخ الغرفة ونقاء الهواء")
         if total_entries > 0:
@@ -300,33 +298,13 @@ with tab2:
             temp = latest.get("temp", 23)
             if 20 <= temp <= 23:
                 st.success(f"🌡️ حرارة الغرفة ({temp}°م) هي النطاق الذهبي لعمل خلايا الدماغ بكفاءة 100%.")
-            elif temp > 23:
-                st.warning(f"🌡️ حرارة الغرفة ({temp}°م) مرتفعة نسبياً وقد تزيد تدفق الدم للجلد بدلاً من الدماغ مما يسبب النعاس.")
             else:
-                st.info(f"🌡️ حرارة الغرفة ({temp}°م) منخفضة، تأكد من ارتداء ملابس دافئة لمنع التشتت الجسدي.")
-
-        # فكرة 3: منبه الإيقاع التكيفي لشبكة النوم
-        st.markdown("---")
-        st.markdown("#### ⏰ منبه دورات النوم التكيفي (Sleep Cycles)")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            latest_sleep = latest.get("sleep", 7.5)
-            st.write(f"بناءً على نومك البارحة (**{latest_sleep} ساعة**)، الدورة العصبية المثالية للاستيقاظ غداً هي:")
-            st.info("💡 **الموعد الأول (خفيف):** بعد 6 ساعات (4 دورات نوم كاملة)\n\n💡 **الموعد الثاني (عميق):** بعد 7.5 ساعات (5 دورات نوم كاملة)")
+                st.warning(f"🌡️ حرارة الغرفة ({temp}°م) قد تؤثر على اليقظة.")
 
     with col_e2:
-        # فكرة 6: محلل التهوية والأكسجين
         st.markdown("#### 🚪 محلل أكسجين وتهوية المكان")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            if latest.get("focus", 3.5) >= 3:
-                st.warning("⚠️ **تنبيه نقص الأكسجين المتوقع:** استمرار الجلوس لـ 3 ساعات يقلل أكسجين الغرفة المغلقة. افتح النافذة لمدة 4 دقائق لتجديد نشاطك.")
-            else:
-                st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
-        else:
-            st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
+        st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
 
-        # فكرة 13: سجل الوجبات الخفيفة والأطعمة الموسع
         st.markdown("---")
         st.markdown("#### 🍱 تحليل أثر الطعام على اليقظة والخمول")
         if total_entries > 0:
@@ -334,20 +312,13 @@ with tab2:
             snack_val = latest.get("snack", "وجبة غير مسجلة")
             st.write(f"نوع الوجبة المسجلة: **{snack_val}**")
             if "ثقيلة" in snack_val:
-                st.error("📉 **تنبيه الخمول الغذائي (Food Coma):** الكاربوهيدرات الثقيلة تسحب الدم للمعدة. ينصح بانتظار 45 دقيقة قبل بدء التفكير المعقد.")
-            elif "سكريات" in snack_val:
-                st.warning("⚠️ **تنبيه هبوط السكر المفاجئ:** السكريات تمنحك طاقة سريعة لمدة 20 دقيقة يعقبها هبوط حاد بالتركيز.")
+                st.error("📉 **تنبيه الخمول الغذائي:** الكاربوهيدرات الثقيلة تسحب الدم للمعدة وتسبب النعاس.")
             elif "ذكية" in snack_val or "بالبروتين" in snack_val:
-                st.success("⚡ **طاقة استثنائية:** اختيار ممتاز يمد الدماغ بنواقل عصبية مستقرة طوال جلسة الدراسة.")
+                st.success("⚡ **طاقة استثنائية:** اختيار ممتاز يمد الدماغ بنواقل عصبية مستقرة.")
             else:
-                st.info("☕ **ملاحظة:** الاعتماد على القهوة أو الصيام يحتاج ترطيباً مضاعفاً بالماء لتجنب الصداع.")
+                st.info("☕ حافظ على ترطيب جسمك بالماء باستمرار.")
         else:
             st.caption("أدخل بياناتك أولاً لتحليل الوجبة.")
-
-        # فكرة 14: تنبيه وضعية الجلوس والدورة الدموية
-        st.markdown("---")
-        st.markdown("#### 🦴 فحص استقامة الظهر والوضعية")
-        st.info("💡 **تمرين سريع (10 ثوانٍ):** ارفع كتفيك للأعلى ثم ارجعهما للخلف واشفط بطنك للداخل لتعديل استقامة فقرات ظهرك الآن.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -359,29 +330,11 @@ with tab3:
     col_t1, col_t2 = st.columns(2)
     
     with col_t1:
-        # فكرة 4: شجرة الإنتاجية التفاعلية
-        st.markdown("#### 🌳 شجرة الإنتاجية الافتراضية")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            focus_val = latest.get("focus", 3.5)
-            if focus_val >= 6:
-                st.success("🌳 **شجرة مثمرة بامتياز!** (أنجزت ساعات تركيز خرافية اليوم)")
-            elif focus_val >= 3.5:
-                st.info("🌿 **شجرة خضراء تنمو وتزهر بسعادة.** (مستوى تركيز رائع ومستقر)")
-            else:
-                st.warning("🌱 **نبتة صغيرة تحتاج إلى السقي.** (قم بريّه بساعات تركيز إضافية غداً)")
-        else:
-            st.caption("أدخل البيانات لتفعيل الشجرة.")
-
-        # فكرة 5: حاسبة سرعة البديهة والصفاء الذهني
-        st.markdown("---")
         st.markdown("#### ⚡ حاسبة سرعة البديهة والجاهزية العصبية")
-        st.caption("اختبر صفاء ذهنك قبل بدء الدراسة:")
         if st.button("🎯 بدء اختبار التفاعل العصبي السريع"):
             rand_speed = random.randint(180, 240)
             st.success(f"⚡ **سرعة استجابتك العصبية:** **{rand_speed} ملي ثانية** (جاهزية عالية ومستعدة للحل والتحليل!)")
 
-        # فكرة 7: تحدي الرفاق الآمن مع حفظ الخصوصية
         st.markdown("---")
         st.markdown("#### 🛡️ تحدي الرفاق التنافسي (المجهول)")
         peer_benchmark = 360.0
@@ -392,10 +345,9 @@ with tab3:
             if user_s >= peer_benchmark:
                 st.success("🥇 أنت متقدم على 85% من الزملاء في رصيد نقاط هذا الأسبوع!")
             else:
-                st.info("🥈 أداء جيد! تحتاج إلى 15 نقطة إضافية للوصول للمركز الأول.")
+                st.info("🥈 أداء جيد! تفصلك خطوات قليلة للصدارة.")
 
     with col_t2:
-        # فكرة 9: حاسبة استهلاك الطاقة الحرارية للدماغ
         st.markdown("#### 🧠 حاسبة السعرات الحرارية للدماغ")
         if total_entries > 0:
             latest = st.session_state.history[-1]
@@ -403,20 +355,6 @@ with tab3:
             st.write(f"🔥 بذل دماغك طاقة تقدر بـ **{cals} سعرة حرارية** أثناء حل المسائل والتفكير المعقد اليوم.")
         else:
             st.caption("أدخل بياناتك لحساب السعرات.")
-
-        # فكرة 15: مكافأة الإنجاز الصامت والأوسمة
-        st.markdown("---")
-        st.markdown("#### 🏆 صندوق أوسمة الإنجاز الصامت")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            if latest.get("focus", 0) >= 4.0 and latest.get("screen", 0) <= 3.0:
-                st.success("🎖️ **وسام العبقري الهادئ:** عزل كامل للتشتت مع تركيز عميق أسطوري!")
-            elif latest.get("focus", 0) >= 3.0:
-                st.info("🏅 **وسام المثابر:** إنجاز جلسة دراسية ممتازة وثابتة.")
-            else:
-                st.caption("أكمل 3 ساعات تركيز نقي مع خفض ساعات الشاشة لفتح الأوسمة المغلقة.")
-        else:
-            st.caption("أدخل بياناتك لتحديد الأوسمة.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -428,58 +366,111 @@ with tab4:
     col_d1, col_d2 = st.columns(2)
     
     with col_d1:
-        # فكرة 8: صندوق التفريغ الذهني التفاعلي
         st.markdown("#### 🗑️ صندوق التفريغ الذهني وتنقية الذاكرة")
-        st.caption("اكتب أي فكرة جانبية أو مقلقة لتفريغها فوراً من عقلك:")
-        thought_input = st.text_input("أدخل الفكرة المشتتة هنا:")
+        thought_input = st.text_input("أدخل الفكرة المشتتة هنا لتنظيف عقلك:")
         if st.button("إفراغ الفكرة من الذهن"):
             if thought_input:
                 st.session_state.mind_dump.append(thought_input)
-                st.success("تم إفراغ الفكرة بنجاح من عقلك! أصبحت ذاكرتك الآن نظيفة ومستعدة.")
+                st.success("تم إفراغ الفكرة بنجاح من عقلك!")
         
         if len(st.session_state.mind_dump) > 0:
             with st.expander("📂 الأفكار المفرغة والمحفوظة بالخلفية"):
                 for idx, item in enumerate(st.session_state.mind_dump, 1):
                     st.write(f"{idx}. {item}")
 
-        # فكرة 10: الخريطة الحرارية لأوقات التشتت
-        st.markdown("---")
-        st.markdown("#### 🗺️ الخريطة الحرارية لساعات السرحان")
-        st.error("⏰ **ساعات التشتت العالية:** من 2:00 ظهراً إلى 4:00 عصراً (تجنب المذاكرة المعقدة فيها).")
-        st.success("✨ **ساعات الصفاء الذهني:** من 6:00 صباحاً إلى 9:00 صباحاً (استغلها للمواد الصعبة).")
-
     with col_d2:
-        # فكرة 11: محامي الدماغ المنطقي المفند للأعذار
         st.markdown("#### ⚖️ محامي الدماغ المنطقي تفنيد الكسل")
         custom_excuse = st.text_input("اكتب العذر الذي يجعلك تتكاسل الآن:")
         if st.button("💡 تفنيد العذر بالدليل العلمي"):
             if custom_excuse:
-                st.info(f"⚖️ **رد المحامي المنطقي:** إن قولك '{custom_excuse}' هو مجرد حيلة من الدماغ للحفاظ على الطاقة! أثبتت الدراسات أن البدء بـ 5 دقائق فقط يكسر هذا الحاجز النفسي تماماً.")
+                st.info(f"⚖️ **رد المحامي المنطقي:** قولك '{custom_excuse}' هو مجرد حيلة من الدماغ لتوفير الطاقة. البدء بـ 5 دقائق يكسر هذا الحاجز فوراً!")
             else:
                 st.warning("يرجى كتابة العذر أولاً لتفنيده.")
 
-        # فكرة 12: مولد القصص المعرفية والتلاخيص
-        st.markdown("---")
-        st.markdown("#### 📖 مولد التشبيهات والقصص المعرفية")
-        subject_type = st.selectbox("اختر المادة لتوليد تشبيه قصصي لها:", ["العلوم والأحياء", "الرياضيات والفيزياء", "التاريخ واللغات"])
-        if st.button("🔮 توليد قصة تثبيت المعلومة"):
-            if "العلوم" in subject_type:
-                st.write("📖 **القصة:** تخيل الخلية كمدينة متكاملة، والميتوكندريا هي محطة توليد الكهرباء التي تغذي الجميع بالأنوار!")
-            elif "الرياضيات" in subject_type:
-                st.write("📖 **القصة:** تخيل المعادلة ككفتي ميزان لا بد أن تبقيها متوازنة، كل شيء تفعله في اليمين كرر مثله في اليسار!")
-            else:
-                st.write("📖 **القصة:** تخيل الكلمات الجديدة كأصدقاء جدد تتعرف عليهم، كلما ناديتهم بأسمائهم أصبحوا أقرب لقلبك وذاكرتك!")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-        # فكرة 16: حاسبة التفكير الزائد
-        st.markdown("---")
-        st.markdown("#### 🌀 حاسبة استرداد وقت القلق والتسويف")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            over_mins = latest.get("overthinking", 20)
-            st.write(f"دقائق القلق المسجلة: **{over_mins} دقيقة**.")
-            st.success(f"💡 تحويل وقت القلق إلى إنجاز يمنحك حل **{int(over_mins * 0.8)} مسألة إضافية** اليوم!")
-        else:
-            st.caption("أدخل بياناتك لحساب التفكير الزائد.")
+# ==========================================
+# --- TAB 5: شجرة الإنتاجية الحية (أيقونة رئيسية مستقلة) ---
+# ==========================================
+with tab5:
+    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+    st.subheader("🌳 شجرة الإنتاجية الحية والازهار المعرفي")
+    st.write("هذه شجرتك التفاعلية الفريدة التي تنمو وتتغير أوراقها وفصولها بناءً على أدائك وتركيزك المستمر!")
+
+    # حساب حالة الشجرة بناءً على إجمالي النقاط أو التركيز
+    avg_focus = st.session_state.history[-1].get("focus", 3.0) if total_entries > 0 else 3.0
+    
+    # تحديد الفصل والشكل بناءً على الأداء
+    if avg_focus >= 5.0:
+        season_name = "🌸 فصل الربيع المزدهر (قمة الإنتاجية)"
+        tree_visual = """
+             🌸  🌿  🌸  🌿
+          🌿   🌳🌳🌳   🌸
+        🌸    🌳🌳🌳🌳🌳    🌿
+             📁📁|  |📁📁
+             📁📁|  |📁📁
+        """
+        leaf_messages = [
+            "🍃 لأنك درست بجد واجتهاد دون تشتت.",
+            "🌟 لأنك نمت جيداً وحققت استشفاءً كاملاً.",
+            "💧 لأنك حافظت على ترطيب جسمك وعقلك.",
+            "📵 لأنك عزلت هاتفك تماماً أثناء الجلسة العميقة."
+        ]
+    elif avg_focus >= 3.0:
+        season_name = "☀️ فصل الصيف الأخضر المستقر"
+        tree_visual = """
+               🟢  🍃  🟢
+            🍃  🟢🟢🟢  🍃
+              🟢🟢🟢🟢🟢
+                 trunk| |
+                 trunk| |
+        """
+        leaf_messages = [
+            "👍 لأن أداءك مستقر وثابت اليوم.",
+            "📚 لأنك استخدمت استراتيجيات المذاكرة النشطة.",
+            "🌡️ لأن مناخ غرفتك كان مثالياً للتركيز."
+        ]
+    else:
+        season_name = "🍂 فصل الخريف المتساقط (يحتاج إنقاذ)"
+        tree_visual = """
+               🍂      🍃
+            🍃     🪵🪵     🍂
+                 🪵🪵🪵🪵
+                 trunk| |
+                 trunk| |
+        """
+        leaf_messages = [
+            "⚠️ تطايِرت ورقة بسبب نقص ساعات التركيز النقي.",
+            "⚠️ تطايِرت ورقة بسبب زيادة ساعات الشاشة والإرهاق البصري.",
+            "💡 ابدأ جلسة تركيز جديدة الآن لإعادة إنبات الأوراق!"
+        ]
+
+    c_t1, c_t2 = st.columns([1, 1])
+    
+    with c_t1:
+        st.markdown(f"### الموسم الحالي: {season_name}")
+        st.code(tree_visual, language="text")
+        st.metric("رصيد نقاط التخصيص المتاحة", f"{st.session_state.user_points} نقطة 🪙")
+        
+    with c_t2:
+        st.markdown("### 🍃 أوراق الشجرة الناطقة (رسائل التحفيز):")
+        st.write("كل ورقة على شجرتك تمثل سبباً لنجاحك العلمي اليوم:")
+        for msg in leaf_messages:
+            st.success(msg)
+            
+    st.markdown("---")
+    st.markdown("### 🎨 متجر وكاتب مظهر الشجرة (تخصيص بالنقاط):")
+    st.write("استخدم نقاط إنجازك لترقية مظهر شجرتك في المعرض العلمي:")
+    
+    selected_theme = st.selectbox("اختر شكل الشجرة المعرفية:", [
+        "شجرة البلوط المعرفية الكلاسيكية 🌳 (تتطلب 0 نقطة)",
+        "شجرة الكرز المزهرة اليابانية 🌸 (تتطلب 50 نقطة)",
+        "شجرة السنديان الذهبية المتألقة ✨ (تتطلب 100 نقطة)"
+    ])
+    
+    if st.button("✨ تطبيق مظهر الشجرة الجديد"):
+        st.session_state.tree_customization = selected_theme
+        st.success(f"🎉 تم تحديث مظهر شجرتك بنجاح إلى: **{selected_theme}**!")
 
     st.markdown('</div>', unsafe_allow_html=True)
 

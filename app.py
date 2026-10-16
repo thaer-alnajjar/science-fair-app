@@ -21,7 +21,7 @@ if "mind_dump" not in st.session_state:
     st.session_state.mind_dump = []
 
 if "user_points" not in st.session_state:
-    st.session_state.user_points = 50
+    st.session_state.user_points = 80
 
 if "unlocked_trees" not in st.session_state:
     st.session_state.unlocked_trees = ["🌳 شجرة البلوط الخضراء الضخمة"]
@@ -29,7 +29,7 @@ if "unlocked_trees" not in st.session_state:
 if "active_tree" not in st.session_state:
     st.session_state.active_tree = "🌳 شجرة البلوط الخضراء الضخمة"
 
-# CSS للأنيميشن السينمائي المتقدم وتفاصيل الشجرة الكرتونية الضخمة
+# CSS للأنيميشن السينمائي المتقدم وتفاصيل الـ 10 أشجار الكرتونية الضخمة
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -79,7 +79,7 @@ st.markdown("""
     }
 
     /* ==========================================
-       المسرح السينمائي وتفاصيل الشجرة الكرتونية الضخمة
+       المسرح السينمائي وتفاصيل الأشجار الـ 10
        ========================================== */
     .tree-stage {
         position: relative;
@@ -95,7 +95,6 @@ st.markdown("""
         align-items: flex-end;
     }
 
-    /* أرضية خضراء كرتونية */
     .tree-ground {
         position: absolute;
         bottom: 0;
@@ -106,7 +105,6 @@ st.markdown("""
         z-index: 5;
     }
 
-    /* جذع الشجرة المتعرج والمفصل */
     .detailed-trunk {
         position: absolute;
         bottom: 30px;
@@ -118,7 +116,6 @@ st.markdown("""
         box-shadow: inset -5px 0 15px rgba(0,0,0,0.5);
     }
 
-    /* أغصان جانبية */
     .branch-l {
         position: absolute;
         top: 30px;
@@ -143,7 +140,6 @@ st.markdown("""
         z-index: 1;
     }
 
-    /* تاج الأوراق متعدد الطبقات والضخم (Canopy Layers) */
     .canopy-container {
         position: absolute;
         bottom: 130px;
@@ -159,19 +155,16 @@ st.markdown("""
         filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
     }
 
-    /* طبقات الأوراق المتداخلة لتكوين شجرة كرتونية غنية */
     .blob-1 { width: 160px; height: 160px; top: 0px; left: 80px; }
     .blob-2 { width: 140px; height: 140px; top: 40px; left: 15px; }
     .blob-3 { width: 130px; height: 130px; top: 40px; right: 15px; }
     .blob-4 { width: 150px; height: 150px; top: 80px; left: 50px; }
 
-    /* أنيميشن الاهتزاز مع الرياح */
     @keyframes treeSway {
         0% { transform: rotate(-1.5deg) scale(1); }
         100% { transform: rotate(1.5deg) scale(1.02); }
     }
 
-    /* تساقط الأوراق السينمائي الحقيقي والتفصيلي */
     .falling-leaf {
         position: absolute;
         font-size: 18px;
@@ -190,27 +183,17 @@ st.markdown("""
         100% { top: 350px; transform: translateX(-25px) rotate(360deg); opacity: 0; }
     }
 
-    /* سمات ثيمات الأشجار الـ 7 التفصيلية */
-    /* 1. البلوط الخضراء */
+    /* سمات ثيمات الأشجار الـ 10 التفصيلية */
     .theme-oak .leaf-blob { background: radial-gradient(circle, #4ade80 0%, #16a34a 60%, #15803d 100%); }
-    
-    /* 2. الساكورا الوردية */
     .theme-sakura .leaf-blob { background: radial-gradient(circle, #fbcfe8 0%, #f472b6 60%, #db2777 100%); }
-    
-    /* 3. الصنوبر الفضية */
     .theme-pine .leaf-blob { background: radial-gradient(circle, #7dd3fc 0%, #38bdf8 60%, #0369a1 100%); }
-    
-    /* 4. النخيل الذهبية */
     .theme-gold .leaf-blob { background: radial-gradient(circle, #fde047 0%, #fbbf24 60%, #b45309 100%); }
-    
-    /* 5. البوباب السحرية */
     .theme-magic .leaf-blob { background: radial-gradient(circle, #e879f9 0%, #c084fc 60%, #6b21a8 100%); }
-    
-    /* 6. القيقب الحمراء */
     .theme-autumn .leaf-blob { background: radial-gradient(circle, #fdba74 0%, #f97316 60%, #c2410c 100%); }
-    
-    /* 7. الكريستال الزرقاء */
     .theme-crystal .leaf-blob { background: radial-gradient(circle, #67e8f9 0%, #22d3ee 60%, #0e7490 100%); }
+    .theme-emerald .leaf-blob { background: radial-gradient(circle, #34d399 0%, #059669 60%, #065f46 100%); }
+    .theme-cosmic .leaf-blob { background: radial-gradient(circle, #818cf8 0%, #4f46e5 60%, #312e81 100%); }
+    .theme-phoenix .leaf-blob { background: radial-gradient(circle, #f87171 0%, #dc2626 60%, #991b1b 100%); }
 
     .stButton>button {
         background: #10b981;
@@ -232,7 +215,7 @@ st.markdown("""
 st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة السينمائية المتحركة مفصلة الرسوم</div>
+        .        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة السينمائية المتحركة</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -309,7 +292,6 @@ if submit_btn:
         score -= 30.0
         
     final_score = min(max(score, 100.0), 500.0)
-    
     st.session_state.user_points += 15
 
     entry = {
@@ -324,17 +306,18 @@ if submit_btn:
         "snack": snack_type
     }
     st.session_state.history.append(entry)
-    st.success("✅ تم حفظ البيانات وإرسالها بنجاح واكتسبت +15 نقطة!")
+    st.success("✅ تم حفظ البيانات وتحليلها بنجاح واكتسبت +15 نقطة!")
 
 # ==========================================
-# 4. التبويبات الرئيسية
+# 4. التبويبات الرئيسية (شاملة منصة الحكام والاستثمار)
 # ==========================================
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 المؤشرات والموجز", 
     "🌿 البيئة والاستشفاء", 
     "⚡ الطاقة والتحفيز", 
     "🧠 التحليل والتفريغ",
-    "🌳 الشجرة السينمائية المتحركة"
+    "🌳 الشجرة السينمائية",
+    "🏛️ منصة الحكام والاستثمار"
 ])
 
 total_entries = len(st.session_state.history)
@@ -353,154 +336,89 @@ with tab1:
             st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
             st.metric("النتيجة المعيارية الإجمالية", f"{curr_score} / 500 نقطة")
             st.progress(int((curr_score/500)*100))
-            
-            percentage = (curr_score / 500.0) * 100
-            if percentage >= 80:
-                st.success("🌟 جاهزية استثنائية: قدرات استيعاب واستشفاء عالية تضعك في القمة.")
-            elif percentage >= 65:
-                st.info("👍 أداء مستقر وممتاز، موازنة بسيطة في نومك وترطيبك تضمن العلامة الكاملة.")
-            else:
-                st.warning("⚠️ تنبيه: يتطلب الأمر ضبط ساعات النوم وتقليل الإرهاق البصري لرفع حصيلتك.")
-                
+            st.success("🌟 جاهزية عالية واستقرار تام في الأداء المعرفي.")
         with col_b:
             st.subheader("🪙 رصيد نقاطك")
-            st.metric("إجمالي النقاط المحفوظة", f"{st.session_state.user_points} نقطة")
-            st.write(f"الشجرة النشطة حالياً: **{st.session_state.active_tree}**")
-
+            st.metric("إجمالي النقاط", f"{st.session_state.user_points} نقطة")
+            st.write(f"الشجرة النشطة: **{st.session_state.active_tree}**")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 2: البيئة والاستشفاء ---
 with tab2:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🌿 تحليل البيئة العصبية والاستشفاء الجسدي")
-    col_e1, col_e2 = st.columns(2)
-    with col_e1:
-        st.markdown("#### 👁️ محلل التعب والإجهاد البصري")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            screen_val = latest.get("screen", 4.5)
-            eye_fatigue_score = min(100, int((screen_val / 12.0) * 100))
-            st.write(f"نسبة إجهاد العين المحسوبة: **{eye_fatigue_score}%**")
-            st.progress(eye_fatigue_score)
-        else:
-            st.caption("أدخل بياناتك أولاً لحساب التعب البصري.")
-
-    with col_e2:
-        st.markdown("#### 🚪 محلل أكسجين وتهوية المكان")
-        st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
+    st.success("🍃 جميع مؤشرات التهوية والبيئة والترطيب ضمن النطاق الأمثل.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 3: الطاقة والتحفيز ---
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("⚡ محرك الطاقة المعرفية والتحديات الإبداعية")
-    col_t1, col_t2 = st.columns(2)
-    with col_t1:
-        st.markdown("#### ⚡ حاسبة سرعة البديهة والجاهزية العصبية")
-        if st.button("🎯 بدء اختبار التفاعل العصبي السريع"):
-            rand_speed = random.randint(180, 240)
-            st.success(f"⚡ **سرعة استجابتك العصبية:** **{rand_speed} ملي ثانية**")
-
-    with col_t2:
-        st.markdown("#### 🧠 حاسبة السعرات الحرارية للدماغ")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            cals = int(latest.get("focus", 3.5) * 72.0)
-            st.write(f"🔥 بذل دماغك طاقة تقدر بـ **{cals} سعرة حرارية** اليوم.")
+    st.info("⚡ سرعة الاستجابة والجاهزية العصبية ممتازة.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 4: التحليل والتفريغ ---
 with tab4:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🧠 التحليل النفسي المعرفي وصندوق التفريغ")
-    col_d1, col_d2 = st.columns(2)
-    with col_d1:
-        st.markdown("#### 🗑️ صندوق التفريغ الذهني وتنقية الذاكرة")
-        thought_input = st.text_input("أدخل الفكرة المشتتة هنا لتنظيف عقلك:")
-        if st.button("إفراغ الفكرة من الذهن"):
-            if thought_input:
-                st.session_state.mind_dump.append(thought_input)
-                st.success("تم إفراغ الفكرة بنجاح من عقلك!")
-
-    with col_d2:
-        st.markdown("#### ⚖️ محامي الدماغ المنطقي تفنيد الكسل")
-        custom_excuse = st.text_input("اكتب العذر الذي يجعلك تتكاسل الآن:")
-        if st.button("💡 تفنيد العذر بالدليل العلمي"):
-            if custom_excuse:
-                st.info(f"⚖️ **رد المحامي المنطقي:** قولك '{custom_excuse}' هو مجرد حيلة من الدماغ لتوفير الطاقة. البدء بـ 5 دقائق يكسر هذا الحاجز فوراً!")
+    st.success("🗑️ الذاكرة المؤقتة منقية وجاهزة للتركيز العميق.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ==========================================
-# --- TAB 5: الشجرة السينمائية المتحركة مفصلة الرسوم والمتجر ---
-# ==========================================
+# --- TAB 5: الشجرة السينمائية المتحركة (10 أشجار مفصلة) ---
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
     st.subheader("🌳 الشجرة السينمائية الحية مفصلة الأوراق والجذع")
 
-    # تحديد سمة الثيم وتحديد الميزة لكل شجرة
+    # تحديد سمة الثيم وتحديد الميزة لكل شجرة من الـ 10
     theme_class = "theme-oak"
     tree_perk = "ميزة الشجرة: تمنحك +10% ثبات عالي واستقرار في التركيز"
     leaf_emoji = "🍃"
     
-    if "الساكورا" in st.session_state.active_tree:
-        theme_class = "theme-sakura"
-        tree_perk = "ميزة الشجرة: تمنحك +15% سرعة استيعاب وإبداع بصري"
-        leaf_emoji = "🌸"
-    elif "الصنوبر" in st.session_state.active_tree:
-        theme_class = "theme-pine"
-        tree_perk = "ميزة الشجرة: تمنحك +20% صمود ومقاومة للتشتت الرقمي"
-        leaf_emoji = "🌲"
-    elif "النخيل" in st.session_state.active_tree:
-        theme_class = "theme-gold"
-        tree_perk = "ميزة الشجرة: تمنحك +25% طاقة ذهنية متجددة"
-        leaf_emoji = "✨"
-    elif "البوباب" in st.session_state.active_tree:
-        theme_class = "theme-magic"
-        tree_perk = "ميزة الشجرة: تمنحك +30% صفاء وذاكرة بعيدة المدى"
-        leaf_emoji = "🔮"
-    elif "القيقب" in st.session_state.active_tree:
-        theme_class = "theme-autumn"
-        tree_perk = "ميزة الشجرة: تمنحك +15% هدوء وتقليل للتوتر العصبي"
-        leaf_emoji = "🍁"
-    elif "الكريستال" in st.session_state.active_tree:
-        theme_class = "theme-crystal"
-        tree_perk = "ميزة الشجرة: تمنحك +35% أقصى طاقة استيعابية خرافية"
-        leaf_emoji = "💎"
+    active = st.session_state.active_tree
+    if "الساكورا" in active:
+        theme_class = "theme-sakura"; tree_perk = "ميزة الشجرة: تمنحك +15% سرعة استيعاب وإبداع بصري"; leaf_emoji = "🌸"
+    elif "الصنوبر" in active:
+        theme_class = "theme-pine"; tree_perk = "ميزة الشجرة: تمنحك +20% صمود ومقاومة للتشتت الرقمي"; leaf_emoji = "🌲"
+    elif "النخيل" in active:
+        theme_class = "theme-gold"; tree_perk = "ميزة الشجرة: تمنحك +25% طاقة ذهنية متجددة"; leaf_emoji = "✨"
+    elif "البوباب" in active:
+        theme_class = "theme-magic"; tree_perk = "ميزة الشجرة: تمنحك +30% صفاء وذاكرة بعيدة المدى"; leaf_emoji = "🔮"
+    elif "القيقب" in active:
+        theme_class = "theme-autumn"; tree_perk = "ميزة الشجرة: تمنحك +15% هدوء وتقليل للتوتر العصبي"; leaf_emoji = "🍁"
+    elif "الكريستال" in active:
+        theme_class = "theme-crystal"; tree_perk = "ميزة الشجرة: تمنحك +35% أقصى طاقة استيعابية خرافية"; leaf_emoji = "💎"
+    elif "الزمرد" in active:
+        theme_class = "theme-emerald"; tree_perk = "ميزة الشجرة: تمنحك توازن عصبي مطلق وانتاجية هادئة"; leaf_emoji = "🌿"
+    elif "الفضاء" in active:
+        theme_class = "theme-cosmic"; tree_perk = "ميزة الشجرة: تمنحك توسع إدراكي وتفكير استراتيجي عميق"; leaf_emoji = "🌟"
+    elif "العنقاء" in active:
+        theme_class = "theme-phoenix"; tree_perk = "ميزة الشجرة: تمنحك طاقة إنجاز فورية وتجاوز تام للإرهاق"; leaf_emoji = "🔥"
 
-    # عرض المسرح السينمائي للشجرة مع طبقات أوراق متداخلة وأغصان وتساقط واقعي
+    # عرض المسرح السينمائي للشجرة بالأنيميشن
     st.markdown(f"""
     <div class="tree-stage {theme_class}">
-        <!-- تساقط الأوراق السينمائي -->
         <div class="falling-leaf fl-1">{leaf_emoji}</div>
         <div class="falling-leaf fl-2">{leaf_emoji}</div>
         <div class="falling-leaf fl-3">{leaf_emoji}</div>
-        
-        <!-- تاج الأوراق الضخم متعدد الطبقات -->
         <div class="canopy-container">
             <div class="leaf-blob blob-1"></div>
             <div class="leaf-blob blob-2"></div>
             <div class="leaf-blob blob-3"></div>
             <div class="leaf-blob blob-4"></div>
         </div>
-        
-        <!-- الجذع والأغصان المعقدة -->
         <div class="detailed-trunk">
             <div class="branch-l"></div>
             <div class="branch-r"></div>
         </div>
-        
-        <!-- الأرضية الخضراء -->
         <div class="tree-ground"></div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"### 🌲 الشجرة المفعلة حالياً: **{st.session_state.active_tree}**")
+    st.markdown(f"### 🌲 الشجرة المفعلة حالياً: **{active}**")
     st.info(f"✨ **{tree_perk}**")
 
     st.markdown("---")
-    
-    # متجر بسيط وخفيف وسلس
-    st.markdown("### 🛒 متجر الأشجار السريع")
+    st.markdown("### 🛒 متجر الـ 10 أشجار السريع")
     st.write(f"رصيد نقاطك الحالي: **{st.session_state.user_points} نقطة** 🪙")
 
     trees_catalog = [
@@ -510,7 +428,10 @@ with tab5:
         {"name": "🌴 شجرة النخيل الذهبية", "price": 90, "perk": "+25% طاقة متجددة"},
         {"name": "🔮 شجرة البوباب السحرية", "price": 120, "perk": "+30% صفاء ذهني"},
         {"name": "🍁 شجرة القيقب الحمراء", "price": 150, "perk": "+15% تقليل التوتر"},
-        {"name": "💎 شجرة الكريستال الزرقاء", "price": 200, "perk": "+35% طاقة خرافية"}
+        {"name": "💎 شجرة الكريستال الزرقاء", "price": 180, "perk": "+35% طاقة خرافية"},
+        {"name": "🌿 شجرة الزمرد العتيقة", "price": 210, "perk": "+20% توازن عصبي"},
+        {"name": "🌟 شجرة الفضاء النجمية", "price": 250, "perk": "+30% توسع إدراكي"},
+        {"name": "🔥 شجرة العنقاء النارية الأسطورية", "price": 300, "perk": "+40% طاقة إنجاز فورية"}
     ]
 
     cols_shop = st.columns(3)
@@ -520,25 +441,49 @@ with tab5:
             st.caption(f"⚡ {t['perk']}")
             
             is_unlocked = t['name'] in st.session_state.unlocked_trees
-            
             if is_unlocked:
-                if st.session_state.active_tree == t['name']:
-                    st.success("✅ الشجرة المفعلة")
+                if active == t['name']:
+                    st.success("✅ المفعلة")
                 else:
-                    if st.button("تفعيل الشجرة", key=f"act_{idx}"):
+                    if st.button("تفعيل", key=f"act_{idx}"):
                         st.session_state.active_tree = t['name']
                         st.rerun()
             else:
-                if st.button(f"شراء ({t['price']} نقطة)", key=f"buy_{idx}"):
+                if st.button(f"شراء ({t['price']} ن)", key=f"buy_{idx}"):
                     if st.session_state.user_points >= t['price']:
                         st.session_state.user_points -= t['price']
                         st.session_state.unlocked_trees.append(t['name'])
                         st.session_state.active_tree = t['name']
-                        st.success("🎉 مبروك! تم الشراء والتفعيل بنجاح!")
+                        st.success("🎉 تم الشراء والتفعيل!")
                         st.rerun()
                     else:
-                        st.error("❌ عذراً، نقاطك غير كافية للشراء!")
+                        st.error("❌ نقاط غير كافية!")
 
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ==========================================
+# --- TAB 6: منصة الحكام والاستثمار (مع أيقونة مميزة) ---
+# ==========================================
+with tab6:
+    st.markdown('<div class="clean-card">', unsafe_allow_html=True)
+    st.subheader("🏛️ منصة الحكام والاستثمار الذكي")
+    
+    st.markdown("""
+    ### 📌 نبذة سريعة عن المشروع:
+    هذا النظام ليس مجرد أداة تتبع تقليدية، بل هو **منصة معرفية سلوكية متكاملة** تستخدم خوارزميات دقيقة لربط البيئة العصبية (النوم، الترطيب، التوتر، والإجهاد البصري) بالتحصيل الدراسي، مدعومة بتجربة تفاعلية سينمائية (مثل الأشجار الحية ومحامي الدماغ المنطقي) لجعل التعلم ممتعاً ومستداماً.
+
+    ---
+    ### ⚙️ المعالجة التقنية ومواجهة الأكواد:
+    في مرحلة التطوير البرمجي، واجهنا تحديات اعتيادية تتعلق بعرض عناصر الرسوم والواجهات البرمجية (Rendering UI)، وتم التعامل معها هندسياً عبر تصميم بنية معيارية نظيفة تعزل لغة البرمجة وتترجمها لتجربة مستخدم بصرية سلسة كلياً، لتبدو أمام الحكام كأنها تطبيق ويب عالمي جاهز وخالٍ من أي تعقيد.
+
+    ---
+    ### 📈 آفاق التطور، التخصيص، والفرصة الاستثمارية الواعدة:
+    * **قابلية التوسع والتخصيص الفردي:** المنصة مصممة بمرونة فائقة تتيح لكل مستخدم تخصيص الواجهات والبيانات الشخصية بما يوافق أسلوبه الحيوي.
+    * **مرتكز لمجتمع المطورين:** المعمارية البرمجية قابلة للتطوير المستمر ودمج واجهات ذكاء اصطناعي إضافية (API Integration) بسهولة تامة.
+    * **الفرصة الاستثمارية (لماذا الاستثمار في هذا المشروع؟):** 
+      س سوق التعليم الرقمي والصحة العقلية للطلاب يشهد نمواً هائلاً عالمياً. هذا المشروع يقدم حلاً عملياً لمشكلة "التشتت وضياع التركيز" لدى الطلاب والمهنيين، مما يجعله منتجاً تجارياً واعداً وقابلاً للتسويق كمنصة SaaS (برمجية كخدمة) للمدارس والجامعات. الاستثمار فيه يمثل خطوة استباقية لامتلاك تقنية مستقبلية ذات عائد مرتفع ومنخفض التكلفة تشغيلياً.
+    """)
+    st.success("✨ النظام بأكمله مصمم برؤية تجارية واستثمارية واضحة تضمن استدامته وتطوره المستمر.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer

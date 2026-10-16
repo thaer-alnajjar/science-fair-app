@@ -13,20 +13,23 @@ st.set_page_config(
     layout="wide"
 )
 
-# تهيئة ذاكرة الجلسة
+# تهيئة ذاكرة الجلسة وحفظ النقاط
 if "history" not in st.session_state:
     st.session_state.history = []
 
 if "mind_dump" not in st.session_state:
     st.session_state.mind_dump = []
 
-if "tree_customization" not in st.session_state:
-    st.session_state.tree_customization = "شجرة بلوط خضراء 🌳"
-
 if "user_points" not in st.session_state:
-    st.session_state.user_points = 120  # رصيد نقاط افتراضي للتخصيص
+    st.session_state.user_points = 50  # نقاط بدائية تحفيزية
 
-# CSS لتصميم نظيف واحترافي
+if "unlocked_trees" not in st.session_state:
+    st.session_state.unlocked_trees = ["🌳 شجرة بلوط الفرسان الكلاسيكية"]
+
+if "active_tree" not in st.session_state:
+    st.session_state.active_tree = "🌳 شجرة بلوط الفرسان الكلاسيكية"
+
+# CSS لتصميم نظيف واحترافي وشكل حلقي كرتوني
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -43,7 +46,7 @@ st.markdown("""
 
     .hero-container {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 28px;
+        padding: 24px;
         border-radius: 16px;
         border: 2px solid #6366f1;
         border-right: 6px solid #f97316;
@@ -53,7 +56,7 @@ st.markdown("""
     }
 
     .hero-verse {
-        font-size: 1.35rem;
+        font-size: 1.3rem;
         font-weight: 700;
         color: #f97316;
         margin-bottom: 5px;
@@ -61,7 +64,7 @@ st.markdown("""
 
     .hero-title {
         font-weight: 900;
-        font-size: 1.8rem;
+        font-size: 1.75rem;
         color: #ffffff;
     }
 
@@ -73,6 +76,33 @@ st.markdown("""
         padding: 22px;
         margin-bottom: 18px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    }
+
+    /* تصميم الشجرة الحلقية الكرتونية */
+    .tree-ring-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: #f1f5f9;
+        border-radius: 20px;
+        border: 3px dashed #10b981;
+        margin: 10px 0;
+    }
+
+    .tree-circle-badge {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border: 6px solid #10b981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+        margin-bottom: 12px;
     }
 
     .stButton>button {
@@ -95,7 +125,7 @@ st.markdown("""
 st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        <div class="hero-title">🚀 النظام التحليلي المتطور للأداء الدراسي والبيئة المعرفية</div>
+        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة المعرفية الحلقية</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -120,7 +150,7 @@ with st.sidebar.form(key="main_form"):
     motivation_level = st.slider("🔥 الدافعية والحماس (1-15)", 1, 15, 12)
     hydration_level = st.slider("💧 مستوى ترطيب الجسم (1-15)", 1, 15, 11)
     
-    snack_type = st.selectbox("🍱 نوع الوجبة الرئيسية/الخفيفة قبل المذاكرة", [
+    snack_type = st.selectbox("🍱 نوع الوجبة الخفيفة قبل المذاكرة", [
         "🍏 وجبة ذكية خفيفة (مكسرات، فواكه، زبادي)",
         "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسماك)",
         "🍝 وجبة غداء ثقيلة/كاربوهيدرات (رز، معكرونة، وجبات سريعة)",
@@ -173,8 +203,8 @@ if submit_btn:
         
     final_score = min(max(score, 100.0), 500.0)
     
-    # زيادة رصيد النقاط تلقائياً عند الإرسال الناجح
-    st.session_state.user_points += 15
+    # مكافأة نقاط إضافية على الإنجاز والالتزام
+    st.session_state.user_points += 10
 
     entry = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -188,17 +218,17 @@ if submit_btn:
         "snack": snack_type
     }
     st.session_state.history.append(entry)
-    st.success("✅ تم حفظ البيانات وتحليلها بنجاح واكتسبت +15 نقطة إنجاز لشجرتك!")
+    st.success("✅ تم حفظ البيانات وتحليلها بنجاح واكتسبت +10 نقاط!")
 
 # ==========================================
-# 4. التبويبات الرئيسية (شاملة أيقونة الشجرة المستقلة)
+# 4. التبويبات الرئيسية (شاملة الشجرة الحلقية المتطورة)
 # ==========================================
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📊 المؤشرات والموجز", 
     "🌿 البيئة والاستشفاء", 
     "⚡ الطاقة والتحفيز", 
     "🧠 التحليل والتفريغ",
-    "🌳 شجرة الإنتاجية الحية"
+    "🌳 شجرة الإنتاجية الحلقية"
 ])
 
 total_entries = len(st.session_state.history)
@@ -210,22 +240,11 @@ with tab1:
         st.info("👈 أدخل بياناتك من اللوحة الجانبية ثم اضغط **(إرسال وتحليل البيانات)** لعرض التقرير الشامل.")
     else:
         latest = st.session_state.history[-1]
+        curr_score = latest.get("score", 0)
         
-        if total_entries >= 2:
-            prev_score = st.session_state.history[-2].get("score", 0)
-            curr_score = latest.get("score", 0)
-            diff = curr_score - prev_score
-            if diff > 0:
-                st.success(f"🎉 **تقدم أسطوري!** ارتفع رصيدك المعرفي بمقدار **+{diff:.1f} نقطة** وشجرتك زادت إزهاراً.")
-            elif diff < 0:
-                st.warning(f"⚠️ **تنبيه انخفاض أداء:** تراجع أدائك بمقدار **{diff:.1f} نقطة** (تطايرت ورقة من شجرتك).")
-            else:
-                st.info("⚖️ أدائك مستقر تماماً ومماثل للجلسة السابقة.")
-
         col_a, col_b = st.columns([2, 1])
         with col_a:
             st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
-            curr_score = latest.get("score", 0)
             st.metric("النتيجة المعيارية الإجمالية", f"{curr_score} / 500 نقطة")
             st.progress(int((curr_score/500)*100))
             
@@ -238,31 +257,9 @@ with tab1:
                 st.warning("⚠️ تنبيه: يتطلب الأمر ضبط ساعات النوم وتقليل الإرهاق البصري لرفع حصيلتك.")
                 
         with col_b:
-            st.subheader("📈 إحصائيات السجل")
-            st.write(f"إجمالي الجلسات المسجلة: **{total_entries}**")
-            st.write(f"رصيد نقاط إنجازك: **{st.session_state.user_points} نقطة** 🪙")
-
-        if total_entries % 5 == 0 and total_entries > 0:
-            st.markdown("---")
-            st.markdown(f"### 📋 الموجز التراكمي الشامل (تقرير الـ {total_entries} إدخالات)")
-            
-            last_5 = st.session_state.history[-5:]
-            df_5 = pd.DataFrame(last_5)
-            first_s = last_5[0].get("score", 0)
-            last_s = last_5[-1].get("score", 0)
-            chg = last_s - first_s
-            
-            mc1, mc2, mc3 = st.columns(3)
-            with mc1:
-                st.metric("متوسط النقاط في الموجز", f"{df_5['score'].mean():.1f} / 500")
-            with mc2:
-                st.metric("معدل التغير الإجمالي", f"{chg:+.1f} نقطة")
-            with mc3:
-                summary_status = "📈 تصاعد مستمر" if chg > 5 else ("📉 يتطلب تعديل المسار" if chg < -5 else "⚖️ أداء متوازن")
-                st.subheader(f"الحالة: {summary_status}")
-                
-            st.markdown("#### 📊 منحنى التطور المعرفي عبر الإدخالات الخمسة الأخيرة:")
-            st.line_chart(df_5.set_index("timestamp")["score"])
+            st.subheader("🪙 رصيد نقاطك")
+            st.metric("إجمالي النقاط المحفوظة", f"{st.session_state.user_points} نقطة")
+            st.write(f"الشجرة النشطة حالياً: **{st.session_state.active_tree}**")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -272,53 +269,20 @@ with tab2:
     st.subheader("🌿 تحليل البيئة العصبية والاستشفاء الجسدي")
     
     col_e1, col_e2 = st.columns(2)
-    
     with col_e1:
         st.markdown("#### 👁️ محلل التعب والإجهاد البصري")
-        study_medium = st.radio("مصدر المذاكرة الرئيسي اليوم:", ["كتب وأوراق ورقية 📚", "جهاز لوحي / شاشة 🖥️", "خليط بينهما 📱📚"], horizontal=True)
         if total_entries > 0:
             latest = st.session_state.history[-1]
             screen_val = latest.get("screen", 4.5)
-            multiplier = 1.2 if "شاشة" in study_medium else (0.8 if "ورقية" in study_medium else 1.0)
-            eye_fatigue_score = min(100, int((screen_val / 12.0) * 100 * multiplier))
-            
+            eye_fatigue_score = min(100, int((screen_val / 12.0) * 100))
             st.write(f"نسبة إجهاد العين المحسوبة: **{eye_fatigue_score}%**")
             st.progress(eye_fatigue_score)
-            if eye_fatigue_score > 60:
-                st.error("🚨 إجهاد بصري مرتفع! استخدم قطرة مرطبة وطبق قاعدة 20-20-20 فوراً.")
-            else:
-                st.success("✨ مستوى إجهاد العين ضمن النطاق الآمن والمقبول.")
         else:
             st.caption("أدخل بياناتك أولاً لحساب التعب البصري.")
-
-        st.markdown("---")
-        st.markdown("#### 🌡️ مستشعر مناخ الغرفة ونقاء الهواء")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            temp = latest.get("temp", 23)
-            if 20 <= temp <= 23:
-                st.success(f"🌡️ حرارة الغرفة ({temp}°م) هي النطاق الذهبي لعمل خلايا الدماغ بكفاءة 100%.")
-            else:
-                st.warning(f"🌡️ حرارة الغرفة ({temp}°م) قد تؤثر على اليقظة.")
 
     with col_e2:
         st.markdown("#### 🚪 محلل أكسجين وتهوية المكان")
         st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
-
-        st.markdown("---")
-        st.markdown("#### 🍱 تحليل أثر الطعام على اليقظة والخمول")
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            snack_val = latest.get("snack", "وجبة غير مسجلة")
-            st.write(f"نوع الوجبة المسجلة: **{snack_val}**")
-            if "ثقيلة" in snack_val:
-                st.error("📉 **تنبيه الخمول الغذائي:** الكاربوهيدرات الثقيلة تسحب الدم للمعدة وتسبب النعاس.")
-            elif "ذكية" in snack_val or "بالبروتين" in snack_val:
-                st.success("⚡ **طاقة استثنائية:** اختيار ممتاز يمد الدماغ بنواقل عصبية مستقرة.")
-            else:
-                st.info("☕ حافظ على ترطيب جسمك بالماء باستمرار.")
-        else:
-            st.caption("أدخل بياناتك أولاً لتحليل الوجبة.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -328,33 +292,18 @@ with tab3:
     st.subheader("⚡ محرك الطاقة المعرفية والتحديات الإبداعية")
     
     col_t1, col_t2 = st.columns(2)
-    
     with col_t1:
         st.markdown("#### ⚡ حاسبة سرعة البديهة والجاهزية العصبية")
         if st.button("🎯 بدء اختبار التفاعل العصبي السريع"):
             rand_speed = random.randint(180, 240)
-            st.success(f"⚡ **سرعة استجابتك العصبية:** **{rand_speed} ملي ثانية** (جاهزية عالية ومستعدة للحل والتحليل!)")
-
-        st.markdown("---")
-        st.markdown("#### 🛡️ تحدي الرفاق التنافسي (المجهول)")
-        peer_benchmark = 360.0
-        if total_entries > 0:
-            latest = st.session_state.history[-1]
-            user_s = latest.get("score", 0)
-            st.write(f"رصيدك الحالي: **{user_s} نقطة** | متوسط الزملاء الإفتراضي: **{peer_benchmark} نقطة**")
-            if user_s >= peer_benchmark:
-                st.success("🥇 أنت متقدم على 85% من الزملاء في رصيد نقاط هذا الأسبوع!")
-            else:
-                st.info("🥈 أداء جيد! تفصلك خطوات قليلة للصدارة.")
+            st.success(f"⚡ **سرعة استجابتك العصبية:** **{rand_speed} ملي ثانية**")
 
     with col_t2:
         st.markdown("#### 🧠 حاسبة السعرات الحرارية للدماغ")
         if total_entries > 0:
             latest = st.session_state.history[-1]
             cals = int(latest.get("focus", 3.5) * 72.0)
-            st.write(f"🔥 بذل دماغك طاقة تقدر بـ **{cals} سعرة حرارية** أثناء حل المسائل والتفكير المعقد اليوم.")
-        else:
-            st.caption("أدخل بياناتك لحساب السعرات.")
+            st.write(f"🔥 بذل دماغك طاقة تقدر بـ **{cals} سعرة حرارية** اليوم.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -364,7 +313,6 @@ with tab4:
     st.subheader("🧠 التحليل النفسي المعرفي وصندوق التفريغ")
     
     col_d1, col_d2 = st.columns(2)
-    
     with col_d1:
         st.markdown("#### 🗑️ صندوق التفريغ الذهني وتنقية الذاكرة")
         thought_input = st.text_input("أدخل الفكرة المشتتة هنا لتنظيف عقلك:")
@@ -372,11 +320,6 @@ with tab4:
             if thought_input:
                 st.session_state.mind_dump.append(thought_input)
                 st.success("تم إفراغ الفكرة بنجاح من عقلك!")
-        
-        if len(st.session_state.mind_dump) > 0:
-            with st.expander("📂 الأفكار المفرغة والمحفوظة بالخلفية"):
-                for idx, item in enumerate(st.session_state.mind_dump, 1):
-                    st.write(f"{idx}. {item}")
 
     with col_d2:
         st.markdown("#### ⚖️ محامي الدماغ المنطقي تفنيد الكسل")
@@ -384,93 +327,117 @@ with tab4:
         if st.button("💡 تفنيد العذر بالدليل العلمي"):
             if custom_excuse:
                 st.info(f"⚖️ **رد المحامي المنطقي:** قولك '{custom_excuse}' هو مجرد حيلة من الدماغ لتوفير الطاقة. البدء بـ 5 دقائق يكسر هذا الحاجز فوراً!")
-            else:
-                st.warning("يرجى كتابة العذر أولاً لتفنيده.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
-# --- TAB 5: شجرة الإنتاجية الحية (أيقونة رئيسية مستقلة) ---
+# --- TAB 5: شجرة الإنتاجية الحلقية ومتجر الأشجار الـ 7 ---
 # ==========================================
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🌳 شجرة الإنتاجية الحية والازهار المعرفي")
-    st.write("هذه شجرتك التفاعلية الفريدة التي تنمو وتتغير أوراقها وفصولها بناءً على أدائك وتركيزك المستمر!")
-
-    # حساب حالة الشجرة بناءً على إجمالي النقاط أو التركيز
-    avg_focus = st.session_state.history[-1].get("focus", 3.0) if total_entries > 0 else 3.0
+    st.subheader("🌳 شجرة الإنتاجية الحلقية ومتجر الأشجار الفخمة")
     
-    # تحديد الفصل والشكل بناءً على الأداء
-    if avg_focus >= 5.0:
-        season_name = "🌸 فصل الربيع المزدهر (قمة الإنتاجية)"
-        tree_visual = """
-             🌸  🌿  🌸  🌿
-          🌿   🌳🌳🌳   🌸
-        🌸    🌳🌳🌳🌳🌳    🌿
-             📁📁|  |📁📁
-             📁📁|  |📁📁
-        """
-        leaf_messages = [
-            "🍃 لأنك درست بجد واجتهاد دون تشتت.",
-            "🌟 لأنك نمت جيداً وحققت استشفاءً كاملاً.",
-            "💧 لأنك حافظت على ترطيب جسمك وعقلك.",
-            "📵 لأنك عزلت هاتفك تماماً أثناء الجلسة العميقة."
-        ]
-    elif avg_focus >= 3.0:
-        season_name = "☀️ فصل الصيف الأخضر المستقر"
-        tree_visual = """
-               🟢  🍃  🟢
-            🍃  🟢🟢🟢  🍃
-              🟢🟢🟢🟢🟢
-                 trunk| |
-                 trunk| |
-        """
-        leaf_messages = [
-            "👍 لأن أداءك مستقر وثابت اليوم.",
-            "📚 لأنك استخدمت استراتيجيات المذاكرة النشطة.",
-            "🌡️ لأن مناخ غرفتك كان مثالياً للتركيز."
-        ]
-    else:
-        season_name = "🍂 فصل الخريف المتساقط (يحتاج إنقاذ)"
-        tree_visual = """
-               🍂      🍃
-            🍃     🪵🪵     🍂
-                 🪵🪵🪵🪵
-                 trunk| |
-                 trunk| |
-        """
-        leaf_messages = [
-            "⚠️ تطايِرت ورقة بسبب نقص ساعات التركيز النقي.",
-            "⚠️ تطايِرت ورقة بسبب زيادة ساعات الشاشة والإرهاق البصري.",
-            "💡 ابدأ جلسة تركيز جديدة الآن لإعادة إنبات الأوراق!"
-        ]
-
-    c_t1, c_t2 = st.columns([1, 1])
+    # 1. عرض الشجرة الحلقية الكرتونية الفخمة والمبسطة
+    curr_focus = st.session_state.history[-1].get("focus", 3.5) if total_entries > 0 else 3.5
+    focus_pct = min(100, int((curr_focus / 8.0) * 100))
     
-    with c_t1:
-        st.markdown(f"### الموسم الحالي: {season_name}")
-        st.code(tree_visual, language="text")
-        st.metric("رصيد نقاط التخصيص المتاحة", f"{st.session_state.user_points} نقطة 🪙")
+    # تحديد الإيموجي الكرتوني الفخم بناءً على الشجرة المحددة
+    tree_icon = "🌳"
+    if "الكرز" in st.session_state.active_tree:
+        tree_icon = "🌸"
+    elif "الصنوبر" in st.session_state.active_tree:
+        tree_icon = "🌲"
+    elif "النخيل" in st.session_state.active_tree:
+        tree_icon = "🌴"
+    elif "البوباب" in st.session_state.active_tree:
+        tree_icon = "🔮"
+    elif "القيقب" in st.session_state.active_tree:
+        tree_icon = "🍁"
+    elif "الكريستال" in st.session_state.active_tree:
+        tree_icon = "💎"
+
+    col_ring1, col_ring2 = st.columns([1, 1])
+    
+    with col_ring1:
+        st.markdown(f"""
+        <div class="tree-ring-container">
+            <div class="tree-circle-badge">
+                {tree_icon}
+            </div>
+            <h3 style="margin:0; color:#10b981;">{st.session_state.active_tree}</h3>
+            <p style="margin-top:5px; font-weight:bold; color:#64748b;">نسبة اكتمال حلقة التركيز: {focus_pct}%</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.progress(focus_pct)
+
+    with col_ring2:
+        st.markdown("### 🪙 كسب النقاط وتحديث المعدل")
+        st.write(f"رصيدك الحالي المحفوظ: **{st.session_state.user_points} نقطة**")
         
-    with c_t2:
-        st.markdown("### 🍃 أوراق الشجرة الناطقة (رسائل التحفيز):")
-        st.write("كل ورقة على شجرتك تمثل سبباً لنجاحك العلمي اليوم:")
-        for msg in leaf_messages:
-            st.success(msg)
+        # كسب النقاط بفضل المعدل المدرسي
+        school_grade = st.number_input("أدخل معدلك المدرسي الأخير (من 100):", 50.0, 100.0, 88.0, 0.5)
+        if st.button("🎁 المطالبة بمكافأة التطابق والمعدل (+50 نقطة)"):
+            st.session_state.user_points += 50
+            st.success("🎉 تهانينا! حصلت على +50 نقطة لإضافة معدلك المدرسي بنجاح!")
             
+        # كسب نقاط عند الالتزام بالدراسة أسبوعاً
+        if st.button("🔥 مكافأة تحسن الأداء والاستمرار الأسبوعي (+30 نقطة)"):
+            st.session_state.user_points += 30
+            st.success("🎉 أسطوري! تم إضافة +30 نقطة لرصيدك بفضل استمرارك في المذاكرة!")
+
     st.markdown("---")
-    st.markdown("### 🎨 متجر وكاتب مظهر الشجرة (تخصيص بالنقاط):")
-    st.write("استخدم نقاط إنجازك لترقية مظهر شجرتك في المعرض العلمي:")
     
-    selected_theme = st.selectbox("اختر شكل الشجرة المعرفية:", [
-        "شجرة البلوط المعرفية الكلاسيكية 🌳 (تتطلب 0 نقطة)",
-        "شجرة الكرز المزهرة اليابانية 🌸 (تتطلب 50 نقطة)",
-        "شجرة السنديان الذهبية المتألقة ✨ (تتطلب 100 نقطة)"
-    ])
+    # 2. جدول إرشادي بسيط وسلس لكسب النقاط
+    st.markdown("### 📋 جدول الطرق البسيطة لكسب النقاط:")
+    points_guide_df = pd.DataFrame({
+        "النشاط الإنجازي": ["تأكيد المعدل المدرسي", "تحسن ساعات الدراسة الأسبوعية", "إرسال تحليل حيوية يومي", "تحقيق تركيز نقي متواصل"],
+        "النقاط المكتسبة": ["+50 نقطة 🪙", "+30 نقطة 🪙", "+10 نقاط 🪙", "+15 نقطة 🪙"]
+    })
+    st.table(points_guide_df)
+
+    st.markdown("---")
     
-    if st.button("✨ تطبيق مظهر الشجرة الجديد"):
-        st.session_state.tree_customization = selected_theme
-        st.success(f"🎉 تم تحديث مظهر شجرتك بنجاح إلى: **{selected_theme}**!")
+    # 3. متجر الأشجار الـ 7 الفخمة
+    st.markdown("### 🛒 متجر الأشجار الـ 7 الأسطورية")
+    st.caption("أنفق نقاطك المكتسبة لشراء وتفعيل أشجار فخمة ومتميزة:")
+
+    trees_catalog = [
+        {"name": "🌳 شجرة بلوط الفرسان الكلاسيكية", "price": 0, "icon": "🌳", "desc": "شجرة خضراء متوازنة وقوية."},
+        {"name": "🌸 شجرة الكرز الوردية (الساكورا)", "price": 40, "icon": "🌸", "desc": "شجرة كرتونية وردية تفوح بالإلهام."},
+        {"name": "🌲 شجرة الصنوبر الفضية المتلألئة", "price": 70, "icon": "🌲", "desc": "شجرة شتوية فخمة بأطراف فضية."},
+        {"name": "🌴 شجرة النخيل الذهبية الأسطورية", "price": 100, "icon": "🌴", "desc": "تصميم دافئ وذهبي لقمة التفوق."},
+        {"name": "🔮 شجرة البوباب البنفسجية السحرية", "price": 130, "icon": "🔮", "desc": "شجرة غامضة بلون بنفسجي متألق."},
+        {"name": "🍁 شجرة القيقب الحمراء الخريفية", "price": 160, "icon": "🍁", "desc": "أوراق أرجوانية وخريفية ساحرة."},
+        {"name": "💎 شجرة الكريستال الزرقاء", "price": 200, "icon": "💎", "desc": "شجرة كرتونية مشعة من الكريستال النقي."}
+    ]
+
+    cols_shop = st.columns(3)
+    for idx, t in enumerate(trees_catalog):
+        col_target = cols_shop[idx % 3]
+        with col_target:
+            st.markdown(f"#### {t['icon']} {t['name']}")
+            st.write(f"{t['desc']}")
+            st.write(f"السعر: **{t['price']} نقطة**")
+            
+            is_unlocked = t['name'] in st.session_state.unlocked_trees
+            
+            if is_unlocked:
+                if st.session_state.active_tree == t['name']:
+                    st.success("✅ شجرتك المفعلة حالياً")
+                else:
+                    if st.button(f"تفعيل {t['icon']}", key=f"activate_{idx}"):
+                        st.session_state.active_tree = t['name']
+                        st.rerun()
+            else:
+                if st.button(f"شراء بـ {t['price']} نقطة 🪙", key=f"buy_{idx}"):
+                    if st.session_state.user_points >= t['price']:
+                        st.session_state.user_points -= t['price']
+                        st.session_state.unlocked_trees.append(t['name'])
+                        st.session_state.active_tree = t['name']
+                        st.success(f"🎉 مبروك! قمت بشراء وتفعيل {t['name']}!")
+                        st.rerun()
+                    else:
+                        st.error("❌ نقاطك غير كافية لشراء هذه الشجرة!")
 
     st.markdown('</div>', unsafe_allow_html=True)
 

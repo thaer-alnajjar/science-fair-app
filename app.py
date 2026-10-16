@@ -321,7 +321,7 @@ with tab2:
         st.markdown("---")
         st.markdown("#### 🍱 تحليل أثر الطعام على اليقظة والخمول")
         if total_entries > 0:
-            st.write(f"نوع الوجبة المسجلة: **{latest['snack']}**")
+st.write(f"نوع الوجبة المسجلة: **{latest.get('snack', 'وجبة غير مسجلة')}**")
             if "ثقيلة" in latest['snack']:
                 st.error("📉 **تنبيه الخمول الغذائي (Food Coma):** الكاربوهيدرات الثقيلة تسحب الدم للمعدة. ينصح بانتظار 45 دقيقة قبل بدء التفكير المعقد.")
             elif "سكريات" in latest['snack']:

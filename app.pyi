@@ -117,7 +117,7 @@ with st.sidebar.form(key="main_form"):
     # خيارات الوجبات والأطعمة الموسعة والمفصلة
     snack_type = st.selectbox("🍱 نوع الوجبة الرئيسية/الخفيفة قبل المذاكرة", [
         "🍏 وجبة ذكية خفيفة (مكسرات، فواكه، زبادي)",
-        "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسمك)",
+        "🥩 وجبة غنية بالبروتين (بيض، دجاج، أسماك)",
         "🍝 وجبة غداء ثقيلة/كاربوهيدرات (رز، معكرونة، وجبات سريعة)",
         "🍩 سكريات ومشروبات طاقة (حلويات، عصائر مصنعة)",
         "☕ معتمدة على الكافيين فقط (قهوة/شاي بدون طعام)",
@@ -205,8 +205,9 @@ with tab1:
         
         # تنبيهات التطور أو الانخفاض مقارنة بالإدخال السابق
         if total_entries >= 2:
-            prev_score = st.session_state.history[-2]["score"]
-            diff = latest["score"] - prev_score
+            prev_score = st.session_state.history[-2].get("score", 0)
+            curr_score = latest.get("score", 0)
+            diff = curr_score - prev_score
             if diff > 0:
                 st.success(f"🎉 **تقدم أسطوري!** ارتفع رصيدك المعرفي بمقدار **+{diff:.1f} نقطة** مقارنة بالمرة السابقة.")
             elif diff < 0:
@@ -217,10 +218,11 @@ with tab1:
         col_a, col_b = st.columns([2, 1])
         with col_a:
             st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
-            st.metric("النتيجة المعيارية الإجمالية", f"{latest['score']} / 500 نقطة")
-            st.progress(int((latest['score']/500)*100))
+            curr_score = latest.get("score", 0)
+            st.metric("النتيجة المعيارية الإجمالية", f"{curr_score} / 500 نقطة")
+            st.progress(int((curr_score/500)*100))
             
-            percentage = (latest['score'] / 500.0) * 100
+            percentage = (curr_score / 500.0) * 100
             if percentage >= 80:
                 st.success("🌟 جاهزية استثنائية: قدرات استيعاب واستشفاء عالية تضعك في القمة.")
             elif percentage >= 65:
@@ -231,7 +233,7 @@ with tab1:
         with col_b:
             st.subheader("📈 إحصائيات السجل")
             st.write(f"إجمالي الجلسات المسجلة: **{total_entries}**")
-            st.write(f"تاريخ آخر تحليل: **{latest['timestamp']}**")
+            st.write(f"تاريخ آخر تحليل: **{latest.get('timestamp', 'غير محدد')}**")
 
         # نظام الموجز التراكمي الذكي (كل 5 إدخالات)
         if total_entries % 5 == 0 and total_entries > 0:
@@ -240,8 +242,8 @@ with tab1:
             
             last_5 = st.session_state.history[-5:]
             df_5 = pd.DataFrame(last_5)
-            first_s = last_5[0]["score"]
-            last_s = last_5[-1]["score"]
+            first_s = last_5[0].get("score", 0)
+            last_s = last_5[-1].get("score", 0)
             chg = last_s - first_s
             
             mc1, mc2, mc3 = st.columns(3)
@@ -277,8 +279,9 @@ with tab2:
         study_medium = st.radio("مصدر المذاكرة الرئيسي اليوم:", ["كتب وأوراق ورقية 📚", "جهاز لوحي / شاشة 🖥️", "خليط بينهما 📱📚"], horizontal=True)
         if total_entries > 0:
             latest = st.session_state.history[-1]
+            screen_val = latest.get("screen", 4.5)
             multiplier = 1.2 if "شاشة" in study_medium else (0.8 if "ورقية" in study_medium else 1.0)
-            eye_fatigue_score = min(100, int((latest['screen'] / 12.0) * 100 * multiplier))
+            eye_fatigue_score = min(100, int((screen_val / 12.0) * 100 * multiplier))
             
             st.write(f"نسبة إجهاد العين المحسوبة: **{eye_fatigue_score}%**")
             st.progress(eye_fatigue_score)
@@ -293,7 +296,8 @@ with tab2:
         st.markdown("---")
         st.markdown("#### 🌡️ مستشعر مناخ الغرفة ونقاء الهواء")
         if total_entries > 0:
-            temp = latest['temp']
+            latest = st.session_state.history[-1]
+            temp = latest.get("temp", 23)
             if 20 <= temp <= 23:
                 st.success(f"🌡️ حرارة الغرفة ({temp}°م) هي النطاق الذهبي لعمل خلايا الدماغ بكفاءة 100%.")
             elif temp > 23:
@@ -305,15 +309,20 @@ with tab2:
         st.markdown("---")
         st.markdown("#### ⏰ منبه دورات النوم التكيفي (Sleep Cycles)")
         if total_entries > 0:
-            latest_sleep = latest['sleep']
+            latest = st.session_state.history[-1]
+            latest_sleep = latest.get("sleep", 7.5)
             st.write(f"بناءً على نومك البارحة (**{latest_sleep} ساعة**)، الدورة العصبية المثالية للاستيقاظ غداً هي:")
             st.info("💡 **الموعد الأول (خفيف):** بعد 6 ساعات (4 دورات نوم كاملة)\n\n💡 **الموعد الثاني (عميق):** بعد 7.5 ساعات (5 دورات نوم كاملة)")
 
     with col_e2:
         # فكرة 6: محلل التهوية والأكسجين
         st.markdown("#### 🚪 محلل أكسجين وتهوية المكان")
-        if total_entries > 0 and latest['focus'] >= 3:
-            st.warning("⚠️ **تنبيه نقص الأكسجين المتوقع:** استمرار الجلوس لـ 3 ساعات يقلل أكسجين الغرفة المغلقة. افتح النافذة لمدة 4 دقائق لتجديد نشاطك.")
+        if total_entries > 0:
+            latest = st.session_state.history[-1]
+            if latest.get("focus", 3.5) >= 3:
+                st.warning("⚠️ **تنبيه نقص الأكسجين المتوقع:** استمرار الجلوس لـ 3 ساعات يقلل أكسجين الغرفة المغلقة. افتح النافذة لمدة 4 دقائق لتجديد نشاطك.")
+            else:
+                st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
         else:
             st.success("🍃 نسبة التهوية والأكسجين في مكان جلوسك متوازنة.")
 
@@ -321,15 +330,19 @@ with tab2:
         st.markdown("---")
         st.markdown("#### 🍱 تحليل أثر الطعام على اليقظة والخمول")
         if total_entries > 0:
-st.write(f"نوع الوجبة المسجلة: **{latest.get('snack', 'وجبة غير مسجلة')}**")
-            if "ثقيلة" in latest['snack']:
+            latest = st.session_state.history[-1]
+            snack_val = latest.get("snack", "وجبة غير مسجلة")
+            st.write(f"نوع الوجبة المسجلة: **{snack_val}**")
+            if "ثقيلة" in snack_val:
                 st.error("📉 **تنبيه الخمول الغذائي (Food Coma):** الكاربوهيدرات الثقيلة تسحب الدم للمعدة. ينصح بانتظار 45 دقيقة قبل بدء التفكير المعقد.")
-            elif "سكريات" in latest['snack']:
+            elif "سكريات" in snack_val:
                 st.warning("⚠️ **تنبيه هبوط السكر المفاجئ:** السكريات تمنحك طاقة سريعة لمدة 20 دقيقة يعقبها هبوط حاد بالتركيز.")
-            elif "ذكية" in latest['snack'] or "بالبروتين" in latest['snack']:
+            elif "ذكية" in snack_val or "بالبروتين" in snack_val:
                 st.success("⚡ **طاقة استثنائية:** اختيار ممتاز يمد الدماغ بنواقل عصبية مستقرة طوال جلسة الدراسة.")
             else:
                 st.info("☕ **ملاحظة:** الاعتماد على القهوة أو الصيام يحتاج ترطيباً مضاعفاً بالماء لتجنب الصداع.")
+        else:
+            st.caption("أدخل بياناتك أولاً لتحليل الوجبة.")
 
         # فكرة 14: تنبيه وضعية الجلوس والدورة الدموية
         st.markdown("---")
@@ -349,9 +362,10 @@ with tab3:
         # فكرة 4: شجرة الإنتاجية التفاعلية
         st.markdown("#### 🌳 شجرة الإنتاجية الافتراضية")
         if total_entries > 0:
-            focus_val = latest['focus']
+            latest = st.session_state.history[-1]
+            focus_val = latest.get("focus", 3.5)
             if focus_val >= 6:
-                st.success("🌳 **شجرة بلا any غابة مثمرة بامتياز!** (أنجزت ساعات تركيز خرافية اليوم)")
+                st.success("🌳 **شجرة مثمرة بامتياز!** (أنجزت ساعات تركيز خرافية اليوم)")
             elif focus_val >= 3.5:
                 st.info("🌿 **شجرة خضراء تنمو وتزهر بسعادة.** (مستوى تركيز رائع ومستقر)")
             else:
@@ -372,7 +386,8 @@ with tab3:
         st.markdown("#### 🛡️ تحدي الرفاق التنافسي (المجهول)")
         peer_benchmark = 360.0
         if total_entries > 0:
-            user_s = latest['score']
+            latest = st.session_state.history[-1]
+            user_s = latest.get("score", 0)
             st.write(f"رصيدك الحالي: **{user_s} نقطة** | متوسط الزملاء الإفتراضي: **{peer_benchmark} نقطة**")
             if user_s >= peer_benchmark:
                 st.success("🥇 أنت متقدم على 85% من الزملاء في رصيد نقاط هذا الأسبوع!")
@@ -383,19 +398,25 @@ with tab3:
         # فكرة 9: حاسبة استهلاك الطاقة الحرارية للدماغ
         st.markdown("#### 🧠 حاسبة السعرات الحرارية للدماغ")
         if total_entries > 0:
-            cals = int(latest['focus'] * 72.0)
+            latest = st.session_state.history[-1]
+            cals = int(latest.get("focus", 3.5) * 72.0)
             st.write(f"🔥 بذل دماغك طاقة تقدر بـ **{cals} سعرة حرارية** أثناء حل المسائل والتفكير المعقد اليوم.")
+        else:
+            st.caption("أدخل بياناتك لحساب السعرات.")
 
         # فكرة 15: مكافأة الإنجاز الصامت والأوسمة
         st.markdown("---")
         st.markdown("#### 🏆 صندوق أوسمة الإنجاز الصامت")
         if total_entries > 0:
-            if latest['focus'] >= 4.0 and latest['screen'] <= 3.0:
+            latest = st.session_state.history[-1]
+            if latest.get("focus", 0) >= 4.0 and latest.get("screen", 0) <= 3.0:
                 st.success("🎖️ **وسام العبقري الهادئ:** عزل كامل للتشتت مع تركيز عميق أسطوري!")
-            elif latest['focus'] >= 3.0:
+            elif latest.get("focus", 0) >= 3.0:
                 st.info("🏅 **وسام المثابر:** إنجاز جلسة دراسية ممتازة وثابتة.")
             else:
                 st.caption("أكمل 3 ساعات تركيز نقي مع خفض ساعات الشاشة لفتح الأوسمة المغلقة.")
+        else:
+            st.caption("أدخل بياناتك لتحديد الأوسمة.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -453,9 +474,12 @@ with tab4:
         st.markdown("---")
         st.markdown("#### 🌀 حاسبة استرداد وقت القلق والتسويف")
         if total_entries > 0:
-            over_mins = latest['overthinking']
+            latest = st.session_state.history[-1]
+            over_mins = latest.get("overthinking", 20)
             st.write(f"دقائق القلق المسجلة: **{over_mins} دقيقة**.")
             st.success(f"💡 تحويل وقت القلق إلى إنجاز يمنحك حل **{int(over_mins * 0.8)} مسألة إضافية** اليوم!")
+        else:
+            st.caption("أدخل بياناتك لحساب التفكير الزائد.")
 
     st.markdown('</div>', unsafe_allow_html=True)
 

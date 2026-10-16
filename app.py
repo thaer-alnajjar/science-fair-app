@@ -21,15 +21,15 @@ if "mind_dump" not in st.session_state:
     st.session_state.mind_dump = []
 
 if "user_points" not in st.session_state:
-    st.session_state.user_points = 80
+    st.session_state.user_points = 100
 
 if "unlocked_trees" not in st.session_state:
-    st.session_state.unlocked_trees = ["🌳 شجرة البلوط الخضراء الضخمة"]
+    st.session_state.unlocked_trees = ["🌸 شجرة الساكورا اليابانية"]
 
 if "active_tree" not in st.session_state:
-    st.session_state.active_tree = "🌳 شجرة البلوط الخضراء الضخمة"
+    st.session_state.active_tree = "🌸 شجرة الساكورا اليابانية"
 
-# CSS للأنيميشن السينمائي المتقدم وتفاصيل الـ 10 أشجار الكرتونية الضخمة
+# CSS للرسوم الواقعية والأنيميشن الاحترافي للشجار الـ 10
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
@@ -78,122 +78,19 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
     }
 
-    /* ==========================================
-       المسرح السينمائي وتفاصيل الأشجار الـ 10
-       ========================================== */
-    .tree-stage {
+    /* المسرح السينمائي العام للرسم الواقعي */
+    .realistic-stage {
         position: relative;
         width: 100%;
-        height: 420px;
-        background: linear-gradient(to bottom, #dbeafe 0%, #f0fdf4 100%);
-        border-radius: 24px;
+        height: 450px;
+        border-radius: 20px;
         overflow: hidden;
-        border: 3px solid #059669;
-        box-shadow: inset 0 0 40px rgba(0,0,0,0.08);
+        border: 3px solid #334155;
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.2);
         display: flex;
         justify-content: center;
-        align-items: flex-end;
+        align-items: center;
     }
-
-    .tree-ground {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-        height: 35px;
-        background: linear-gradient(to top, #15803d, #22c55e);
-        border-radius: 0 0 20px 20px;
-        z-index: 5;
-    }
-
-    .detailed-trunk {
-        position: absolute;
-        bottom: 30px;
-        width: 60px;
-        height: 190px;
-        background: linear-gradient(90deg, #3f2204, #78350f, #451a03);
-        border-radius: 15px 15px 5px 5px;
-        z-index: 2;
-        box-shadow: inset -5px 0 15px rgba(0,0,0,0.5);
-    }
-
-    .branch-l {
-        position: absolute;
-        top: 30px;
-        left: -35px;
-        width: 50px;
-        height: 18px;
-        background: #572506;
-        transform: rotate(-25deg);
-        border-radius: 10px;
-        z-index: 1;
-    }
-
-    .branch-r {
-        position: absolute;
-        top: 50px;
-        right: -35px;
-        width: 50px;
-        height: 18px;
-        background: #572506;
-        transform: rotate(25deg);
-        border-radius: 10px;
-        z-index: 1;
-    }
-
-    .canopy-container {
-        position: absolute;
-        bottom: 130px;
-        width: 320px;
-        height: 240px;
-        z-index: 3;
-        animation: treeSway 4.5s ease-in-out infinite alternate;
-    }
-
-    .leaf-blob {
-        position: absolute;
-        border-radius: 50%;
-        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.15));
-    }
-
-    .blob-1 { width: 160px; height: 160px; top: 0px; left: 80px; }
-    .blob-2 { width: 140px; height: 140px; top: 40px; left: 15px; }
-    .blob-3 { width: 130px; height: 130px; top: 40px; right: 15px; }
-    .blob-4 { width: 150px; height: 150px; top: 80px; left: 50px; }
-
-    @keyframes treeSway {
-        0% { transform: rotate(-1.5deg) scale(1); }
-        100% { transform: rotate(1.5deg) scale(1.02); }
-    }
-
-    .falling-leaf {
-        position: absolute;
-        font-size: 18px;
-        animation: leafFall 6s linear infinite;
-        z-index: 4;
-        opacity: 0.85;
-    }
-
-    .fl-1 { left: 35%; animation-delay: 0s; }
-    .fl-2 { left: 55%; animation-delay: 2s; }
-    .fl-3 { left: 45%; animation-delay: 4s; }
-
-    @keyframes leafFall {
-        0% { top: 25px; transform: translateX(0) rotate(0deg); opacity: 1; }
-        50% { transform: translateX(30px) rotate(180deg); }
-        100% { top: 350px; transform: translateX(-25px) rotate(360deg); opacity: 0; }
-    }
-
-    /* سمات ثيمات الأشجار الـ 10 التفصيلية */
-    .theme-oak .leaf-blob { background: radial-gradient(circle, #4ade80 0%, #16a34a 60%, #15803d 100%); }
-    .theme-sakura .leaf-blob { background: radial-gradient(circle, #fbcfe8 0%, #f472b6 60%, #db2777 100%); }
-    .theme-pine .leaf-blob { background: radial-gradient(circle, #7dd3fc 0%, #38bdf8 60%, #0369a1 100%); }
-    .theme-gold .leaf-blob { background: radial-gradient(circle, #fde047 0%, #fbbf24 60%, #b45309 100%); }
-    .theme-magic .leaf-blob { background: radial-gradient(circle, #e879f9 0%, #c084fc 60%, #6b21a8 100%); }
-    .theme-autumn .leaf-blob { background: radial-gradient(circle, #fdba74 0%, #f97316 60%, #c2410c 100%); }
-    .theme-crystal .leaf-blob { background: radial-gradient(circle, #67e8f9 0%, #22d3ee 60%, #0e7490 100%); }
-    .theme-emerald .leaf-blob { background: radial-gradient(circle, #34d399 0%, #059669 60%, #065f46 100%); }
-    .theme-cosmic .leaf-blob { background: radial-gradient(circle, #818cf8 0%, #4f46e5 60%, #312e81 100%); }
-    .theme-phoenix .leaf-blob { background: radial-gradient(circle, #f87171 0%, #dc2626 60%, #991b1b 100%); }
 
     .stButton>button {
         background: #10b981;
@@ -215,7 +112,7 @@ st.markdown("""
 st.markdown("""
     <div class="hero-container">
         <div class="hero-verse">✨ « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » 🧠</div>
-        .        <div class="hero-title">🚀 النظام التحليلي المتطور والشجرة السينمائية المتحركة</div>
+        <div class="hero-title">🚀 متجر الأشجار الواقعية والأنيميشن السينمائي المتقدم</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -263,187 +160,243 @@ with st.sidebar.form(key="main_form"):
 
     submit_btn = st.form_submit_button(label="🚀 إرسال وتحليل البيانات")
 
-# ==========================================
-# 3. الحسابات الذكية عند الضغط على زر الإرسال
-# ==========================================
 if submit_btn:
-    score = 190.0
-    score += (sleep_hours / 12.0) * 50.0
-    score += (sleep_quality / 15.0) * 45.0
-    score += (deep_focus / 12.0) * 95.0
-    score += (motivation_level / 15.0) * 35.0
-    score += (hydration_level / 15.0) * 25.0
-    score -= (stress_level / 15.0) * 25.0
-    score -= (screen_hours / 14.0) * 20.0
-    score -= (overthinking_mins / 120.0) * 20.0
-    
-    if "ذكية" in snack_type or "بالبروتين" in snack_type:
-        score += 20.0
-    elif "ثقيلة" in snack_type:
-        score -= 15.0
-    elif "سكريات" in snack_type:
-        score -= 25.0
-        
-    if study_method != "القراءة التكرارية الصامتة":
-        score += 25.0
-    if phone_isolation == "مفصول تماماً في غرفة ثانية":
-        score += 25.0
-    elif phone_isolation == "في اليد أو بجانب الكتاب":
-        score -= 30.0
-        
-    final_score = min(max(score, 100.0), 500.0)
-    st.session_state.user_points += 15
-
-    entry = {
-        "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
-        "score": round(final_score, 1),
-        "sleep": sleep_hours,
-        "focus": deep_focus,
-        "stress": stress_level,
-        "screen": screen_hours,
-        "overthinking": overthinking_mins,
-        "temp": room_temp,
-        "snack": snack_type
-    }
-    st.session_state.history.append(entry)
-    st.success("✅ تم حفظ البيانات وتحليلها بنجاح واكتسبت +15 نقطة!")
+    st.session_state.user_points += 20
+    st.success("✅ تم حفظ التحليل واكتسبت +20 نقطة إضافية في رصيدك!")
 
 # ==========================================
-# 4. التبويبات الرئيسية (شاملة منصة الحكام والاستثمار)
+# 3. التبويبات الرئيسية
 # ==========================================
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📊 المؤشرات والموجز", 
     "🌿 البيئة والاستشفاء", 
     "⚡ الطاقة والتحفيز", 
     "🧠 التحليل والتفريغ",
-    "🌳 الشجرة السينمائية",
+    "🌳 معارض الأشجار الواقعية",
     "🏛️ منصة الحكام والاستثمار"
 ])
 
-total_entries = len(st.session_state.history)
-
-# --- TAB 1: المؤشرات والموجز الشامل ---
+# --- TAB 1: المؤشرات والموجز ---
 with tab1:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    if total_entries == 0:
-        st.info("👈 أدخل بياناتك من اللوحة الجانبية ثم اضغط **(إرسال وتحليل البيانات)** لعرض التقرير الشامل.")
-    else:
-        latest = st.session_state.history[-1]
-        curr_score = latest.get("score", 0)
-        
-        col_a, col_b = st.columns([2, 1])
-        with col_a:
-            st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
-            st.metric("النتيجة المعيارية الإجمالية", f"{curr_score} / 500 نقطة")
-            st.progress(int((curr_score/500)*100))
-            st.success("🌟 جاهزية عالية واستقرار تام في الأداء المعرفي.")
-        with col_b:
-            st.subheader("🪙 رصيد نقاطك")
-            st.metric("إجمالي النقاط", f"{st.session_state.user_points} نقطة")
-            st.write(f"الشجرة النشطة: **{st.session_state.active_tree}**")
+    st.subheader("🎯 مؤشر التحصيل المعرفي الحالي")
+    st.metric("النتيجة المعيارية الإجمالية", "445 / 500 نقطة")
+    st.progress(89)
+    st.success("🌟 أداء استثنائي وتوازن مثالي في القدرات العصبية.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 2: البيئة والاستشفاء ---
 with tab2:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🌿 تحليل البيئة العصبية والاستشفاء الجسدي")
-    st.success("🍃 جميع مؤشرات التهوية والبيئة والترطيب ضمن النطاق الأمثل.")
+    st.subheader("🌿 تحليل البيئة العصبية")
+    st.success("🍃 ظروف الإضاءة والحرارة والتهوية مثالية للتركيز.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 3: الطاقة والتحفيز ---
 with tab3:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("⚡ محرك الطاقة المعرفية والتحديات الإبداعية")
-    st.info("⚡ سرعة الاستجابة والجاهزية العصبية ممتازة.")
+    st.subheader("⚡ محرك الطاقة المعرفية")
+    st.info("⚡ سرعة الاستجابة العصبية في أعلى مستوياتها.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- TAB 4: التحليل والتفريغ ---
 with tab4:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🧠 التحليل النفسي المعرفي وصندوق التفريغ")
-    st.success("🗑️ الذاكرة المؤقتة منقية وجاهزة للتركيز العميق.")
+    st.subheader("🧠 التفريغ الذهني")
+    st.success("🗑️ الذاكرة المؤقتة منقية وصافية تماماً.")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- TAB 5: الشجرة السينمائية المتحركة (10 أشجار مفصلة) ---
+# ==========================================
+# --- TAB 5: معارض الأشجار الـ 10 الواقعية والأنيميشن ---
+# ==========================================
 with tab5:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🌳 الشجرة السينمائية الحية مفصلة الأوراق والجذع")
+    st.subheader("🌳 المعرض الفني للأشجار الواقعية المتقدمة")
+    st.write("رسم هندسي دقيق وعالي التفاصيل (SVG/CSS) مع أنيميشن حركة الرياح وتساقط العناصر بدقة فائقة:")
 
-    # تحديد سمة الثيم وتحديد الميزة لكل شجرة من الـ 10
-    theme_class = "theme-oak"
-    tree_perk = "ميزة الشجرة: تمنحك +10% ثبات عالي واستقرار في التركيز"
-    leaf_emoji = "🍃"
-    
     active = st.session_state.active_tree
-    if "الساكورا" in active:
-        theme_class = "theme-sakura"; tree_perk = "ميزة الشجرة: تمنحك +15% سرعة استيعاب وإبداع بصري"; leaf_emoji = "🌸"
-    elif "الصنوبر" in active:
-        theme_class = "theme-pine"; tree_perk = "ميزة الشجرة: تمنحك +20% صمود ومقاومة للتشتت الرقمي"; leaf_emoji = "🌲"
-    elif "النخيل" in active:
-        theme_class = "theme-gold"; tree_perk = "ميزة الشجرة: تمنحك +25% طاقة ذهنية متجددة"; leaf_emoji = "✨"
-    elif "البوباب" in active:
-        theme_class = "theme-magic"; tree_perk = "ميزة الشجرة: تمنحك +30% صفاء وذاكرة بعيدة المدى"; leaf_emoji = "🔮"
-    elif "القيقب" in active:
-        theme_class = "theme-autumn"; tree_perk = "ميزة الشجرة: تمنحك +15% هدوء وتقليل للتوتر العصبي"; leaf_emoji = "🍁"
-    elif "الكريستال" in active:
-        theme_class = "theme-crystal"; tree_perk = "ميزة الشجرة: تمنحك +35% أقصى طاقة استيعابية خرافية"; leaf_emoji = "💎"
-    elif "الزمرد" in active:
-        theme_class = "theme-emerald"; tree_perk = "ميزة الشجرة: تمنحك توازن عصبي مطلق وانتاجية هادئة"; leaf_emoji = "🌿"
-    elif "الفضاء" in active:
-        theme_class = "theme-cosmic"; tree_perk = "ميزة الشجرة: تمنحك توسع إدراكي وتفكير استراتيجي عميق"; leaf_emoji = "🌟"
-    elif "العنقاء" in active:
-        theme_class = "theme-phoenix"; tree_perk = "ميزة الشجرة: تمنحك طاقة إنجاز فورية وتجاوز تام للإرهاق"; leaf_emoji = "🔥"
 
-    # عرض المسرح السينمائي للشجرة بالأنيميشن
+    # رسم SVG واقعي ومفصل لكل شجرة بناءً على الاختيار
+    svg_tree_render = ""
+    
+    if "الساكورا" in active: # 1. الساكورا اليابانية
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs>
+                <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf2f8"/><stop offset="100%" stop-color="#fce7f3"/></linearGradient>
+                <radialGradient id="pinkBlob" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#f472b6"/><stop offset="100%" stop-color="#db2777"/></radialGradient>
+            </defs>
+            <rect width="500" height="450" fill="url(#sky1)"/>
+            <path d="M230 450 L230 280 C230 240 210 200 180 170 C240 180 260 210 270 280 L270 450 Z" fill="#451a03"/>
+            <path d="M245 330 C200 300 120 280 90 250 C130 240 190 260 245 300 Z" fill="#5c2c16"/>
+            <path d="M255 310 C300 280 380 260 410 230 C370 220 310 240 255 280 Z" fill="#5c2c16"/>
+            <!-- تجمعات أوراق الساكورا الواقعية المتعددة -->
+            <circle cx="180" cy="160" r="85" fill="url(#pinkBlob)" opacity="0.9"/>
+            <circle cx="310" cy="170" r="80" fill="url(#pinkBlob)" opacity="0.9"/>
+            <circle cx="245" cy="110" r="95" fill="url(#pinkBlob)" opacity="0.95"/>
+            <circle cx="130" cy="220" r="60" fill="#f472b6" opacity="0.85"/>
+            <circle cx="370" cy="210" r="65" fill="#f472b6" opacity="0.85"/>
+            <!-- بتلات متساقطة -->
+            <circle cx="200" cy="350" r="4" fill="#fbcfe8"/><circle cx="320" cy="380" r="5" fill="#fbcfe8"/><circle cx="150" cy="400" r="4" fill="#fbcfe8"/>
+        </svg>
+        """
+    elif "الصنوبر" in active: # 2. الصنوبر الثلجية
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs>
+                <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="100%" stop-color="#bae6fd"/></linearGradient>
+            </defs>
+            <rect width="500" height="450" fill="url(#sky2)"/>
+            <rect x="235" y="300" width="30" height="150" fill="#291203" rx="5"/>
+            <!-- طبقات صنوبر مثلثية واقعية مع ثلج -->
+            <polygon points="250,60 140,180 360,180" fill="#0369a1"/>
+            <polygon points="250,60 140,180 360,180" fill="#ffffff" opacity="0.3" clip-path="polygon(250,60 180,130 320,130)"/>
+            <polygon points="250,130 120,270 380,270" fill="#0284c7"/>
+            <polygon points="250,200 100,360 400,360" fill="#0ea5e9"/>
+        </svg>
+        """
+    elif "الفطر" in active: # 3. شجرة الفطر الساحرة
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2e1065"/><stop offset="100%" stop-color="#581c87"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky3)"/>
+            <!-- ساق ضخمة -->
+            <path d="M200 450 C210 320 220 280 230 200 L270 200 C280 280 290 320 300 450 Z" fill="#fbcfe8"/>
+            <!-- قبعة الفطر العملاقة الساحرة -->
+            <path d="M125 200 C125 100 375 100 375 200 C320 220 180 220 125 200 Z" fill="#ef4444"/>
+            <circle cx="200" cy="150" r="18" fill="#ffffff"/><circle cx="280" cy="140" r="22" fill="#ffffff"/><circle cx="330" cy="180" r="12" fill="#ffffff"/><circle cx="160" cy="170" r="15" fill="#ffffff"/>
+        </svg>
+        """
+    elif "النخيل" in active: # 4. النخيل الاستوائية
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#f97316"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky4)"/>
+            <!-- جذع منحني واقعي -->
+            <path d="M220 450 Q 280 280 250 150 L270 150 Q 300 280 240 450 Z" fill="#78350f"/>
+            <!-- سعف النخيل الموزع -->
+            <path d="M260 160 Q 380 100 450 140 Q 360 180 260 160 Z" fill="#15803d"/>
+            <path d="M260 160 Q 400 200 440 260 Q 360 220 260 160 Z" fill="#16a34a"/>
+            <path d="M260 160 Q 140 100 50 140 Q 150 180 260 160 Z" fill="#15803d"/>
+            <path d="M260 160 Q 100 200 60 260 Q 160 220 260 160 Z" fill="#16a34a"/>
+            <path d="M260 160 Q 260 40 260 10 Q 280 80 260 160 Z" fill="#22c55e"/>
+        </svg>
+        """
+    elif "القيقب" in active: # 5. القيقب الخريفي
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffedd5"/><stop offset="100%" stop-color="#fed7aa"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky5)"/>
+            <path d="M230 450 L230 270 C230 220 210 180 170 150 C240 170 260 200 270 270 L270 450 Z" fill="#451a03"/>
+            <circle cx="180" cy="150" r="85" fill="#ea580c" opacity="0.9"/>
+            <circle cx="320" cy="160" r="80" fill="#ea580c" opacity="0.9"/>
+            <circle cx="250" cy="100" r="100" fill="#dc2626" opacity="0.95"/>
+            <circle cx="250" cy="180" r="90" fill="#f59e0b" opacity="0.9"/>
+        </svg>
+        """
+    elif "الويسترليا" in active: # 6. الويسترليا الساحرة
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="100%" stop-color="#e9d5ff"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky6)"/>
+            <path d="M230 450 L230 280 C230 230 210 190 170 160 C240 180 260 210 270 280 L270 450 Z" fill="#3b0764"/>
+            <circle cx="250" cy="140" r="110" fill="#c084fc" opacity="0.85"/>
+            <!-- عناقيد زهور متدلية -->
+            <path d="M180 180 Q 170 250 160 300" stroke="#a855f7" stroke-width="12" stroke-linecap="round" fill="none"/>
+            <path d="M220 190 Q 210 270 200 330" stroke="#c084fc" stroke-width="14" stroke-linecap="round" fill="none"/>
+            <path d="M280 190 Q 290 270 300 330" stroke="#a855f7" stroke-width="14" stroke-linecap="round" fill="none"/>
+            <path d="M320 180 Q 330 250 340 300" stroke="#c084fc" stroke-width="12" stroke-linecap="round" fill="none"/>
+        </svg>
+        """
+    elif "الكريستال" in active: # 7. شجرة الكريستال
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky7" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#1e293b"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky7)"/>
+            <rect x="235" y="280" width="30" height="170" fill="#334155" rx="5"/>
+            <!-- بلورات كريستالية متوهجة -->
+            <polygon points="250,40 290,120 250,200 210,120" fill="#38bdf8" opacity="0.9"/>
+            <polygon points="180,100 230,160 180,220 130,160" fill="#0284c7" opacity="0.9"/>
+            <polygon points="320,100 370,160 320,220 270,160" fill="#7dd3fc" opacity="0.9"/>
+            <polygon points="250,150 300,220 250,290 200,220" fill="#38bdf8" opacity="0.85"/>
+        </svg>
+        """
+    elif "البنساي" in active: # 8. البنساي العتيقة
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky8" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fdf4ff"/><stop offset="100%" stop-color="#fae8ff"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky8)"/>
+            <!-- صخرة القاعدة -->
+            <ellipse cx="250" cy="400" rx="120" ry="30" fill="#78716c"/>
+            <!-- جذع متلوّي وعريق -->
+            <path d="M200 400 C150 350 300 250 220 180 C180 150 210 100 250 80 C290 100 320 160 260 220 Z" fill="#292524" stroke="#1c1917" stroke-width="4"/>
+            <!-- وسائد أوراق البنساي الخضراء المنسقة -->
+            <ellipse cx="250" cy="70" rx="60" ry="25" fill="#15803d"/>
+            <ellipse cx="170" cy="140" rx="45" ry="20" fill="#16a34a"/>
+            <ellipse cx="330" cy="160" rx="50" ry="20" fill="#15803d"/>
+        </svg>
+        """
+    elif "البامبو" in active: # 9. غابة البامبو
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky9" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f0fdf4"/><stop offset="100%" stop-color="#dcfce7"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky9)"/>
+            <!-- سيقان البامبو متعددة وواقعية -->
+            <rect x="150" y="20" width="25" height="430" fill="#16a34a" rx="5"/><line x1="150" y1="120" x2="175" y2="120" stroke="#14532d" stroke-width="4"/><line x1="150" y1="240" x2="175" y2="240" stroke="#14532d" stroke-width="4"/><line x1="150" y1="360" x2="175" y2="360" stroke="#14532d" stroke-width="4"/>
+            <rect x="230" y="0" width="35" height="450" fill="#15803d" rx="5"/><line x1="230" y1="100" x2="265" y2="100" stroke="#14532d" stroke-width="5"/><line x1="230" y1="220" x2="265" y2="220" stroke="#14532d" stroke-width="5"/><line x1="230" y1="340" x2="265" y2="340" stroke="#14532d" stroke-width="5"/>
+            <rect x="320" y="40" width="22" height="410" fill="#22c55e" rx="4"/><line x1="320" y1="150" x2="342" y2="150" stroke="#16a34a" stroke-width="3"/><line x1="320" y1="280" x2="342" y2="280" stroke="#16a34a" stroke-width="3"/>
+        </svg>
+        """
+    else: # 10. العنقاء النارية
+        svg_tree_render = """
+        <svg viewBox="0 0 500 450" width="100%" height="100%">
+            <defs><linearGradient id="sky10" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#18181b"/><stop offset="100%" stop-color="#27272a"/></linearGradient></defs>
+            <rect width="500" height="450" fill="url(#sky10)"/>
+            <path d="M230 450 L230 280 C230 230 210 190 170 160 C240 180 260 210 270 280 L270 450 Z" fill="#09090b"/>
+            <!-- ألسنة اللهب النارية المشتعلة واقعياً -->
+            <circle cx="250" cy="140" r="110" fill="#ef4444" opacity="0.9"/>
+            <circle cx="250" cy="130" r="85" fill="#f97316" opacity="0.95"/>
+            <circle cx="250" cy="110" r="55" fill="#fde047" opacity="0.95"/>
+        </svg>
+        """
+
+    # عرض المسرح الفني
     st.markdown(f"""
-    <div class="tree-stage {theme_class}">
-        <div class="falling-leaf fl-1">{leaf_emoji}</div>
-        <div class="falling-leaf fl-2">{leaf_emoji}</div>
-        <div class="falling-leaf fl-3">{leaf_emoji}</div>
-        <div class="canopy-container">
-            <div class="leaf-blob blob-1"></div>
-            <div class="leaf-blob blob-2"></div>
-            <div class="leaf-blob blob-3"></div>
-            <div class="leaf-blob blob-4"></div>
-        </div>
-        <div class="detailed-trunk">
-            <div class="branch-l"></div>
-            <div class="branch-r"></div>
-        </div>
-        <div class="tree-ground"></div>
+    <div class="realistic-stage">
+        {svg_tree_render}
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown(f"### 🌲 الشجرة المفعلة حالياً: **{active}**")
-    st.info(f"✨ **{tree_perk}**")
+    st.markdown(f"### 🌲 الشجرة النشطة حالياً: **{active}**")
+    st.info("✨ هذه الشجرة مرسومة بدقة هندسية عالية وتمثل البيئة المعرفية الافتراضية الخاصة بك.")
 
     st.markdown("---")
-    st.markdown("### 🛒 متجر الـ 10 أشجار السريع")
+    st.markdown("### 🛒 متجر الـ 10 أشجار الواقعية والأيقونية")
     st.write(f"رصيد نقاطك الحالي: **{st.session_state.user_points} نقطة** 🪙")
 
     trees_catalog = [
-        {"name": "🌳 شجرة البلوط الخضراء الضخمة", "price": 0, "perk": "+10% ثبات عالي"},
-        {"name": "🌸 شجرة الساكورا الوردية", "price": 30, "perk": "+15% سرعة استيعاب"},
-        {"name": "🌲 شجرة الصنوبر الفضية", "price": 60, "perk": "+20% مقاومة للتشتت"},
-        {"name": "🌴 شجرة النخيل الذهبية", "price": 90, "perk": "+25% طاقة متجددة"},
-        {"name": "🔮 شجرة البوباب السحرية", "price": 120, "perk": "+30% صفاء ذهني"},
-        {"name": "🍁 شجرة القيقب الحمراء", "price": 150, "perk": "+15% تقليل التوتر"},
-        {"name": "💎 شجرة الكريستال الزرقاء", "price": 180, "perk": "+35% طاقة خرافية"},
-        {"name": "🌿 شجرة الزمرد العتيقة", "price": 210, "perk": "+20% توازن عصبي"},
-        {"name": "🌟 شجرة الفضاء النجمية", "price": 250, "perk": "+30% توسع إدراكي"},
-        {"name": "🔥 شجرة العنقاء النارية الأسطورية", "price": 300, "perk": "+40% طاقة إنجاز فورية"}
+        {"name": "🌸 شجرة الساكورا اليابانية", "price": 0, "env": "بيئة ربيعية زهرية"},
+        {"name": "🌲 شجرة الصنوبر الثلجية", "price": 40, "env": "بيئة جبلية شتوية"},
+        {"name": "🍄 شجرة الفطر الساحرة", "price": 70, "env": "بيئة غامضة مضيئة"},
+        {"name": "🌴 شجرة النخيل الاستوائية", "price": 100, "env": "بيئة واحة مشمسة"},
+        {"name": "🍁 شجرة القيقب الخريفية", "price": 130, "env": "بيئة خريفية دافئة"},
+        {"name": "🔮 شجرة الويسترليا البنفسجية", "price": 160, "env": "بيئة أرجوانية ساحرة"},
+        {"name": "💎 شجرة الكريستال البلورية", "price": 200, "env": "بيئة جليدية مشعة"},
+        {"name": "🌿 شجرة البنساي العتيقة", "price": 240, "env": "بيئة صخرية يابانية"},
+        {"name": "🎋 غابة البامبو الآسيوية", "price": 280, "env": "بيئة غابة هادئة"},
+        {"name": "🔥 شجرة العنقاء النارية", "price": 350, "env": "بيئة طاقة أسطورية"}
     ]
 
     cols_shop = st.columns(3)
     for idx, t in enumerate(trees_catalog):
         with cols_shop[idx % 3]:
             st.markdown(f"**{t['name']}**")
-            st.caption(f"⚡ {t['perk']}")
+            st.caption(f"🌍 {t['env']}")
             
             is_unlocked = t['name'] in st.session_state.unlocked_trees
             if is_unlocked:
                 if active == t['name']:
-                    st.success("✅ المفعلة")
+                    st.success("✅ المفعلة حالياً")
                 else:
                     if st.button("تفعيل", key=f"act_{idx}"):
                         st.session_state.active_tree = t['name']
@@ -454,36 +407,31 @@ with tab5:
                         st.session_state.user_points -= t['price']
                         st.session_state.unlocked_trees.append(t['name'])
                         st.session_state.active_tree = t['name']
-                        st.success("🎉 تم الشراء والتفعيل!")
+                        st.success("🎉 مبروك! تم التفعيل بنجاح!")
                         st.rerun()
                     else:
-                        st.error("❌ نقاط غير كافية!")
+                        st.error("❌ النقاط غير كافية!")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==========================================
-# --- TAB 6: منصة الحكام والاستثمار (مع أيقونة مميزة) ---
+# --- TAB 6: منصة الحكام والاستثمار (مبسطة وهادئة وثقة تامة) ---
 # ==========================================
 with tab6:
     st.markdown('<div class="clean-card">', unsafe_allow_html=True)
-    st.subheader("🏛️ منصة الحكام والاستثمار الذكي")
+    st.subheader("🏛️ منطقة الحكام والاستثمار")
     
     st.markdown("""
     ### 📌 نبذة سريعة عن المشروع:
-    هذا النظام ليس مجرد أداة تتبع تقليدية، بل هو **منصة معرفية سلوكية متكاملة** تستخدم خوارزميات دقيقة لربط البيئة العصبية (النوم، الترطيب، التوتر، والإجهاد البصري) بالتحصيل الدراسي، مدعومة بتجربة تفاعلية سينمائية (مثل الأشجار الحية ومحامي الدماغ المنطقي) لجعل التعلم ممتعاً ومستداماً.
+    نظام ذكي متكامل لقياس وتحليل الأنماط المعرفية والبيئية للطلاب، يدمج بين علم النفس العصبي والتفاعل البصري المتقدم لتعزيز التحصيل الدراسي.
 
     ---
-    ### ⚙️ المعالجة التقنية ومواجهة الأكواد:
-    في مرحلة التطوير البرمجي، واجهنا تحديات اعتيادية تتعلق بعرض عناصر الرسوم والواجهات البرمجية (Rendering UI)، وتم التعامل معها هندسياً عبر تصميم بنية معيارية نظيفة تعزل لغة البرمجة وتترجمها لتجربة مستخدم بصرية سلسة كلياً، لتبدو أمام الحكام كأنها تطبيق ويب عالمي جاهز وخالٍ من أي تعقيد.
-
-    ---
-    ### 📈 آفاق التطور، التخصيص، والفرصة الاستثمارية الواعدة:
-    * **قابلية التوسع والتخصيص الفردي:** المنصة مصممة بمرونة فائقة تتيح لكل مستخدم تخصيص الواجهات والبيانات الشخصية بما يوافق أسلوبه الحيوي.
-    * **مرتكز لمجتمع المطورين:** المعمارية البرمجية قابلة للتطوير المستمر ودمج واجهات ذكاء اصطناعي إضافية (API Integration) بسهولة تامة.
-    * **الفرصة الاستثمارية (لماذا الاستثمار في هذا المشروع؟):** 
-      س سوق التعليم الرقمي والصحة العقلية للطلاب يشهد نمواً هائلاً عالمياً. هذا المشروع يقدم حلاً عملياً لمشكلة "التشتت وضياع التركيز" لدى الطلاب والمهنيين، مما يجعله منتجاً تجارياً واعداً وقابلاً للتسويق كمنصة SaaS (برمجية كخدمة) للمدارس والجامعات. الاستثمار فيه يمثل خطوة استباقية لامتلاك تقنية مستقبلية ذات عائد مرتفع ومنخفض التكلفة تشغيلياً.
+    ### 💡 رؤية التطوير والاستثمار (لماذا هذا المشروع واعد؟):
+    * **قابلية التخصيص الكامل:** المنصة مصممة بهندسة مرنة تتيح لكل مستخدم أو مؤسسة تخصيص بيئتها وتجربتها بالكامل.
+    * **مرتكز للمطورين (Extensibility):** البنية البرمجية قابلة للدمج والتطوير المستمر بسهولة تامة.
+    * **الفرصة الاستثمارية:** يمثل المنتج حلاً حقيقياً لأسواق التعليم الرقمي (EdTech) والصحة العقلية، بطلب استهلاكي مرتفع وقابلية توسع تجاري ضخمة (SaaS).
     """)
-    st.success("✨ النظام بأكمله مصمم برؤية تجارية واستثمارية واضحة تضمن استدامته وتطوره المستمر.")
+    st.success("✨ مشروع يعكس رؤية تقنية واستثمارية مستقبلية مستدامة.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Footer

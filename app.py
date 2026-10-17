@@ -377,25 +377,47 @@ SNACK = [90, 95, 45, 35, 40, 30]
 METHOD = [100, 95, 60]
 PHONE = [100, 60, 20]
 
+# محاور التقييم وأوزانها (ثابتة)
+AXES = [("😴 النوم", "sleep", 25), ("🎯 التركيز", "focus", 25), ("⚡ الطاقة", "energy", 15),
+        ("🧠 الصفاء الذهني", "mind", 15), ("🌿 البيئة", "env", 10), ("📚 أسلوب المذاكرة", "method", 10)]
+
 
 def _c(v):
     return max(0.0, min(100.0, v))
 
 
+def _g(dist, k):
+    """منحنى متدرج: 100 داخل المدى المثالي، وينخفض بنعومة كلما ابتعدت عنه."""
+    return 100.0 * math.exp(-(dist / k) ** 2)
+
+
 def analyze(sh, sq, scr, ts, df, temp, ot, stress, mo, hy, snack, method, phone):
-    dur = 100 if 7 <= sh <= 9 else 100 - (7 - sh if sh < 7 else sh - 9) * 25
-    sleep = _c(.55 * dur + .45 * sq / 15 * 100)
     df = min(df, ts)
-    focus = _c(.6 * df / ts * 100 + .4 * min(df / 4, 1) * 100)
-    eyes = _c(100 - max(0, scr - 2) * 9)
-    tmp = _c(100 if 21 <= temp <= 24 else 100 - (21 - temp if temp < 21 else temp - 24) * 12)
+    # النوم: مدة (المثالي 7-9) + جودة
+    dur = _g(max(7 - sh, sh - 9, 0), 2.5)
+    qual = (sq - 1) / 14 * 100
+    sleep = _c(.55 * dur + .45 * qual)
+    # التركيز: نسبة التركيز النقي + حجمه، مع خصم الإرهاق، ثم تأثير النوم وعزل الهاتف
     ph = PHONE[PHONE_OPTS.index(phone)]
+    ratio = _c(min(df / ts / .8, 1) * 100)
+    vol = _c(min(df / 4, 1) * 100 - max(df - 6, 0) * 4)
+    fatigue = max(ts - 8, 0) * 3
+    mult = .9 + .1 * (.5 * sleep + .5 * ph) / 100
+    focus = _c((.6 * ratio + .4 * vol - fatigue) * mult)
+    # البيئة: الحرارة (الحر أشد أثراً من البرد) + الهاتف + راحة العين
+    eyes = _g(max(scr - 2, 0), 6)
+    tmp = _g(21 - temp, 6) if temp < 21 else _g(temp - 24, 4.5) if temp > 24 else 100.0
     env = _c(.4 * tmp + .4 * ph + .2 * eyes)
-    mind = _c(100 - ot / 120 * 55 - (stress - 1) / 14 * 45)
+    # الصفاء الذهني: التفكير الزائد والتوتر
+    mind = _c(100 - 55 * min(ot / 120, 1) ** .8 - 45 * ((stress - 1) / 14) ** 1.2)
+    # الطاقة: الدافعية + الترطيب + جودة الوجبة
+    mot = (mo - 1) / 14 * 100
+    hyd = ((hy - 1) / 14) ** 1.2 * 100
     sn = SNACK[SNACK_OPTS.index(snack)]
-    energy = _c(.4 * (mo - 1) / 14 * 100 + .25 * (hy - 1) / 14 * 100 + .35 * sn)
+    energy = _c(.4 * mot + .25 * hyd + .35 * sn)
     meth = METHOD[METHOD_OPTS.index(method)]
-    total = (.25 * sleep + .25 * focus + .15 * energy + .15 * mind + .10 * env + .10 * meth) * 5
+    res = dict(sleep=sleep, focus=focus, energy=energy, mind=mind, env=env, method=meth)
+    total = sum(w * res[k] for _, k, w in AXES) / 100 * 5
     goals = [
         ("😴 نوم 7 ساعات أو أكثر", sh >= 7),
         ("🎯 تركيز نقي 3 ساعات أو أكثر", df >= 3),
@@ -404,8 +426,18 @@ def analyze(sh, sq, scr, ts, df, temp, ot, stress, mo, hy, snack, method, phone)
         ("🌀 تفكير زائد 30 دقيقة أو أقل", ot <= 30),
         ("📱 شاشة 5 ساعات أو أقل", scr <= 5),
     ]
-    return dict(sleep=sleep, focus=focus, eyes=eyes, temp=tmp, phone=ph, env=env, mind=mind,
-                energy=energy, snack=sn, method=meth, total=total, goals=goals)
+    notes = []
+    if sh < 5 and sq >= 11:
+        notes.append("جودة النوم مرتفعة جداً مع نوم أقل من 5 ساعات، راجع القيمتين.")
+    if ts >= 2 and df / ts > .9:
+        notes.append("نسبة التركيز النقي تتجاوز 90% من وقت الدراسة وهذا غير معتاد، تأكد من القيمة.")
+    if sh + ts > 20:
+        notes.append("مجموع ساعات النوم والدراسة يتجاوز 20 ساعة، تأكد من القيم.")
+    if df > 6:
+        notes.append("التركيز النقي فوق 6 ساعات يُخصم منه أثر الإرهاق في حساب حجم التركيز.")
+    parts = [("مدة النوم", dur), ("جودة النوم", qual), ("نسبة التركيز النقي", ratio), ("حجم التركيز", vol),
+             ("راحة العين", eyes), ("ملاءمة الحرارة", tmp), ("عزل الهاتف", ph), ("الدافعية", mot), ("الترطيب", hyd)]
+    return dict(res, eyes=eyes, temp=tmp, phone=ph, snack=sn, total=total, goals=goals, parts=parts, notes=notes, mult=mult)
 
 
 def grade(v):
@@ -415,7 +447,7 @@ def grade(v):
 def show_metrics(items, ncols=3):
     cols = st.columns(ncols)
     for i, (name, v) in enumerate(items):
-        cols[i % ncols].metric(name, f"{v:.0f}%")
+        cols[i % ncols].metric(name, f"{v:.1f}%")
 
 
 def show_tips(tips, ok_msg):
@@ -427,12 +459,12 @@ def show_tips(tips, ok_msg):
 
 
 # ==========================================
-# 1. إعدادات الصفحة والتصميم
+# 1. إعدادات الصفحة والهوية البصرية
 # ==========================================
 st.set_page_config(
     page_title="وعلم الإنسان ما لم يعلم | النظام التحليلي المتطور",
-    page_icon="🎓",
-    layout="centered"
+    page_icon="🌳",
+    layout="wide"
 )
 
 # تهيئة ذاكرة الجلسة
@@ -454,54 +486,55 @@ if "unlocked_trees" not in st.session_state:
 if "active_tree" not in st.session_state:
     st.session_state.active_tree = "🌸 شجرة الساكورا اليابانية الساحرة"
 
-# CSS بسيط ونظيف
+# الهوية البصرية: الألوان (كحلي / زمردي / برتقالي / نيلي) وخط Cairo
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
-
-    html, body, [class*="css"] {
-        font-family: 'Cairo', sans-serif;
-        direction: rtl;
-    }
-
-    #MainMenu, footer, header { visibility: hidden; }
-
-    .block-container { padding-top: 1.2rem; max-width: 880px; }
-
-    .hero-container {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        padding: 16px;
-        border-radius: 14px;
-        border-right: 5px solid #f97316;
-        text-align: center;
-        margin-bottom: 14px;
-    }
-
-    .hero-verse { font-size: 1.1rem; font-weight: 700; color: #f97316; }
-    .hero-title { font-weight: 900; font-size: 1.4rem; color: #ffffff; }
-
-    .stButton>button, .stFormSubmitButton>button {
-        background: #10b981;
-        color: white;
-        border-radius: 10px;
-        font-weight: bold;
-        border: none;
-        width: 100%;
-    }
-
-    .stButton>button:hover, .stFormSubmitButton>button:hover {
-        background: #059669;
-        color: white;
-    }
-    </style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+:root{--navy:#0f172a;--navy2:#1e293b;--emerald:#10b981;--emerald-d:#059669;--orange:#f97316;--indigo:#6366f1;}
+html, body, [class*="css"]{font-family:'Cairo',sans-serif;direction:rtl;}
+html{font-size:17px;}
+#MainMenu, footer, header{visibility:hidden;}
+[data-testid="stAppViewContainer"]{background:linear-gradient(180deg,#f8fafc 0%,#eef2ff 100%);}
+.block-container{max-width:1280px;padding-top:1.4rem;padding-bottom:3rem;}
+.brand-hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:22px;padding:26px 30px;border-radius:20px;margin-bottom:18px;
+background:radial-gradient(circle at 15% 20%,rgba(16,185,129,.28),transparent 45%),radial-gradient(circle at 85% 80%,rgba(249,115,22,.25),transparent 45%),linear-gradient(135deg,#0f172a,#1e293b);
+border:1px solid rgba(99,102,241,.45);box-shadow:0 14px 34px rgba(15,23,42,.25);}
+.brand-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--emerald),var(--indigo),var(--orange));}
+.brand-logo{flex:0 0 auto;filter:drop-shadow(0 6px 14px rgba(16,185,129,.4));}
+.brand-verse{color:var(--orange);font-weight:700;font-size:1.15rem;margin-bottom:2px;}
+.brand-name{color:#fff;font-weight:900;font-size:2rem;line-height:1.3;}
+.brand-tag{color:#cbd5e1;font-size:1rem;margin-top:2px;}
+.block-container h3{border-right:5px solid var(--emerald);padding-right:12px;font-weight:900;}
+.block-container h4{color:var(--navy2);font-weight:800;}
+.stTabs [data-baseweb="tab-list"]{gap:8px;}
+.stTabs [data-baseweb="tab"]{font-size:1.1rem;font-weight:700;padding:12px 24px;border-radius:12px 12px 0 0;}
+.stTabs [aria-selected="true"]{background:#ffffff;color:var(--emerald-d);}
+[data-testid="stMetric"]{background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid var(--emerald);border-radius:14px;padding:14px 16px;box-shadow:0 4px 12px rgba(15,23,42,.05);}
+[data-testid="stMetricValue"]{font-size:1.9rem;font-weight:900;color:var(--navy);}
+[data-testid="stForm"]{background:#ffffff;border:1px solid #e2e8f0;border-top:4px solid var(--indigo);border-radius:16px;padding:20px;box-shadow:0 4px 14px rgba(15,23,42,.05);}
+.stButton>button, .stFormSubmitButton>button{background:linear-gradient(135deg,var(--emerald),var(--emerald-d));color:#fff;border:none;border-radius:12px;font-weight:800;font-size:1.05rem;padding:.65rem 1rem;width:100%;box-shadow:0 6px 14px rgba(16,185,129,.28);}
+.stButton>button:hover, .stFormSubmitButton>button:hover{color:#fff;transform:translateY(-1px);filter:brightness(1.05);}
+.brand-foot{text-align:center;color:#64748b;padding:18px;border-top:1px solid #e2e8f0;margin-top:30px;}
+</style>
 """, unsafe_allow_html=True)
 
-# الهيدر
+# الهيدر: الشعار + الاسم + الآية
 st.markdown("""
-    <div class="hero-container">
-        <div class="hero-verse">« وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ »</div>
-        <div class="hero-title">🎓 النظام التحليلي المتطور</div>
-    </div>
+<div class="brand-hero">
+<svg class="brand-logo" width="96" height="96" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="bl1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#10b981"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs>
+<circle cx="50" cy="50" r="46" fill="#0b1220" stroke="url(#bl1)" stroke-width="4"/>
+<path d="M18 70Q50 60 82 70L82 76Q50 66 18 76Z" fill="#f97316"/>
+<path d="M50 68V46" stroke="#a16207" stroke-width="5" stroke-linecap="round"/>
+<circle cx="50" cy="34" r="16" fill="#10b981"/><circle cx="37" cy="42" r="11" fill="#34d399"/><circle cx="63" cy="42" r="11" fill="#059669"/>
+<circle cx="50" cy="30" r="3" fill="#fff" opacity=".8"/><circle cx="42" cy="38" r="2" fill="#fff" opacity=".7"/><circle cx="60" cy="36" r="2.4" fill="#fff" opacity=".7"/>
+</svg>
+<div>
+<div class="brand-verse">« وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ »</div>
+<div class="brand-name">النظام التحليلي المتطور</div>
+<div class="brand-tag">حلّل عاداتك الدراسية، حقّق مهامك، وازرع شجرتك</div>
+</div>
+</div>
 """, unsafe_allow_html=True)
 
 top = st.container()
@@ -512,98 +545,111 @@ tab1, tab2, tab3 = st.tabs(["📊 تحليلي", "🌳 الأشجار والمت
 # TAB 1: إدخال البيانات والنتيجة
 # ==========================================
 with tab1:
-    with st.form(key="main_form"):
-        st.markdown("#### 🎛️ أدخل بياناتك")
-        c1, c2 = st.columns(2)
-        sleep_hours = c1.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.25)
-        total_study = c2.slider("⏱️ إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.25)
-        deep_focus = c1.slider("🎯 ساعات التركيز النقي الصافي", 0.5, 12.0, 3.5, 0.25)
-        phone_isolation = c2.selectbox("📵 عزل الهاتف الخلوي", PHONE_OPTS)
+    left, right = st.columns([1, 1.15], gap="large")
 
-        with st.expander("⚙️ تفاصيل إضافية لنتيجة أدق (اختياري)"):
-            e1, e2 = st.columns(2)
-            sleep_quality = e1.slider("✨ جودة النوم (1-15)", 1, 15, 12)
-            screen_hours = e2.slider("📱 ساعات الشاشة", 1.0, 14.0, 4.5, 0.25)
-            room_temp = e1.slider("🌡️ حرارة الغرفة (مئوية)", 16.0, 32.0, 23.0, 0.5)
-            overthinking_mins = e2.slider("🌀 دقائق التفكير الزائد", 0, 120, 20, 1)
-            stress_level = e1.slider("⚠️ مستوى التوتر (1-15)", 1, 15, 5)
-            motivation_level = e2.slider("🔥 الدافعية (1-15)", 1, 15, 12)
-            hydration_level = e1.slider("💧 مستوى الترطيب (1-15)", 1, 15, 11)
-            snack_type = st.selectbox("🍱 الوجبة قبل المذاكرة", SNACK_OPTS)
-            study_method = st.selectbox("📚 أسلوب المذاكرة الأساسي", METHOD_OPTS)
+    with left:
+        with st.form(key="main_form"):
+            st.markdown("#### 🎛️ أدخل بياناتك")
+            c1, c2 = st.columns(2)
+            sleep_hours = c1.slider("🌙 ساعات النوم اليومية", 3.0, 12.0, 7.5, 0.25)
+            total_study = c2.slider("⏱️ إجمالي ساعات التواجد الدراسي", 1.0, 12.0, 4.0, 0.25)
+            deep_focus = c1.slider("🎯 ساعات التركيز النقي الصافي", 0.5, 12.0, 3.5, 0.25)
+            phone_isolation = c2.selectbox("📵 عزل الهاتف الخلوي", PHONE_OPTS)
 
-        submit_btn = st.form_submit_button("🚀 إرسال وتحليل البيانات")
+            with st.expander("⚙️ تفاصيل إضافية لنتيجة أدق (اختياري)"):
+                e1, e2 = st.columns(2)
+                sleep_quality = e1.slider("✨ جودة النوم (1-15)", 1, 15, 12)
+                screen_hours = e2.slider("📱 ساعات الشاشة", 1.0, 14.0, 4.5, 0.25)
+                room_temp = e1.slider("🌡️ حرارة الغرفة (مئوية)", 16.0, 32.0, 23.0, 0.5)
+                overthinking_mins = e2.slider("🌀 دقائق التفكير الزائد", 0, 120, 20, 1)
+                stress_level = e1.slider("⚠️ مستوى التوتر (1-15)", 1, 15, 5)
+                motivation_level = e2.slider("🔥 الدافعية (1-15)", 1, 15, 12)
+                hydration_level = e1.slider("💧 مستوى الترطيب (1-15)", 1, 15, 11)
+                snack_type = st.selectbox("🍱 الوجبة قبل المذاكرة", SNACK_OPTS)
+                study_method = st.selectbox("📚 أسلوب المذاكرة الأساسي", METHOD_OPTS)
 
-    # التحليل الدقيق للقيم الحالية
-    R = analyze(sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
-                overthinking_mins, stress_level, motivation_level, hydration_level,
-                snack_type, study_method, phone_isolation)
+            submit_btn = st.form_submit_button("🚀 إرسال وتحليل البيانات")
 
-    if submit_btn:
-        sig = (sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
-               overthinking_mins, stress_level, motivation_level, hydration_level,
-               snack_type, study_method, phone_isolation)
-        if deep_focus > total_study:
-            st.warning("⚠️ ساعات التركيز النقي لا يمكن أن تزيد عن إجمالي ساعات التواجد الدراسي. صحّح القيم ثم أعد الإرسال.")
-        elif sig == st.session_state.last_sig:
-            st.info("ℹ️ هذه نفس البيانات السابقة. غيّر بعض القيم لتحصل على نقاط جديدة.")
-        else:
-            done = sum(1 for _, ok in R["goals"] if ok)
-            base = round(R["total"] / 500 * 60)
-            perfect = 40 if done == len(R["goals"]) else 0
-            gain = base + 15 * done + perfect
-            st.session_state.user_points += gain
-            st.session_state.last_sig = sig
-            st.session_state.history.append({"الدرجة": round(R["total"], 1), "النقاط": gain})
-            msg = f"✅ تم حفظ التحليل واكتسبت +{gain} نقطة (التحليل {base} + المهام {done}×15"
-            msg += f" + مكافأة اليوم المثالي {perfect})" if perfect else ")"
-            st.success(msg)
+        # التحليل الدقيق للقيم الحالية
+        R = analyze(sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
+                    overthinking_mins, stress_level, motivation_level, hydration_level,
+                    snack_type, study_method, phone_isolation)
+
+        if submit_btn:
+            sig = (sleep_hours, sleep_quality, screen_hours, total_study, deep_focus, room_temp,
+                   overthinking_mins, stress_level, motivation_level, hydration_level,
+                   snack_type, study_method, phone_isolation)
+            if deep_focus > total_study:
+                st.warning("⚠️ ساعات التركيز النقي لا يمكن أن تزيد عن إجمالي ساعات التواجد الدراسي. صحّح القيم ثم أعد الإرسال.")
+            elif sig == st.session_state.last_sig:
+                st.info("ℹ️ هذه نفس البيانات السابقة. غيّر بعض القيم لتحصل على نقاط جديدة.")
+            else:
+                done = sum(1 for _, ok in R["goals"] if ok)
+                base = round(R["total"] / 500 * 60)
+                perfect = 40 if done == len(R["goals"]) else 0
+                gain = base + 15 * done + perfect
+                st.session_state.user_points += gain
+                st.session_state.last_sig = sig
+                st.session_state.history.append({"الدرجة": round(R["total"], 1), "النقاط": gain})
+                msg = f"✅ تم حفظ التحليل واكتسبت +{gain} نقطة (التحليل {base} + المهام {done}×15"
+                msg += f" + مكافأة اليوم المثالي {perfect})" if perfect else ")"
+                st.success(msg)
 
     # شريط الحالة العلوي (يُملأ هنا ليعكس آخر نقاط)
     with top:
-        s1, s2, s3 = st.columns(3)
+        s1, s2, s3, s4 = st.columns(4)
         s1.metric("🪙 رصيدك", st.session_state.user_points)
-        s2.metric("🎯 درجتك", f"{R['total']:.0f}/500")
-        s3.metric("🌲 شجرتك", st.session_state.active_tree.split(" ")[0])
+        s2.metric("🎯 درجتك", f"{R['total']:.1f}/500")
+        s3.metric("✅ مهام اليوم", f"{sum(1 for _, ok in R['goals'] if ok)}/{len(R['goals'])}")
+        s4.metric("🌲 شجرتك", st.session_state.active_tree.split(" ")[0])
 
-    st.markdown("### 🎯 نتيجتك")
-    st.metric("النتيجة الإجمالية", f"{R['total']:.0f} / 500", delta=grade(R["total"]), delta_color="off")
-    st.progress(int(round(R["total"] / 5)))
-    show_metrics([
-        ("😴 النوم", R["sleep"]), ("🎯 التركيز", R["focus"]), ("⚡ الطاقة", R["energy"]),
-        ("🧠 الصفاء الذهني", R["mind"]), ("🌿 البيئة", R["env"]), ("📚 أسلوب المذاكرة", R["method"])
-    ])
+    with right:
+        st.markdown("### 🎯 نتيجتك")
+        st.metric("النتيجة الإجمالية", f"{R['total']:.1f} / 500", delta=grade(R["total"]), delta_color="off")
+        st.progress(int(round(R["total"] / 5)))
+        show_metrics([(n, R[k]) for n, k, _ in AXES])
 
-    tips = []
-    if sleep_hours < 7 or sleep_hours > 9:
-        tips.append(f"😴 نومك {sleep_hours:g} ساعة، والمدى المثالي من 7 إلى 9 ساعات.")
-    if phone_isolation != PHONE_OPTS[0]:
-        tips.append("📵 الهاتف قريب منك، وفصله في غرفة ثانية يرفع التركيز بوضوح.")
-    if hydration_level < 8:
-        tips.append("💧 مستوى الترطيب منخفض، اشرب كوب ماء قبل المذاكرة وخلالها.")
-    if R["snack"] < 50:
-        tips.append("🍱 وجبتك الحالية ضعيفة للتركيز، استبدلها بمكسرات أو فواكه أو بروتين.")
-    if overthinking_mins > 30:
-        tips.append(f"🌀 {overthinking_mins} دقيقة من التفكير الزائد، دوّن أفكارك على ورقة لتفرغها من ذهنك.")
-    if stress_level > 8:
-        tips.append("⚠️ التوتر مرتفع، جرّب تنفساً عميقاً لدقيقتين قبل المذاكرة.")
-    if screen_hours > 5:
-        tips.append(f"📱 ساعات الشاشة {screen_hours:g}، حاول خفضها إلى 5 ساعات أو أقل مع استراحات للعين.")
-    if not 21 <= room_temp <= 24:
-        tips.append(f"🌡️ حرارة الغرفة {room_temp:g}°م، والمثالي بين 21 و24°م.")
-    if motivation_level < 8:
-        tips.append("🔥 الدافعية منخفضة، ابدأ بمهمة صغيرة سهلة لتكسر الجمود.")
+        tips = []
+        if sleep_hours < 7 or sleep_hours > 9:
+            tips.append(f"😴 نومك {sleep_hours:g} ساعة، والمدى المثالي من 7 إلى 9 ساعات.")
+        if phone_isolation != PHONE_OPTS[0]:
+            tips.append("📵 الهاتف قريب منك، وفصله في غرفة ثانية يرفع التركيز بوضوح.")
+        if hydration_level < 8:
+            tips.append("💧 مستوى الترطيب منخفض، اشرب كوب ماء قبل المذاكرة وخلالها.")
+        if R["snack"] < 50:
+            tips.append("🍱 وجبتك الحالية ضعيفة للتركيز، استبدلها بمكسرات أو فواكه أو بروتين.")
+        if overthinking_mins > 30:
+            tips.append(f"🌀 {overthinking_mins} دقيقة من التفكير الزائد، دوّن أفكارك على ورقة لتفرغها من ذهنك.")
+        if stress_level > 8:
+            tips.append("⚠️ التوتر مرتفع، جرّب تنفساً عميقاً لدقيقتين قبل المذاكرة.")
+        if screen_hours > 5:
+            tips.append(f"📱 ساعات الشاشة {screen_hours:g}، حاول خفضها إلى 5 ساعات أو أقل مع استراحات للعين.")
+        if not 21 <= room_temp <= 24:
+            tips.append(f"🌡️ حرارة الغرفة {room_temp:g}°م، والمثالي بين 21 و24°م.")
+        if motivation_level < 8:
+            tips.append("🔥 الدافعية منخفضة، ابدأ بمهمة صغيرة سهلة لتكسر الجمود.")
 
-    st.markdown("### 💡 نصائح لك")
-    show_tips(tips[:4], "🌟 ممتاز! كل مؤشراتك ضمن المدى المثالي.")
+        st.markdown("### 💡 نصائح لك")
+        show_tips(tips[:4], "🌟 ممتاز! كل مؤشراتك ضمن المدى المثالي.")
 
-    with st.expander("🎯 مهام اليوم (كل مهمة منجزة = +15 نقطة)"):
-        for name, ok in R["goals"]:
-            st.write(("✅ " if ok else "⬜ ") + name)
+        with st.expander("🎯 مهام اليوم (كل مهمة منجزة = +15 نقطة)"):
+            for name, ok in R["goals"]:
+                st.write(("✅ " if ok else "⬜ ") + name)
 
-    if len(st.session_state.history) > 1:
-        with st.expander("📈 تطور درجتك"):
-            st.line_chart(pd.DataFrame(st.session_state.history)["الدرجة"])
+        with st.expander("🔬 تفاصيل حساب الدرجة"):
+            st.table(pd.DataFrame([
+                {"المحور": n, "الوزن %": w, "الدرجة %": round(R[k], 1), "المساهمة (من 500)": round(w * R[k] / 100 * 5, 1)}
+                for n, k, w in AXES
+            ]).set_index("المحور"))
+            st.markdown("**العوامل التفصيلية**")
+            st.table(pd.DataFrame([{"العامل": n, "القيمة %": round(v, 1)} for n, v in R["parts"]]).set_index("العامل"))
+            st.caption(f"معامل تأثير النوم وعزل الهاتف على التركيز: ×{R['mult']:.3f}")
+            for n in R["notes"]:
+                st.info("🔎 " + n)
+
+        if len(st.session_state.history) > 1:
+            with st.expander("📈 تطور درجتك"):
+                st.line_chart(pd.DataFrame(st.session_state.history)["الدرجة"])
 
 # ==========================================
 # TAB 2: الأشجار والمتجر
@@ -611,56 +657,58 @@ with tab1:
 with tab2:
     active = st.session_state.active_tree
     svg_tree_render = get_tree_svg(active)
+    t_left, t_right = st.columns([1.15, 1], gap="large")
 
-    components.html(f"""
-    <div style="width: 100%; height: 480px; border-radius: 20px; overflow: hidden; border: 3px solid #334155; box-shadow: 0 15px 30px rgba(0,0,0,0.2); background: #fff;">
-        {svg_tree_render}
-    </div>
-    """, height=490)
+    with t_left:
+        components.html(f"""
+        <div style="width: 100%; max-width: 820px; height: 640px; margin: 0 auto; border-radius: 22px; overflow: hidden; border: 3px solid #334155; box-shadow: 0 15px 30px rgba(0,0,0,0.2); background: #fff;">
+            {svg_tree_render}
+        </div>
+        """, height=665)
+        st.markdown(f"**🌲 الشجرة النشطة:** {active}")
 
-    st.markdown(f"**🌲 الشجرة النشطة:** {active}")
+    with t_right:
+        st.markdown("### 🛒 المتجر")
+        st.caption(f"رصيدك: {st.session_state.user_points} نقطة 🪙 — تكسب نقاطاً من كل تحليل جديد، وكل مهمة منجزة تعطيك 15 نقطة.")
 
-    st.markdown("### 🛒 المتجر")
-    st.caption(f"رصيدك: {st.session_state.user_points} نقطة 🪙 — تكسب نقاطاً من كل تحليل جديد، وكل مهمة منجزة تعطيك 15 نقطة.")
+        trees_catalog = [
+            {"name": "🌸 شجرة الساكورا اليابانية الساحرة", "price": 0},
+            {"name": "🌲 شجرة الصنوبر الثلجية", "price": 250},
+            {"name": "🍄 شجرة الفطر الساحرة", "price": 500},
+            {"name": "🌴 شجرة النخيل الاستوائية", "price": 800},
+            {"name": "🍁 شجرة القيقب الخريفية", "price": 1200},
+            {"name": "🔮 شجرة الويسترليا البنفسجية", "price": 1700},
+            {"name": "💎 شجرة الكريستال البلورية", "price": 2300},
+            {"name": "🌿 شجرة البنساي العتيقة", "price": 3000},
+            {"name": "🎋 غابة البامبو الآسيوية", "price": 3800},
+            {"name": "🔥 شجرة العنقاء النارية", "price": 5000}
+        ]
 
-    trees_catalog = [
-        {"name": "🌸 شجرة الساكورا اليابانية الساحرة", "price": 0},
-        {"name": "🌲 شجرة الصنوبر الثلجية", "price": 250},
-        {"name": "🍄 شجرة الفطر الساحرة", "price": 500},
-        {"name": "🌴 شجرة النخيل الاستوائية", "price": 800},
-        {"name": "🍁 شجرة القيقب الخريفية", "price": 1200},
-        {"name": "🔮 شجرة الويسترليا البنفسجية", "price": 1700},
-        {"name": "💎 شجرة الكريستال البلورية", "price": 2300},
-        {"name": "🌿 شجرة البنساي العتيقة", "price": 3000},
-        {"name": "🎋 غابة البامبو الآسيوية", "price": 3800},
-        {"name": "🔥 شجرة العنقاء النارية", "price": 5000}
-    ]
+        cols_shop = st.columns(2)
+        for idx, t in enumerate(trees_catalog):
+            with cols_shop[idx % 2]:
+                st.markdown(f"**{t['name']}**")
 
-    cols_shop = st.columns(3)
-    for idx, t in enumerate(trees_catalog):
-        with cols_shop[idx % 3]:
-            st.markdown(f"**{t['name']}**")
-
-            is_unlocked = t['name'] in st.session_state.unlocked_trees
-            if is_unlocked:
-                if active == t['name']:
-                    st.success("✅ المفعلة حالياً")
-                else:
-                    if st.button("تفعيل", key=f"act_{idx}"):
-                        st.session_state.active_tree = t['name']
-                        st.rerun()
-            else:
-                missing = max(0, t['price'] - st.session_state.user_points)
-                st.caption(f"🔒 ينقصك {missing} نقطة" if missing else "🔓 رصيدك يكفي")
-                if st.button(f"شراء ({t['price']} ن)", key=f"buy_{idx}"):
-                    if st.session_state.user_points >= t['price']:
-                        st.session_state.user_points -= t['price']
-                        st.session_state.unlocked_trees.append(t['name'])
-                        st.session_state.active_tree = t['name']
-                        st.success("🎉 مبروك! تم التفعيل بنجاح!")
-                        st.rerun()
+                is_unlocked = t['name'] in st.session_state.unlocked_trees
+                if is_unlocked:
+                    if active == t['name']:
+                        st.success("✅ المفعلة حالياً")
                     else:
-                        st.error("❌ النقاط غير كافية!")
+                        if st.button("تفعيل", key=f"act_{idx}"):
+                            st.session_state.active_tree = t['name']
+                            st.rerun()
+                else:
+                    missing = max(0, t['price'] - st.session_state.user_points)
+                    st.caption(f"🔒 ينقصك {missing} نقطة" if missing else "🔓 رصيدك يكفي")
+                    if st.button(f"شراء ({t['price']} ن)", key=f"buy_{idx}"):
+                        if st.session_state.user_points >= t['price']:
+                            st.session_state.user_points -= t['price']
+                            st.session_state.unlocked_trees.append(t['name'])
+                            st.session_state.active_tree = t['name']
+                            st.success("🎉 مبروك! تم التفعيل بنجاح!")
+                            st.rerun()
+                        else:
+                            st.error("❌ النقاط غير كافية!")
 
 # ==========================================
 # TAB 3: عن المشروع (للحكام والاستثمار)
@@ -670,15 +718,15 @@ with tab3:
     st.markdown("""
     ### 📌 نبذة سريعة عن المشروع:
     نظام ذكي متكامل لقياس وتحليل الأنماط المعرفية والبيئية للطلاب، يدمج بين علم النفس العصبي والتفاعل البصري المتقدم لتعزيز التحصيل الدراسي.
-
-    ---
-    ### 💡 رؤية التطوير والاستثمار (لماذا هذا المشروع واعد؟):
-    * **قابلية التخصيص الكامل:** المنصة مصممة بهندسة مرنة تتيح لكل مستخدم أو مؤسسة تخصيص بيئتها وتجربتها بالكامل.
-    * **مرتكز للمطورين (Extensibility):** البنية البرمجية قابلة للدمج والتطوير المستمر بسهولة تامة.
-    * **الفرصة الاستثمارية:** يمثل المنتج حلاً حقيقياً لأسواق التعليم الرقمي (EdTech) والصحة العقلية، بطلب استهلاكي مرتفع وقابلية توسع تجاري ضخمة (SaaS).
     """)
+    st.markdown("### 💡 رؤية التطوير والاستثمار (لماذا هذا المشروع واعد؟):")
+    a1, a2, a3 = st.columns(3)
+    a1.markdown("#### 🎛️ قابلية التخصيص الكامل\nالمنصة مصممة بهندسة مرنة تتيح لكل مستخدم أو مؤسسة تخصيص بيئتها وتجربتها بالكامل.")
+    a2.markdown("#### 🧩 مرتكز للمطورين (Extensibility)\nالبنية البرمجية قابلة للدمج والتطوير المستمر بسهولة تامة.")
+    a3.markdown("#### 📈 الفرصة الاستثمارية\nيمثل المنتج حلاً حقيقياً لأسواق التعليم الرقمي (EdTech) والصحة العقلية، بطلب استهلاكي مرتفع وقابلية توسع تجاري ضخمة (SaaS).")
     st.success("✨ مشروع يعكس رؤية تقنية واستثمارية مستقبلية مستدامة.")
 
 # Footer
-st.write("---")
-st.caption("النظام التحليلي المتطور — نسخة المعارض العلمية المتقدمة.")
+st.markdown("""
+<div class="brand-foot">🌳 <b>النظام التحليلي المتطور</b> — « وَعَلَّمَ الإِنْسَانَ مَا لَمْ يَعْلَمْ » · نسخة المعارض العلمية المتقدمة</div>
+""", unsafe_allow_html=True)

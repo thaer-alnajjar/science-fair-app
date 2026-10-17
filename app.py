@@ -644,3 +644,41 @@ with tab2:
             is_unlocked = t['name'] in st.session_state.unlocked_trees
             if is_unlocked:
                 if active == t['name']:
+                    st.success("✅ المفعلة حالياً")
+                else:
+                    if st.button("تفعيل", key=f"act_{idx}"):
+                        st.session_state.active_tree = t['name']
+                        st.rerun()
+            else:
+                missing = max(0, t['price'] - st.session_state.user_points)
+                st.caption(f"🔒 ينقصك {missing} نقطة" if missing else "🔓 رصيدك يكفي")
+                if st.button(f"شراء ({t['price']} ن)", key=f"buy_{idx}"):
+                    if st.session_state.user_points >= t['price']:
+                        st.session_state.user_points -= t['price']
+                        st.session_state.unlocked_trees.append(t['name'])
+                        st.session_state.active_tree = t['name']
+                        st.success("🎉 مبروك! تم التفعيل بنجاح!")
+                        st.rerun()
+                    else:
+                        st.error("❌ النقاط غير كافية!")
+
+# ==========================================
+# TAB 3: عن المشروع (للحكام والاستثمار)
+# ==========================================
+with tab3:
+    st.subheader("🏛️ منطقة الحكام والاستثمار")
+    st.markdown("""
+    ### 📌 نبذة سريعة عن المشروع:
+    نظام ذكي متكامل لقياس وتحليل الأنماط المعرفية والبيئية للطلاب، يدمج بين علم النفس العصبي والتفاعل البصري المتقدم لتعزيز التحصيل الدراسي.
+
+    ---
+    ### 💡 رؤية التطوير والاستثمار (لماذا هذا المشروع واعد؟):
+    * **قابلية التخصيص الكامل:** المنصة مصممة بهندسة مرنة تتيح لكل مستخدم أو مؤسسة تخصيص بيئتها وتجربتها بالكامل.
+    * **مرتكز للمطورين (Extensibility):** البنية البرمجية قابلة للدمج والتطوير المستمر بسهولة تامة.
+    * **الفرصة الاستثمارية:** يمثل المنتج حلاً حقيقياً لأسواق التعليم الرقمي (EdTech) والصحة العقلية، بطلب استهلاكي مرتفع وقابلية توسع تجاري ضخمة (SaaS).
+    """)
+    st.success("✨ مشروع يعكس رؤية تقنية واستثمارية مستقبلية مستدامة.")
+
+# Footer
+st.write("---")
+st.caption("النظام التحليلي المتطور — نسخة المعارض العلمية المتقدمة.")
